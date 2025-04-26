@@ -1,4 +1,6 @@
 const express = require("express");
+const asyncHandler = require("../../helper/asyncHandler");
+
 const controller = require("../../controller/admin/post.controller");
 const multer = require("multer");
 const upload = multer();
@@ -9,46 +11,46 @@ const {
 
 const Router = express.Router();
 
-Router.get("/", checkPermission("posts_view"), controller.index);
+Router.get("/", checkPermission("posts_view"), asyncHandler(controller.index));
 
 Router.patch(
   "/change-status/:status/:id",
   checkPermission("posts_edit"),
-  controller.changeStatus
+  asyncHandler(controller.changeStatus)
 );
 
 Router.patch(
   "/change-multi",
   checkPermission("posts_edit"),
-  controller.changeMulti
+  asyncHandler(controller.changeMulti)
 );
 
 Router.delete(
   "/delete/:id",
   checkPermission("posts_delete"),
-  controller.delete
+  asyncHandler(controller.delete)
 );
 
-Router.get("/create", checkPermission("posts_create"), controller.create);
+Router.get("/create", checkPermission("posts_create"), asyncHandler(controller.create));
 
 Router.post(
   "/create",
   checkPermission("posts_create"),
   upload.single("thumbnail"),
   uploadCloud.upload,
-  controller.createPost
+  asyncHandler(controller.createPost)
 );
 
-Router.get("/edit/:id", checkPermission("posts_edit"), controller.edit);
+Router.get("/edit/:id", checkPermission("posts_edit"), asyncHandler(controller.edit));
 
 Router.patch(
   "/edit/:id",
   checkPermission("posts_edit"),
   upload.single("thumbnail"),
   uploadCloud.upload,
-  controller.editPost
+  asyncHandler(controller.editPost)
 );
 
-Router.get("/detail/:id", checkPermission("posts_view"), controller.detail);
-Router.get("/test", controller.test);
+Router.get("/detail/:id", checkPermission("posts_view"), asyncHandler(controller.detail));
+Router.get("/test", asyncHandler(controller.test));
 module.exports = Router;

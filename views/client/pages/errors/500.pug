@@ -1,0 +1,18 @@
+extends ../../layout/default.pug
+
+block main
+  .container.my-5.py-5
+    .row.justify-content-center
+      .col-md-8.text-center
+        .error-content.py-5
+          h1.display-1.fw-bold.text-danger 500
+          h2.mb-4 Lỗi máy chủ
+          p.lead.text-muted.mb-4 Đã có lỗi bất ngờ xảy ra từ hệ thống của chúng tôi. Vui lòng thử lại sau.
+          if message
+            .alert.alert-danger.mt-4.text-start
+              i.bi.bi-exclamation-triangle-fill.me-2
+              strong Chi tiết lỗi: 
+              span #{message}
+          a.btn.btn-primary.btn-lg.mt-4(href="/") 
+            i.bi.bi-house-door.me-2
+            | Về lại trang chủ

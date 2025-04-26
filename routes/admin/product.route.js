@@ -1,4 +1,6 @@
 const express = require("express");
+const asyncHandler = require("../../helper/asyncHandler");
+
 const controller = require("../../controller/admin/product.controller");
 const validate = require("../../validates/admin/product.validate");
 const multer = require("multer");
@@ -9,27 +11,27 @@ const {
 } = require("../../middlewares/admin/checkPermission.middleware");
 
 const Router = express.Router();
-Router.get("/", checkPermission("products_view"), controller.index);
+Router.get("/", checkPermission("products_view"), asyncHandler(controller.index));
 
 Router.patch(
   "/change-status/:status/:id",
   checkPermission("products_edit"),
-  controller.changeStatus
+  asyncHandler(controller.changeStatus)
 );
 
 Router.patch(
   "/change-multi",
   checkPermission("products_edit"),
-  controller.changeMulti
+  asyncHandler(controller.changeMulti)
 );
 
 Router.delete(
   "/delete/:id",
   checkPermission("products_delete"),
-  controller.delete
+  asyncHandler(controller.delete)
 );
 
-Router.get("/create", checkPermission("products_create"), controller.create);
+Router.get("/create", checkPermission("products_create"), asyncHandler(controller.create));
 
 Router.post(
   "/create",
@@ -37,20 +39,20 @@ Router.post(
   upload.single("thumbnail"),
   uploadCloud.upload,
   validate.createProduct,
-  controller.createProduct
+  asyncHandler(controller.createProduct)
 );
 
-Router.get("/edit/:id", checkPermission("products_edit"), controller.edit);
+Router.get("/edit/:id", checkPermission("products_edit"), asyncHandler(controller.edit));
 Router.patch(
   "/edit/:id",
   checkPermission("products_edit"),
   upload.single("thumbnail"),
   uploadCloud.upload,
   validate.createProduct,
-  controller.editProduct
+  asyncHandler(controller.editProduct)
 );
 
-Router.get("/detail/:id", checkPermission("products_view"), controller.detail);
+Router.get("/detail/:id", checkPermission("products_view"), asyncHandler(controller.detail));
 
-// Router.patch("/test", controller.test);
+// Router.patch("/test", asyncHandler(controller.test));
 module.exports = Router;

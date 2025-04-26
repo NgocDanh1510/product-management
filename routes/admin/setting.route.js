@@ -1,4 +1,6 @@
 const express = require("express");
+const asyncHandler = require("../../helper/asyncHandler");
+
 const Router = express.Router();
 const controller = require("../../controller/admin/setting.controller");
 const multer = require("multer");
@@ -8,7 +10,7 @@ const {
   checkPermission,
 } = require("../../middlewares/admin/checkPermission.middleware");
 
-Router.get("/", checkPermission("settings_view"), controller.general);
+Router.get("/", checkPermission("settings_view"), asyncHandler(controller.general));
 Router.patch(
   "/",
   checkPermission("settings_edit"),
@@ -17,7 +19,7 @@ Router.patch(
     { name: "favicon", maxCount: 1 },
   ]),
   uploadCloud.uploadFields,
-  controller.generalPatch
+  asyncHandler(controller.generalPatch)
 );
 
 module.exports = Router;

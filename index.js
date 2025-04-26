@@ -40,7 +40,7 @@ app.use(
     resave: false,
     saveUninitialized: true,
     cookie: { maxAge: 60000 },
-  })
+  }),
 );
 
 // flash
@@ -49,7 +49,7 @@ app.use(flash());
 //tinyMCE
 app.use(
   "/tinymce",
-  express.static(path.join(__dirname, "node_modules", "tinymce"))
+  express.static(path.join(__dirname, "node_modules", "tinymce")),
 );
 
 //Route
@@ -61,6 +61,22 @@ routerAdmin(app);
 //variable local
 const systemConfig = require("./config/system");
 app.locals.prefixAdmin = systemConfig.prefixAdmin;
+
+// 404 Handler
+app.use((req, res) => {
+  res.status(404).render("client/pages/errors/404", {
+    pageTitle: "404 Not Found",
+  });
+});
+
+// Global Error Handler
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(err.status || 500).render("client/pages/errors/500", {
+    pageTitle: "500 Internal Server Error",
+    message: err.message || "Internal Server Error",
+  });
+});
 
 app.listen(port, () => {
   console.log(`App listening on port ${port} http://localhost:${port}/`);

@@ -1,0 +1,13 @@
+extends ../../layout/default.pug
+
+block main
+  .container.my-5.py-5
+    .row.justify-content-center
+      .col-md-8.text-center
+        .error-content.py-5
+          h1.display-1.fw-bold.text-primary 404
+          h2.mb-4 Không tìm thấy trang
+          p.lead.text-muted.mb-4 Rất tiếc, trang bạn đang tìm kiếm không tồn tại, đã bị thay đổi đường dẫn hoặc bị gỡ bỏ.
+          a.btn.btn-primary.btn-lg(href="/") 
+            i.bi.bi-house-door.me-2
+            | Về lại trang chủ

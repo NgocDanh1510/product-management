@@ -5,6 +5,7 @@ const calculator = require("../../helper/calculator");
 
 // [GET] /
 module.exports.index = async (req, res) => {
+  throw new Error("Test error!");
   const categories = await ProductCategory.find({
     deleted: false,
     status: "active",
