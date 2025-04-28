@@ -46,7 +46,7 @@ module.exports.index = async (req, res) => {
     .populate("updatedBy", "fullName")
     .sort(sort)
     .limit(objectPagination.limitPage)
-    .skip(objectPagination.skipPage);
+    .skip(objectPagination.skipPage).lean();
 
   //get fullName user update product
   for (const product of products) {
@@ -161,7 +161,7 @@ module.exports.delete = async (req, res) => {
 
 //[GET] /admin/products/create
 module.exports.create = async (req, res) => {
-  const categories = await productCategory.find({ deleted: false });
+  const categories = await productCategory.find({ deleted: false }).lean();
   const treeCategory = createTree(categories);
 
   res.render("admin/pages/products/create", {
@@ -203,8 +203,8 @@ module.exports.createProduct = async (req, res) => {
 module.exports.edit = async (req, res) => {
   try {
     const id = req.params.id;
-    const product = await Product.findOne({ _id: id });
-    const categories = await productCategory.find({ deleted: false });
+    const product = await Product.findOne({ _id: id }).lean();
+    const categories = await productCategory.find({ deleted: false }).lean();
     const treeCategory = createTree(categories);
     res.render("admin/pages/products/edit", {
       titlePage: "chỉnh sửa sản phẩm",
@@ -252,18 +252,18 @@ module.exports.editProduct = async (req, res) => {
 //[GET] /admin/products/detail/:id
 module.exports.detail = async (req, res) => {
   const id = req.params.id;
-  const product = await Product.findOne({ _id: id });
+  const product = await Product.findOne({ _id: id }).lean();
 
   if (product.updatedBy) {
     const user = await Acccount.findOne({ _id: product.updatedBy }).select(
       "fullName",
-    );
+    ).lean();
     product.updatedByFullName = user.fullName;
   }
   if (product.createdBy) {
     const user = await Acccount.findOne({ _id: product.createdBy }).select(
       "fullName",
-    );
+    ).lean();
     product.createdByFullName = user.fullName;
   }
 

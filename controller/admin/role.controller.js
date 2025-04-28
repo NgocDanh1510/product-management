@@ -4,7 +4,7 @@ const systemConfig = require("../../config/system");
 //[GET] /admin/roles
 module.exports.index = async (req, res) => {
   let find = { deleted: false };
-  const roles = await Role.find(find);
+  const roles = await Role.find(find).lean();
   res.render("admin/pages/roles/index", {
     titlePage: "vai trò",
     listRole: roles,
@@ -32,7 +32,7 @@ module.exports.createPost = async (req, res) => {
 //[GET] /admin/roles/permission
 module.exports.permission = async (req, res) => {
   let find = { deleted: false };
-  const roles = await Role.find(find);
+  const roles = await Role.find(find).lean();
 
   res.render("admin/pages/roles/permission", {
     titlePage: "Phân quyền",
@@ -51,7 +51,7 @@ module.exports.permissionPatch = async (req, res) => {
 
 //[GET] /admin/roles/edit/:id
 module.exports.edit = async (req, res) => {
-  const role = await Role.findOne({ _id: req.params.id });
+  const role = await Role.findOne({ _id: req.params.id }).lean();
 
   res.render("admin/pages/roles/edit", {
     titlePage: "chỉnh sửa",
@@ -76,7 +76,7 @@ module.exports.editPatch = async (req, res) => {
 
 //[GET] /admin/roles/detail/:id
 module.exports.detail = async (req, res) => {
-  const role = await Role.findOne({ _id: req.params.id });
+  const role = await Role.findOne({ _id: req.params.id }).lean();
 
   res.render("admin/pages/roles/detail", {
     titlePage: "chi tiết",

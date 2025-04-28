@@ -4,7 +4,7 @@ const Order = require("../../model/order.model");
 //[GET] /orders
 
 module.exports.index = async (req, res) => {
-  const userId = res.locals.user.id;
+  const userId = res.locals.user._id;
   const filter = { user_id: userId };
 
   const status = req.query.status;
@@ -12,7 +12,7 @@ module.exports.index = async (req, res) => {
     filter.status = status;
   }
 
-  const orders = await Order.find(filter).sort({ createdAt: -1 }); // Sắp xếp đơn mới nhất lên đầu
+  const orders = await Order.find(filter).sort({ createdAt: -1 }).lean(); // Sắp xếp đơn mới nhất lên đầu
 
   res.render("client/pages/orders/index", {
     titlePage: "Lịch sử đơn hàng",

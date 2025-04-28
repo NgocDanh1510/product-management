@@ -17,13 +17,13 @@ module.exports.index = async (req, res) => {
 
   //filter categories
   if (category) {
-    const categoryId = await ProductCategory.findOne({ slug: category }).select(
-      "_id"
-    );
-    const subCategories = await subCategoriesHelper(categoryId.id);
-    const subCategories_id = subCategories.map((e) => e.id);
+    const categoryId = await ProductCategory.findOne({ slug: category })
+      .select("_id")
+      .lean();
+    const subCategories = await subCategoriesHelper(categoryId._id);
+    const subCategories_id = subCategories.map((e) => e._id);
     find["product_category_id"] = {
-      $in: [categoryId.id, ...subCategories_id],
+      $in: [categoryId._id, ...subCategories_id],
     };
   }
 
@@ -68,24 +68,26 @@ module.exports.index = async (req, res) => {
     },
     req.query,
     Product,
-    find
+    find,
   );
 
   //get products
   const products = await Product.find(find)
     .sort(sort)
     .limit(objectPagination.limitPage)
-    .skip(objectPagination.skipPage);
+    .skip(objectPagination.skipPage)
+    .lean();
 
   //get category
   const categories = await ProductCategory.find({
     deleted: false,
     status: "active",
-    $or: [{ parent_id: "" }, { parent_id: { $exists: false } }],
+    $or: [{ parent_id: null }, { parent_id: { $exists: false } }],
   })
     .sort({ position: 1 })
     .limit(8)
-    .select("title slug");
+    .select("title slug")
+    .lean();
 
   //get post
   const posts = await Post.find({
@@ -95,7 +97,8 @@ module.exports.index = async (req, res) => {
   })
     .sort({ position: "desc" })
     .limit(3)
-    .select("title description thumbnail slug createdAt");
+    .select("title description thumbnail slug createdAt")
+    .lean();
 
   const newProducts = calculatorHelper.newPrice(products);
   res.render("client/pages/products/index", {
@@ -122,7 +125,7 @@ module.exports.detail = async (req, res) => {
   try {
     const product = await Product.findOne({
       slug: req.params.slug,
-    });
+    }).lean();
 
     product.newPrice = (
       product.price *
@@ -142,17 +145,17 @@ module.exports.detail = async (req, res) => {
 module.exports.productCategory = async (req, res) => {
   try {
     const slug = req.params.slugCategory;
-    const categoryRoot = await ProductCategory.findOne({ slug: slug }).select(
-      "_id"
-    );
-    const subCategories = await subCategoriesHelper(categoryRoot.id);
-    const subCategories_id = subCategories.map((e) => e.id);
+    const categoryRoot = await ProductCategory.findOne({ slug: slug })
+      .select("_id")
+      .lean();
+    const subCategories = await subCategoriesHelper(categoryRoot._id);
+    const subCategories_id = subCategories.map((e) => e._id);
 
     const { category, minPrice, maxPrice, sortBy } = req.query;
 
     const sort = { position: "asc" };
     const find = {
-      product_category_id: { $in: [categoryRoot.id, ...subCategories_id] },
+      product_category_id: { $in: [categoryRoot._id, ...subCategories_id] },
       deleted: false,
       availabilityStatus: "In Stock",
     };
@@ -161,12 +164,14 @@ module.exports.productCategory = async (req, res) => {
     if (category) {
       const categoryId = await ProductCategory.findOne({
         slug: category,
-      }).select("_id");
-      const subCategories = await subCategoriesHelper(categoryId.id);
-      const subCategories_id = subCategories.map((e) => e.id);
+      })
+        .select("_id")
+        .lean();
+      const subCategories = await subCategoriesHelper(categoryId._id);
+      const subCategories_id = subCategories.map((e) => e._id);
       delete find.product_category_id;
       find["product_category_id"] = {
-        $in: [categoryId.id, ...subCategories_id],
+        $in: [categoryId._id, ...subCategories_id],
       };
     }
     //filter price
@@ -210,18 +215,21 @@ module.exports.productCategory = async (req, res) => {
       },
       req.query,
       Product,
-      find
+      find,
     );
     //get products
     const products = await Product.find(find)
       .sort(sort)
       .limit(objectPagination.limitPage)
-      .skip(objectPagination.skipPage);
+      .skip(objectPagination.skipPage)
+      .lean();
     const categoriesFilter = await ProductCategory.find({
       deleted: false,
       status: "active",
-      parent_id: categoryRoot.id,
-    }).select("title slug");
+      parent_id: categoryRoot._id,
+    })
+      .select("title slug")
+      .lean();
     //get post
     const posts = await Post.find({
       deleted: false,
@@ -230,7 +238,8 @@ module.exports.productCategory = async (req, res) => {
     })
       .sort({ position: "desc" })
       .limit(8)
-      .select("title thumbnail slug createdAt");
+      .select("title thumbnail slug createdAt")
+      .lean();
 
     const newProducts = calculatorHelper.newPrice(products);
     res.render("client/pages/products/index", {

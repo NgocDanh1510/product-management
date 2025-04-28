@@ -18,7 +18,7 @@ module.exports.index = async (req, res) => {
         slug: selectedCategory,
         deleted: false,
         status: "active",
-      });
+      }).lean();
       if (category) {
         filters.post_category_id = category._id;
       }
@@ -42,13 +42,13 @@ module.exports.index = async (req, res) => {
       isFeatured: true,
     })
       .sort({ createdAt: -1 })
-      .select("title description thumbnail slug createdAt views");
+      .select("title description thumbnail slug createdAt views").lean();
 
     // Nếu có featured post, thêm category name
     if (featuredPost && featuredPost.post_category_id) {
       const category = await PostCategory.findById(
         featuredPost.post_category_id
-      );
+      ).lean();
       if (category) {
         featuredPost.category = category.title;
       }
@@ -62,7 +62,7 @@ module.exports.index = async (req, res) => {
       .skip(objectPagination.skipPage)
       .select(
         "title description thumbnail slug createdAt views post_category_id"
-      );
+      ).lean();
 
     // Thêm tên danh mục cho mỗi bài viết
     for (let post of listPosts) {
@@ -77,7 +77,7 @@ module.exports.index = async (req, res) => {
       status: "active",
     })
       .sort({ position: 1 })
-      .select("title slug");
+      .select("title slug").lean();
 
     // ===== RENDER =====
     res.render("client/pages/posts/index", {
@@ -104,7 +104,7 @@ module.exports.detail = async (req, res) => {
       slug: slug,
       deleted: false,
       status: "active",
-    });
+    }).lean();
 
     if (!post) {
       req.flash("error", "Bài viết không tồn tại!");
@@ -116,7 +116,7 @@ module.exports.detail = async (req, res) => {
 
     // Lấy tên danh mục
     if (post.post_category_id) {
-      const category = await PostCategory.findById(post.post_category_id);
+      const category = await PostCategory.findById(post.post_category_id).lean();
       if (category) {
         post.category = category.title;
       }
@@ -135,7 +135,7 @@ module.exports.detail = async (req, res) => {
     })
       .sort({ createdAt: -1 })
       .limit(4)
-      .select("title description thumbnail slug createdAt");
+      .select("title description thumbnail slug createdAt").lean();
 
     // ===== BÀI VIẾT NỔI BẬT (sidebar) =====
     const featuredPosts = await Post.find({
@@ -146,7 +146,7 @@ module.exports.detail = async (req, res) => {
     })
       .sort({ createdAt: -1 })
       .limit(5)
-      .select("title thumbnail slug createdAt");
+      .select("title thumbnail slug createdAt").lean();
 
     // ===== BÀI VIẾT MỚI NHẤT (sidebar) =====
     const latestPosts = await Post.find({
@@ -156,7 +156,7 @@ module.exports.detail = async (req, res) => {
     })
       .sort({ createdAt: -1 })
       .limit(5)
-      .select("title thumbnail slug createdAt");
+      .select("title thumbnail slug createdAt").lean();
 
     // ===== URL HIỆN TẠI (cho share buttons) =====
     const currentUrl = `${req.protocol}://${req.get("host")}${req.originalUrl}`;

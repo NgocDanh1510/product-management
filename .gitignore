@@ -56,3 +56,6 @@ commitOne.py
 #document
 improvement_prompts.md
 project_review.md
+
+#scripts
+scripts/*.js

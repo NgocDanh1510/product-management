@@ -18,7 +18,7 @@ module.exports.login = (req, res) => {
 module.exports.loginPost = async (req, res) => {
   const { email, password } = req.body;
 
-  const user = await Account.findOne({ email: email, deleted: false });
+  const user = await Account.findOne({ email: email, deleted: false }).lean();
 
   if (!user) {
     req.flash("error", "email không tồn tại !");

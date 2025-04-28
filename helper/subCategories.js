@@ -4,12 +4,12 @@ const getSubCategories = async (parent_id) => {
     parent_id: parent_id,
     deleted: false,
     status: "active",
-  }).select("_id title");
+  }).select("_id title").lean();
 
   let subAll = [...subCategories];
 
   for (const element of subCategories) {
-    const subs = await getSubCategories(element.id);
+    const subs = await getSubCategories(element._id);
     subAll = [...subAll, ...subs];
   }
 

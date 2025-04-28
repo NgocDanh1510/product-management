@@ -58,7 +58,7 @@ module.exports.index = async (req, res) => {
     Order,
     filters
   );
-  const orders = await Order.find(filters).sort(sort);
+  const orders = await Order.find(filters).sort(sort).lean();
 
   for (const order of orders) {
     order.totalQuantity = order.products.reduce(
@@ -93,7 +93,7 @@ module.exports.detail = async (req, res) => {
     const id = req.params.id;
     const order = await Order.findOne({
       _id: id,
-    });
+    }).lean();
 
     if (!order) {
       req.flash("error", "Không tìm thấy đơn hàng!");

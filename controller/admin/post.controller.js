@@ -38,7 +38,7 @@ module.exports.index = async (req, res) => {
     .populate("createdBy", "fullName")
     .sort(sort)
     .limit(pagination.limitPage)
-    .skip(pagination.skipPage);
+    .skip(pagination.skipPage).lean();
 
   for (const element of posts) {
     if (element.createdBy) {
@@ -155,7 +155,7 @@ module.exports.changeMulti = async (req, res) => {
 
 //[GET] /admin/posts/create
 module.exports.create = async (req, res) => {
-  const categories = await PostCategory.find({ deleted: false });
+  const categories = await PostCategory.find({ deleted: false }).lean();
   const treeCategory = createTree(categories);
   res.render("admin/pages/posts/create", {
     titlePage: "Thêm bài viết",
@@ -200,8 +200,8 @@ module.exports.createPost = async (req, res) => {
 
 //[GET] /admin/posts/edit/:id
 module.exports.edit = async (req, res) => {
-  const post = await Post.findOne({ _id: req.params.id });
-  const categories = await PostCategory.find({ deleted: false });
+  const post = await Post.findOne({ _id: req.params.id }).lean();
+  const categories = await PostCategory.find({ deleted: false }).lean();
   const treeCategory = createTree(categories);
   res.render("admin/pages/posts/edit", {
     titlePage: "Sửa bài viết",
@@ -244,19 +244,19 @@ module.exports.editPost = async (req, res) => {
 };
 //[GET] /admin/posts/detail/:id
 module.exports.detail = async (req, res) => {
-  const post = await Post.findOne({ _id: req.params.id });
+  const post = await Post.findOne({ _id: req.params.id }).lean();
 
   if (post.createdBy) {
     const account = await Acccount.findOne({ _id: post.createdBy }).select(
       "fullName",
-    );
+    ).lean();
     post.createdByFullName = account.fullName;
   } else post.createdByFullName = "";
 
   if (post.updatedBy) {
     const account = await Acccount.findOne({ _id: post.updatedBy }).select(
       "fullName",
-    );
+    ).lean();
     post.updatedByFullName = account.fullName;
   } else post.updatedByFullName = "";
 
@@ -267,7 +267,7 @@ module.exports.detail = async (req, res) => {
 };
 
 module.exports.test = async (req, res) => {
-  const post = await Post.find({});
+  const post = await Post.find({}).lean();
   const postJSON = JSON.stringify(post);
   res.send(postJSON);
 };

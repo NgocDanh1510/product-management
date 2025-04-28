@@ -31,7 +31,7 @@ module.exports.index = async (req, res) => {
 
   const categories = await PostCategory.find(find)
     .populate("updatedBy", "fullName")
-    .sort(sort);
+    .sort(sort).lean();
   //get fullName user update post
   for (const item of categories) {
     if (item.updatedBy) {
@@ -145,7 +145,7 @@ module.exports.delete = async (req, res) => {
 //[GET] /post-category/create
 module.exports.create = async (req, res) => {
   let find = { deleted: false };
-  const listCategory = await PostCategory.find(find);
+  const listCategory = await PostCategory.find(find).lean();
 
   const treeCategory = createTree(listCategory);
 
@@ -183,10 +183,10 @@ module.exports.createPostCategory = async (req, res) => {
 //[GET] /post-category/edit
 module.exports.edit = async (req, res) => {
   const id = req.params.id;
-  const category = await PostCategory.findOne({ _id: id });
+  const category = await PostCategory.findOne({ _id: id }).lean();
 
   let find = { deleted: false };
-  const listCategory = await PostCategory.find(find);
+  const listCategory = await PostCategory.find(find).lean();
   const treeCategory = createTree(listCategory);
 
   res.render("admin/pages/post-category/edit", {
@@ -224,18 +224,18 @@ module.exports.editPostCategory = async (req, res) => {
 //[GET] /post-category/detail/:id
 module.exports.detail = async (req, res) => {
   id = req.params.id;
-  const category = await PostCategory.findOne({ _id: id });
+  const category = await PostCategory.findOne({ _id: id }).lean();
 
   if (category.updatedBy) {
     const userUpdate = await Acccount.findOne({
       _id: category.updatedBy,
-    }).select("fullName");
+    }).select("fullName").lean();
     category.updatedByFullName = userUpdate.fullName;
   }
   if (category.createdBy) {
     const userCreate = await Acccount.findOne({
       _id: category.createdBy,
-    }).select("fullName");
+    }).select("fullName").lean();
 
     category.createdByFullName = userCreate.fullName;
   }

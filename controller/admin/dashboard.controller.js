@@ -30,7 +30,7 @@ module.exports.index = async (req, res) => {
     const recentOrders = await Order.find()
       .sort({ createdAt: -1 })
       .limit(5)
-      .select("userInfor totalPrice status createdAt");
+      .select("userInfor totalPrice status createdAt").lean();
 
     // Thống kê trạng thái đơn hàng
     const orderStatusStats = await Order.aggregate([

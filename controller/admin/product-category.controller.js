@@ -30,7 +30,7 @@ module.exports.index = async (req, res) => {
 
   const categories = await ProductCategory.find(find)
     .populate("updatedBy", "fullName")
-    .sort(sort);
+    .sort(sort).lean();
   //get fullName user update product
   for (const item of categories) {
     if (item.updatedBy) {
@@ -145,7 +145,7 @@ module.exports.delete = async (req, res) => {
 //[GET] /product-category/create
 module.exports.create = async (req, res) => {
   let find = { deleted: false };
-  const listCategory = await ProductCategory.find(find);
+  const listCategory = await ProductCategory.find(find).lean();
 
   const treeCategory = createTree(listCategory);
 
@@ -184,10 +184,10 @@ module.exports.createProductCategory = async (req, res) => {
 //[GET] /product-category/edit
 module.exports.edit = async (req, res) => {
   const id = req.params.id;
-  const category = await ProductCategory.findOne({ _id: id });
+  const category = await ProductCategory.findOne({ _id: id }).lean();
 
   let find = { deleted: false };
-  const listCategory = await ProductCategory.find(find);
+  const listCategory = await ProductCategory.find(find).lean();
   const treeCategory = createTree(listCategory);
 
   res.render("admin/pages/product-category/edit", {
@@ -226,18 +226,18 @@ module.exports.editProductCategory = async (req, res) => {
 //[GET] /product-category/detail/:id
 module.exports.detail = async (req, res) => {
   id = req.params.id;
-  const category = await ProductCategory.findOne({ _id: id });
+  const category = await ProductCategory.findOne({ _id: id }).lean();
 
   if (category.updatedBy) {
     const user = await Acccount.findOne({ _id: category.updatedBy }).select(
       "fullName"
-    );
+    ).lean();
     category.updatedByFullName = user.fullName;
   }
   if (category.createdBy) {
     const user = await Acccount.findOne({ _id: category.createdBy }).select(
       "fullName"
-    );
+    ).lean();
     category.createdByFullName = user.fullName;
   }
 

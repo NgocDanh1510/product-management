@@ -34,7 +34,7 @@ module.exports.order = async (req, res) => {
     }
 
     const order = {
-      user_id: res.locals.user.id,
+      user_id: res.locals.user._id,
       note: req.body.note,
       paymentMethod: req.body.paymentMethod,
       totalPrice: cart.totalPriceNew,
