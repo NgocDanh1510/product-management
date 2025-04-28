@@ -56,6 +56,7 @@ module.exports.index = async (req, res) => {
 
     // ===== LẤY DANH SÁCH BÀI VIẾT =====
     let listPosts = await Post.find(filters)
+      .populate("post_category_id", "title")
       .sort({ position: 1, createdAt: -1 })
       .limit(objectPagination.limitPage)
       .skip(objectPagination.skipPage)
@@ -66,10 +67,7 @@ module.exports.index = async (req, res) => {
     // Thêm tên danh mục cho mỗi bài viết
     for (let post of listPosts) {
       if (post.post_category_id) {
-        const category = await PostCategory.findById(post.post_category_id);
-        if (category) {
-          post.category = category.title;
-        }
+        post.category = post.post_category_id.title;
       }
     }
 

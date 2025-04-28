@@ -35,16 +35,14 @@ module.exports.index = async (req, res) => {
   );
 
   const posts = await Post.find(find)
+    .populate("createdBy", "fullName")
     .sort(sort)
     .limit(pagination.limitPage)
     .skip(pagination.skipPage);
 
   for (const element of posts) {
     if (element.createdBy) {
-      const account = await Acccount.findOne({ _id: element.createdBy }).select(
-        "fullName",
-      );
-      element.createdByFullName = account.fullName;
+      element.createdByFullName = element.createdBy.fullName;
     } else element.createdByFullName = "";
   }
 

@@ -6,8 +6,9 @@ const productCategoryShema = new mongoose.Schema(
     title: String,
     description: String,
     parent_id: {
-      type: String,
-      default: "",
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "ProductCategory",
+      default: null,
     },
     thumbnail: String,
     status: String,
@@ -21,9 +22,18 @@ const productCategoryShema = new mongoose.Schema(
       slug: "title",
       unique: true,
     },
-    createdBy: String,
-    updatedBy: String,
-    deletedBy: String,
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Account",
+    },
+    updatedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Account",
+    },
+    deletedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Account",
+    },
     deleted: {
       type: Boolean,
       default: false,

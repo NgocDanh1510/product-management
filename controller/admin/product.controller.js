@@ -43,6 +43,7 @@ module.exports.index = async (req, res) => {
   }
 
   const products = await Product.find(find)
+    .populate("updatedBy", "fullName")
     .sort(sort)
     .limit(objectPagination.limitPage)
     .skip(objectPagination.skipPage);
@@ -50,11 +51,7 @@ module.exports.index = async (req, res) => {
   //get fullName user update product
   for (const product of products) {
     if (product.updatedBy) {
-      const user = await Acccount.findOne({ _id: product.updatedBy }).select(
-        "fullName",
-      );
-      user;
-      product.updatedByFullName = user.fullName;
+      product.updatedByFullName = product.updatedBy.fullName;
     } else {
       product.updatedByFullName = "";
     }

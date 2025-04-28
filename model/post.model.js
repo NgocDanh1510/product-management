@@ -7,8 +7,9 @@ const postSchema = new mongoose.Schema(
   {
     title: String,
     post_category_id: {
-      type: String,
-      default: "",
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "PostCategory",
+      default: null,
     },
     description: String,
     content: String,
@@ -27,9 +28,18 @@ const postSchema = new mongoose.Schema(
       slug: "title",
       unique: true,
     },
-    createdBy: String,
-    updatedBy: String,
-    deletedBy: String,
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Account",
+    },
+    updatedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Account",
+    },
+    deletedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Account",
+    },
     deleted: {
       type: Boolean,
       default: false,

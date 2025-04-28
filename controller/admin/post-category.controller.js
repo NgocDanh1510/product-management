@@ -29,14 +29,13 @@ module.exports.index = async (req, res) => {
     sort[sortKey] = sortValue;
   }
 
-  const categories = await PostCategory.find(find).sort(sort);
+  const categories = await PostCategory.find(find)
+    .populate("updatedBy", "fullName")
+    .sort(sort);
   //get fullName user update post
   for (const item of categories) {
     if (item.updatedBy) {
-      const user = await Acccount.findOne({ _id: item.updatedBy }).select(
-        "fullName"
-      );
-      item.updatedByFullName = user.fullName;
+      item.updatedByFullName = item.updatedBy.fullName;
     } else {
       item.updatedByFullName = "";
     }

@@ -3,8 +3,14 @@ const mongoose = require("mongoose");
 
 const OrderSchema = new mongoose.Schema(
   {
-    user_id: String,
-    cart_id: String,
+    user_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+    cart_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Cart",
+    },
     note: String,
     userInfor: {
       fullName: String,
@@ -15,7 +21,10 @@ const OrderSchema = new mongoose.Schema(
 
     products: [
       {
-        product_id: String,
+        product_id: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Product",
+        },
         title: String,
         thumbnail: String,
         price: Number,
@@ -42,8 +51,14 @@ const OrderSchema = new mongoose.Schema(
     //   enum: ["unpaid", "paid", "failed"],
     //   default: "unpaid",
     // },
-    updatedBy: String,
-    deletedBy: String,
+    updatedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Account",
+    },
+    deletedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Account",
+    },
     deleted: {
       type: Boolean,
       default: false,

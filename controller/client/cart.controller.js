@@ -27,7 +27,7 @@ module.exports.addCart = async (req, res) => {
 
     const updated = await Cart.updateOne(
       { _id: cartId, "products.product_id": productId },
-      { $inc: { "products.$.quantity": quantity } }
+      { $inc: { "products.$.quantity": quantity } },
     );
 
     if (updated.matchedCount === 0) {
@@ -37,7 +37,7 @@ module.exports.addCart = async (req, res) => {
           $push: {
             products: { product_id: productId, quantity },
           },
-        }
+        },
       );
     }
     req.flash("success", " đã thêm thêm vào giỏ hàng!");
@@ -65,7 +65,7 @@ module.exports.delete = async (req, res) => {
         $pull: {
           products: { product_id: productId },
         },
-      }
+      },
     );
 
     req.flash("success", " đã thêm thêm vào giỏ hàng!");
@@ -94,7 +94,7 @@ module.exports.updateQuantity = async (req, res) => {
         $set: {
           "products.$.quantity": quantity,
         },
-      }
+      },
     );
 
     res.status(200).end();

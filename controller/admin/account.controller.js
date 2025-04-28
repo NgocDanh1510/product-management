@@ -6,12 +6,13 @@ const bcrypt = require("bcrypt");
 //[GET] /admin/accounts
 module.exports.index = async (req, res) => {
   let find = { deleted: false };
-  const accounts = await Account.find(find).select("-password -token");
+  const accounts = await Account.find(find)
+    .populate({ path: "role_id", match: { deleted: false }, select: "title" })
+    .select("-password -token");
 
   for (const element of accounts) {
     if (element.role_id) {
-      const role = await Role.findOne({ _id: element.role_id, deleted: false });
-      element.nameRole = role.title;
+      element.nameRole = element.role_id.title;
     }
   }
 

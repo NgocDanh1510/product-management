@@ -8,7 +8,10 @@ const accountSchema = new mongoose.Schema(
     phone: String,
     avatar: String,
     password: String,
-    role_id: String,
+    role_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Role",
+    },
     status: {
       type: String,
       default: "active", // active | inactive
