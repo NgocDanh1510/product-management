@@ -1,0 +1,16 @@
+.inner-main {
+  margin-top: 80px;
+  margin-right: 15px;
+  margin-left: 10%;
+}
+.inner-sider {
+  height: 100vh;
+  top: 48px;
+}
+.inner-header {
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 60px;
+  z-index: 100;
+}

@@ -1,0 +1,4 @@
+mixin filterStatus(status)
+  button.btn.btn-outline-success( class=(status ? "" : "active") btn-status ="") Tất cả
+  button.btn.btn-outline-success.ms-2( class=(status === "In Stock" ? "active" : "") btn-status ="In Stock") Còn hàng
+  button.btn.btn-outline-success.ms-2(class=(status === "Low Stock" ? "active" : "") btn-status="Low Stock") Hết hàng
