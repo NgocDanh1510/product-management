@@ -5,16 +5,60 @@ block main
   .inner-main.bg-light.py-5
     .container 
       +box-head("Danh Sách Sản Phẩm")
-      .inner-list
-        .row.g-3
+      
+      .inner-list.mt-4
+        .row.g-4
           each item in listProduct
-            .col-3
-              .inner-item 
-                .card
-                  img(class="card-img-top" src=item.thumbnail alt=item.title)
-                  .card-body 
-                    h4.card-title #{item.title}
-                    .card-text.text-success.fs-3 #{item.newPrice}$
-                    del.d-block.card-text.text-danger.fs-3.mb-2 #{item.price}$
-                    span.bg-danger.rounded-3.text-white.p-1 #{item.discountPercentage}%
-              
+            .col-lg-3.col-md-4.col-sm-6
+              .card.h-100.shadow-sm.border-0.position-relative.product-card
+                //- Discount Badge
+                if item.discountPercentage
+                  .position-absolute.top-0.end-0.m-2
+                    span.badge.bg-danger.fs-6.px-3.py-2
+                      i.bi.bi-tag-fill.me-1
+                      | -#{item.discountPercentage}%
+                
+                //- Product Image
+                .card-img-wrapper.overflow-hidden(style="height: 250px")
+                  img.card-img-top.w-100.h-100.object-fit-cover(
+                    src=item.thumbnail 
+                    alt=item.title
+                  )
+                
+                //- Product Info
+                .card-body.d-flex.flex-column
+                  //- Title
+                  h5.card-title.fw-bold.text-truncate.mb-3(title=item.title) 
+                    | #{item.title}
+                  
+                  //- Pricing
+                  .pricing.mt-auto
+                    //- New Price
+                    .d-flex.align-items-center.gap-2.mb-2
+                      span.text-success.fw-bold.fs-4 #{item.newPrice}$
+                      del.text-muted.fs-6 #{item.price}$
+                    
+                    //- Discount Badge (alternative style)
+                    .d-flex.align-items-center.justify-content-between
+                      span.text-muted.small Tiết kiệm: 
+                        strong.text-danger #{(item.price - item.newPrice).toFixed(2)}$
+                  
+                  //- Action Buttons
+                  .card-footer.bg-transparent.border-0.p-0.mt-3
+                    .d-grid.gap-2
+                      button.btn.btn-primary.btn-sm
+                        i.bi.bi-cart-plus.me-2
+                        | Thêm vào giỏ
+                      a.btn.btn-outline-secondary.btn-sm(href = `/products/${item.slug}`)
+                        i.bi.bi-eye.me-2
+                        | Xem chi tiết
+
+      //- Empty State
+      if !listProduct || listProduct.length === 0
+        .text-center.py-5
+          i.bi.bi-box-seam.fs-1.text-muted.d-block.mb-3
+          h5.text-muted Không có sản phẩm nào
+          p.text-muted.small Vui lòng quay lại sau
+
+
+

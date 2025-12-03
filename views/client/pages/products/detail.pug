@@ -1,0 +1,81 @@
+extends ../../layout/default.pug
+
+block main
+  .product-detail.bg-light.py-5
+    .container
+      .row.g-4
+        //- Product Image
+        .col-lg-6
+          .card.shadow-sm
+            .card-body.text-center
+              img.img-fluid.rounded(
+                src=product.thumbnail
+                alt=product.title
+                style="max-height: 500px"
+              )
+
+        //- Product Info
+        .col-lg-6
+          .card.shadow-sm
+            .card-body
+              //- Title
+              h1.fw-bold.mb-3 #{product.title}
+
+              //- Price
+              .price-section.mb-4.p-3.bg-light.rounded
+                if product.discountPercentage
+                  .d-flex.align-items-center.gap-3.mb-2
+                    del.text-muted.fs-4 #{product.price}$
+                    span.badge.bg-danger.fs-6 -#{product.discountPercentage}%
+                  .text-primary.fw-bold.fs-1 #{product.newPrice}$
+                else
+                  .text-primary.fw-bold.fs-1 #{product.price}$
+
+              //- Status & Stock
+              .mb-4
+                if product.availabilityStatus === "In Stock"
+                  .d-flex.align-items-center.gap-2.mb-2
+                    i.bi.bi-check-circle-fill.text-success
+                    span.text-success.fw-bold Còn hàng
+                  if product.stock
+                    small.text-muted Còn lại: #{product.stock} sản phẩm
+                else
+                  .d-flex.align-items-center.gap-2
+                    i.bi.bi-x-circle-fill.text-danger
+                    span.text-danger.fw-bold Hết hàng
+
+              //- Action Buttons
+              .d-grid.gap-2.mb-4
+                if product.availabilityStatus === "In Stock"
+                  button.btn.btn-primary.btn-lg
+                    i.bi.bi-cart-plus.me-2
+                    | Thêm vào giỏ hàng
+                  button.btn.btn-success.btn-lg
+                    i.bi.bi-lightning-fill.me-2
+                    | Mua ngay
+                else
+                  button.btn.btn-secondary.btn-lg(disabled) Tạm hết hàng
+
+              //- Product Info
+              //- .border-top.pt-3
+              //-   if product.brand
+              //-     .row.mb-2
+              //-       .col-4.text-muted Thương hiệu:
+              //-       .col-8.fw-bold #{product.brand}
+              //-   if product.category
+              //-     .row.mb-2
+              //-       .col-4.text-muted Danh mục:
+              //-       .col-8.fw-bold #{product.category}
+              //-   if product.sku
+              //-     .row.mb-2
+              //-       .col-4.text-muted Mã SKU:
+              //-       .col-8.fw-bold #{product.sku}
+
+      //- Description
+      if product.description
+        .row.mt-4
+          .col-12
+            .card.shadow-sm
+              .card-body
+                h4.fw-bold.mb-3 Mô tả sản phẩm
+                div !{product.description}

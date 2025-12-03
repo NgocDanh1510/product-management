@@ -32,4 +32,6 @@ Router.patch(
 );
 
 Router.get("/detail/:id", controller.detail);
+
+// Router.patch("/test", controller.test);
 module.exports = Router;

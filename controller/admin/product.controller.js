@@ -213,3 +213,13 @@ module.exports.detail = async (req, res) => {
     product: product,
   });
 };
+
+// module.exports.test = async (req, res) => {
+//   const products = await Product.find({});
+
+//   for (const e of products) {
+//     await Product.updateOne({ _id: e._id }, { title: e.title });
+//   }
+
+//   res.send("Done");
+// };

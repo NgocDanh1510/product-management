@@ -16,11 +16,11 @@ const app = express();
 const port = process.env.PORT;
 
 //set pug
-app.set("views", "./views");
+app.set("views", `${__dirname}/view`);
 app.set("view engine", "pug");
 
 //set public
-app.use(express.static("public"));
+app.use(express.static(`${__dirname}/public`));
 
 //method override
 app.use(methodOverride("_method"));
