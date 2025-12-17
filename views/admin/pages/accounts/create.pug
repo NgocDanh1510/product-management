@@ -1,0 +1,128 @@
+extends ../../layout/default.pug
+
+block main
+  .d-flex.justify-content-between.align-items-center.mb-4
+    h2.fw-bold
+      i.bi.bi-person-plus.me-2
+      | Thêm mới tài khoản
+    a.btn.btn-outline-secondary(href=`${prefixAdmin}/accounts`)
+      i.bi.bi-arrow-left.me-2
+      | Quay lại
+
+  form(
+    action=`${prefixAdmin}/accounts/create`
+    method="POST"
+    enctype="multipart/form-data"
+  )
+    .row
+      .col-lg-8
+        .card.shadow-sm.mb-3
+          .card-body
+            .mb-3
+              label.form-label(for="fullName") 
+                | Họ tên 
+                span.text-danger *
+              input.form-control(
+                type="text"
+                id="fullName"
+                name="fullName"
+                placeholder="Nguyễn Văn A"
+                required
+              )
+            
+            .mb-3
+              label.form-label(for="email") 
+                | Email 
+                span.text-danger *
+              input.form-control(
+                type="email"
+                id="email"
+                name="email"
+                placeholder="email@example.com"
+                required
+              )
+            
+            .mb-3
+              label.form-label(for="password") 
+                | Mật khẩu 
+                span.text-danger *
+              input.form-control(
+                type="password"
+                id="password"
+                name="password"
+                placeholder="Nhập mật khẩu"
+                required
+              )
+            
+            .mb-3
+              label.form-label(for="phone") Số điện thoại
+              input.form-control(
+                type="text"
+                id="phone"
+                name="phone"
+                placeholder="0987654321"
+              )
+
+      .col-lg-4
+        .card.shadow-sm.mb-3
+          .card-body
+            .mb-3(upload-image)
+              label.form-label(for="avatar") Ảnh đại diện
+              input.form-control(
+                type="file"
+                id="avatar"
+                name="avatar"
+                accept="image/*"
+                upload-image-input
+              )
+              .form-imagePreview.text-center.mt-3.d-none
+                button.btn-close(type="button" btn-remove-imagePreview)
+                img.img-thumbnail(
+                  src=""
+                  style="max-width: 200px;"
+                  upload-image-preview
+                )
+        
+        .card.shadow-sm.mb-3
+          .card-body
+            .mb-3
+              label.form-label(for="role_id") Phân quyền
+              select.form-select(name="role_id" id="role_id")
+                option(value="" selected) -- Chọn vai trò --
+                each item in roles
+                  option(value=item._id) #{item.title}
+            
+            .mb-3
+              label.form-label.d-block Trạng thái
+              .form-check.form-check-inline
+                input.form-check-input(
+                  type="radio"
+                  id="statusActive"
+                  name="status"
+                  value="active"
+                  checked
+                )
+                label.form-check-label(for="statusActive") 
+                  i.bi.bi-check-circle.text-success.me-1
+                  | Hoạt động
+              
+              .form-check.form-check-inline
+                input.form-check-input(
+                  type="radio"
+                  id="statusInActive"
+                  name="status"
+                  value="inactive"
+                )
+                label.form-check-label(for="statusInActive") 
+                  i.bi.bi-x-circle.text-danger.me-1
+                  | Dừng hoạt động
+
+    .d-flex.justify-content-between.mt-4
+      a.btn.btn-secondary(href=`${prefixAdmin}/accounts`)
+        i.bi.bi-x-circle.me-2
+        | Hủy
+      button.btn.btn-primary(type="submit")
+        i.bi.bi-check-circle.me-2
+        | Tạo mới
+
+  script(src="/admin/js/upload-image.js")

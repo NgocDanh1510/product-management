@@ -1,0 +1,97 @@
+extends ../../layout/default
+include ../../mixins/alert.pug
+
+block main
+  +alert-success(5000)
+  +alert-error(5000)
+  
+  //- Page Header
+  .d-flex.justify-content-between.align-items-center.mb-4
+    div
+      h2.fw-bold.mb-1
+        i.bi.bi-shield-check.me-2.text-primary
+        | Quản Lý Tài Khoản
+      p.text-muted.mb-0 Quản lý tài khoản và phân quyền tài khoản
+    a.btn.btn-primary(href=`${prefixAdmin}/accounts/create`)
+      i.bi.bi-plus-circle.me-2
+      | Thêm tài khoản
+
+  //- Accounts List
+  .card.border-0.shadow-sm
+    .card-header.bg-white.d-flex.justify-content-between.align-items-center
+      h6.mb-0.fw-semibold
+        i.bi.bi-list-ul.me-2
+        | Danh Sách Tài Khoản
+      span.badge.bg-primary #{listAccount ? listAccount.length : 0} tài khoản
+
+    .card-body
+      .table-responsive
+        table.table.table-hover.align-middle
+          thead.table-light
+            tr
+              th.text-center STT
+              th.text-center Avatar
+              th Tên 
+              th Email
+              th Phone
+              th Vai trò
+              th.text-center Trạng Thái
+              th.text-center Thao Tác
+
+          tbody
+            if !listAccount || listAccount.length === 0
+              tr
+                td.text-center.py-5(colspan="6")
+                  i.bi.bi-inbox.display-1.text-muted.d-block
+                  p.text-muted Chưa có tài khoản nào
+            else
+              each item, index in listAccount
+                tr
+                  td.text-center.fw-semibold #{index + 1}
+                  td.text-center
+                    if item.avatar
+                      img(
+                        src=item.avatar
+                        class="rounded-circle"
+                        width="40"
+                        height="40"
+                      )
+                    else
+                      i.bi.bi-person-circle.fs-3.text-muted
+                  td.fw-semibold #{item.fullName}
+                  td #{item.email}
+                  td #{item.phone}
+                  td 
+                    each role in roles
+                      if role._id == item.role_id
+                        span #{role.title}
+                  td.text-center
+                    button.badge.border-0.fs-6(
+                      class=item.status === "active" ? "bg-success" : "bg-danger"
+                      data-status=item.status
+                      data-id=item._id
+                    )
+                      i.bi(class=item.status === "active" ? "bi-check-circle" : "bi-x-circle")
+                      |  #{item.status === "active" ? "Hoạt động" : "Dừng"}
+                  
+                  td.text-center
+                      a.btn.btn-outline-warning(
+                        href=`${prefixAdmin}/accounts/edit/${item._id}`
+                        title="Sửa"
+                      )
+                        i.bi.bi-pencil
+                      
+                      button.btn.btn-outline-danger(
+                        btn-delete
+                        data-id=item._id
+                        title="Xóa"
+                      )
+                        i.bi.bi-trash
+
+  //- Hidden Forms
+  form#form-delete(
+    action=""
+    method="POST"
+    data-path=`${prefixAdmin}/accounts/delete`
+  )
+  

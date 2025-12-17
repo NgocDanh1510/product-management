@@ -1,0 +1,65 @@
+extends ../../layout/auth
+include ../../mixins/alert.pug
+
+block main
+  +alert-success(5000)
+  +alert-error(5000)
+  .bg-light
+    .container
+      .row.justify-content-center.align-items-center.min-vh-100
+        .col-md-5
+          .card.shadow
+            .card-header.bg-primary.text-white.text-center.py-4
+              i.bi.bi-shield-lock.fs-1.d-block.mb-2
+              h4.mb-0 Đăng Nhập Hệ Thống
+            
+            .card-body.p-4
+              //- Alert messages
+              if error
+                .alert.alert-danger.alert-dismissible.fade.show
+                  i.bi.bi-exclamation-circle.me-2
+                  = error
+                  button.btn-close(type="button" data-bs-dismiss="alert")
+              
+              if success
+                .alert.alert-success.alert-dismissible.fade.show
+                  i.bi.bi-check-circle.me-2
+                  = success
+                  button.btn-close(type="button" data-bs-dismiss="alert")
+
+              form(action=`${prefixAdmin}/auth/login` method="POST")
+                .mb-3
+                  label.form-label(for="email") Email
+                  input.form-control(
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="email@example.com"
+                    required
+                  )
+                
+                .mb-3
+                  label.form-label(for="password") Mật khẩu
+                  input.form-control(
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="Nhập mật khẩu"
+                    required
+                  )
+                
+                .mb-3.form-check
+                  input.form-check-input(
+                    type="checkbox"
+                    id="remember"
+                    name="remember"
+                  )
+                  label.form-check-label(for="remember") Ghi nhớ đăng nhập
+                
+                .d-grid
+                  button.btn.btn-primary(type="submit")
+                    i.bi.bi-box-arrow-in-right.me-2
+                    | Đăng Nhập
+
+            .card-footer.text-center.text-muted
+              small © 2024 Admin System

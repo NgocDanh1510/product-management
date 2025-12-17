@@ -1,22 +1,41 @@
+/* ===== MINIMAL CSS - Chỉ những gì Bootstrap không có ===== */
+
+/* Layout cơ bản */
+body {
+  padding-top: 56px;
+}
+
 .inner-main {
-  margin-top: 80px;
-  margin-right: 15px;
-  margin-left: 10%;
+  margin-left: 270px;
+  padding: 20px;
+  min-height: calc(100vh - 56px);
 }
-.inner-sider {
-  height: 100vh;
-  top: 48px;
+
+/* Sidebar hover effect */
+.hover-bg-light:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 0.25rem;
 }
-.inner-header {
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 60px;
-  z-index: 100;
+
+/* Form image preview */
+.form-imagePreview {
+  position: relative;
+  display: inline-block;
 }
-.form-imagePreview button {
+
+.form-imagePreview .btn-close {
+  position: absolute;
   top: -8px;
   right: -8px;
-  opacity: 1 !important;
-  padding: 5px;
+  padding: 0.5rem;
+  background-color: #dc3545;
+  border-radius: 50%;
+  opacity: 1;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+  .inner-main {
+    margin-left: 0;
+  }
 }

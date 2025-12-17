@@ -1,15 +1,23 @@
-header.navbar.navbar-dark.bg-dark.fixed-top.shadow
-  .container-fluid.px-4
-    a.navbar-brand.d-flex.align-items-center(href="/admin/dashboard")
-      i.bi.bi-speedometer2.me-2.fs-4
-      span.fw-bold.fs-4 ADMIN PANEL
+header.navbar.navbar-expand-lg.navbar-dark.bg-dark.fixed-top.border-bottom
+  .container-fluid
+    a.navbar-brand.fw-bold(href="/admin/dashboard")
+      i.bi.bi-speedometer2.me-2
+      | ADMIN PANEL
+    
     button.navbar-toggler(type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav")
       span.navbar-toggler-icon
+    
     .collapse.navbar-collapse.justify-content-end#navbarNav
       ul.navbar-nav
         li.nav-item.dropdown
           a.nav-link.dropdown-toggle(href="#" role="button" data-bs-toggle="dropdown")
-            i.bi.bi-person-circle.fs-5
+            img(
+                src=user.avatar
+                class="rounded-circle"
+                width="40"
+                height="40"
+            )
+            span.ms-2 #{user.fullName}
           ul.dropdown-menu.dropdown-menu-end
             li
               a.dropdown-item(href="#")
@@ -18,6 +26,6 @@ header.navbar.navbar-dark.bg-dark.fixed-top.shadow
             li
               hr.dropdown-divider
             li
-              a.dropdown-item(href="#")
+              a.dropdown-item(href="/admin/auth/logout")
                 i.bi.bi-box-arrow-right.me-2
                 | Đăng xuất

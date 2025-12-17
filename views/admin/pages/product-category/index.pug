@@ -1,0 +1,88 @@
+extends ../../layout/default
+include ../../mixins/alert.pug
+include ../../mixins/filterStatus.pug
+include ../../mixins/search.pug
+include ../../mixins/pagination.pug
+include ../../mixins/form-multi-action.pug
+include ../../mixins/alert.pug
+include ../../mixins/multi-sort.pug
+include ../../mixins/table-tree.pug
+block main
+  +alert-success(5000)
+  +alert-error(5000)
+  //- Page Header
+  .d-flex.justify-content-between.align-items-center.mb-4
+    div
+      h2.fw-bold.mb-1
+        i.bi.bi-list-ul.me-2.text-primary
+        | Quản Lý Danh Mục
+      p.text-muted.mb-0 Quản lý danh mục sản phẩm
+    a.btn.btn-primary(href=`${prefixAdmin}/product-category/create`)
+      i.bi.bi-plus-circle.me-2
+      | Thêm Danh Mục
+  //- Filter & Search
+  .card.mb-3.border-0.shadow-sm
+    .card-header.bg-white
+      h6.mb-0.fw-semibold
+        i.bi.bi-funnel.me-2
+        | Bộ Lọc & Tìm Kiếm
+    .card-body
+      .row.g-3
+        .col-md-7
+          +filterStatus(status)
+        .col-md-5
+          +search(keyword)
+  //- Sort
+  .card.mb-3.border-0.shadow-sm
+    .card-header.bg-white
+      h6.mb-0.fw-semibold
+        i.bi.bi-sort-down.me-2
+        | Sắp Xếp
+    .card-body
+      +multi-sort([
+        { value: "position-desc", name: "vị trí giảm dần" },
+        { value: "position-asc", name: "vị trí tăng dần" },
+        { value: "title-asc", name: "tiêu đề A - Z" },
+        { value: "title-desc", name: "tiêu đề Z - A" }
+      ])
+  //- Categories List
+  .card.border-0.shadow-sm
+    .card-header.bg-white.d-flex.justify-content-between.align-items-center
+      h6.mb-0.fw-semibold
+        i.bi.bi-folder.me-2
+        | Danh Sách Danh Mục
+      span.badge.bg-primary #{listCategory ? listCategory.length : 0} danh mục
+
+    .card-body
+      .row.g-3.mb-3
+        .col-md-4
+          +form-multi-action(`${prefixAdmin}/product-category/change-multi?_method=PATCH`)       
+      .table-responsive
+        table.table.table-hover.align-middle(checkbox-multi)
+          thead.table-light
+            tr
+              th.text-center(style="width: 50px")
+                input.form-check-input(type="checkbox" name="check-change-all")
+              th.text-center STT
+              th.text-center Hình Ảnh
+              th Tiêu Đề
+              th.text-center Vị Trí
+              th.text-center Trạng Thái
+              th.text-center Thao Tác
+
+          tbody
+            +table-tree(listCategory)
+
+  //- Hidden Forms
+  form#form-change-status(
+    action=""
+    method="POST"
+    data-path=`${prefixAdmin}/product-category/change-status`
+  )
+  form#form-delete(
+    action=""
+    method="POST"
+    data-path=`${prefixAdmin}/product-category/delete`
+  )
+  
+  script(src="/admin/js/product-category.js")

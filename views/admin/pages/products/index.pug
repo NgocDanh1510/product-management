@@ -10,88 +10,157 @@ include ../../mixins/multi-sort.pug
 block main
   +alert-success(5000)
   +alert-error(5000)
-  +box-head("Danh Sách Sản Phẩm")
-  .card.mb-3
-    .card-header Bộ lọc và tìm kiếm
+  
+  //- Page Header
+  .d-flex.justify-content-between.align-items-center.mb-4
+    div
+      h2.fw-bold.mb-1
+        i.bi.bi-box-seam.me-2.text-primary
+        | Quản Lý Sản Phẩm
+      p.text-muted.mb-0 Quản lý danh sách sản phẩm của cửa hàng
+    a.btn.btn-primary(href=`${prefixAdmin}/products/create`)
+      i.bi.bi-plus-circle.me-2
+      | Thêm Sản Phẩm
+
+  //- Filter & Search
+  .card.mb-3.border-0.shadow-sm
+    .card-header.bg-white
+      h6.mb-0.fw-semibold
+        i.bi.bi-funnel.me-2
+        | Bộ Lọc & Tìm Kiếm
     .card-body
-      .row 
-        .col-8
+      .row.g-3
+        .col-md-7
           +filterStatus(status)
-        .col-4 
+        .col-md-5
           +search(keyword)
-  .card.mb-3
-    .card-header Sắp xếp
-    .card-body
-      +multi-sort()
 
-
-  .card.mb-3 
-    .card-header Danh Sách 
+  //- Sort
+  .card.mb-3.border-0.shadow-sm
+    .card-header.bg-white
+      h6.mb-0.fw-semibold
+        i.bi.bi-sort-down.me-2
+        | Sắp Xếp
     .card-body
-      .row 
-        .col-3 
+      +multi-sort([
+        { value: "position-desc", name: "vị trí giảm dần" },
+        { value: "position-asc", name: "vị trí tăng dần" },
+        { value: "price-desc", name: "giá giảm dần" },
+        { value: "price-asc", name: "giá tăng dần" },
+        { value: "title-asc", name: "tiêu đề A - Z" },
+        { value: "title-desc", name: "tiêu đề Z - A" }
+      ])
+
+  //- Products List
+  .card.border-0.shadow-sm
+    .card-header.bg-white.d-flex.justify-content-between.align-items-center
+      h6.mb-0.fw-semibold
+        i.bi.bi-list-ul.me-2
+        | Danh Sách Sản Phẩm
+      span.badge.bg-primary #{listProduct.length} sản phẩm
+
+    .card-body
+      //- Toolbar
+      .row.g-3.mb-3
+        .col-md-6
           +form-multi-action(`${prefixAdmin}/products/change-multi?_method=PATCH`)
-        .col-7 
-        .col-2
-          a.btn.btn-success(href=`${prefixAdmin}/products/create`) + Thêm mới 
+        .col-md-6.text-end
+          .btn-group
+            button.btn.btn-sm.btn-outline-secondary(type="button")
+              i.bi.bi-grid-3x3-gap
+            button.btn.btn-sm.btn-outline-secondary.active(type="button")
+              i.bi.bi-list-ul
 
-      table.table.table-hover(checkbox-multi)
-        thead 
-          tr
-            th 
-              input(class="form-check-input" type="checkbox" value="" name="check-change-all")
-            th STT 
-            th Hình ảnh
-            th Tiêu đề 
-            th Giá
-            th Vị trí
-            th Trạng thái
-            th Hoạt động
-        tbody
-          each item, index in listProduct
+      //- Table
+      .table-responsive
+        table.table.table-hover.align-middle(checkbox-multi)
+          thead.table-light
             tr
-              td
-                input(class="form-check-input" type="checkbox" value=item._id name="check-change") 
-              td #{index+1}
-              td
-                img(
-                  src=item.thumbnail
-                  alt=item.title
-                  width="100px"
-                  height="auto"
-                  class="border "
-                )
-              td #{item.title}
-              td #{item.price}$
-              td 
-                input(type="number" style='width: 70px' class=" form-control" name="position" min=1 data-id=item._id value=item.position)
-              td
-                button(
-                  class=`badge btn ${
-                    item.availabilityStatus === "In Stock" ? "btn-success" : "btn-danger"
-                  }`
-                  data-status=item.availabilityStatus
-                  data-id=item._id
-                  btn-change-status
-                ) #{item.availabilityStatus}
+              th.text-center(style="width: 50px")
+                input.form-check-input(type="checkbox" name="check-change-all")
+              th.text-center STT
+              th.text-center Hình Ảnh
+              th Tiêu Đề
+              th.text-center Giá
+              th.text-center Vị Trí
+              th.text-center Trạng Thái
+              th.text-center Thao Tác
 
-              td
-                a.btn.btn-secondary(href=`${prefixAdmin}/products/detail/${item._id}`) detail
-                a.btn.btn-warning.ms-2(href=`${prefixAdmin}/products/edit/${item._id}`) edit
-                button.btn.btn-danger.ms-2(btn-delete data-id=item._id) delete
-  +pagination(pagination)
+          tbody
+            if listProduct.length === 0
+              tr
+                td.text-center.py-5(colspan="8")
+                  i.bi.bi-inbox.display-1.text-muted.d-block
+                  p.text-muted Không có sản phẩm
+            else
+              each item, index in listProduct
+                tr
+                  td.text-center
+                    input.form-check-input(type="checkbox" value=item._id name="check-change")
+                  td.text-center.fw-semibold #{(pagination.currentPage-1)*pagination.limitPage + index +1}
+                  td.text-center
+                    img.rounded.border(
+                      src=item.thumbnail
+                      alt=item.title
+                      style="width: 60px; height: 60px; object-fit: cover;"
+                    )
+                  td
+                    .fw-semibold #{item.title}
+                    if item.description
+                      small.text-muted.d-block.text-truncate(style="max-width: 300px") !{item.description}
+                  td.text-center
+                    span.fw-bold.text-success #{item.price}$
+                  td.text-center
+                    input.form-control.form-control-sm.text-center(
+                      type="number"
+                      style="width: 70px"
+                      name="position"
+                      min="1"
+                      data-id=item._id
+                      value=item.position
+                    )
+                  td.text-center
+                    button.badge.border-0.fs-6(
+                      class=item.availabilityStatus === "In Stock" ? "bg-success" : "bg-danger"
+                      data-status=item.availabilityStatus
+                      data-id=item._id
+                      btn-change-status
+                    )
+                      i.bi(class=item.availabilityStatus === "In Stock" ? "bi-check-circle" : "bi-x-circle")
+                      |  #{item.availabilityStatus}
+                  td.text-center
+                    .btn-group.btn-group-sm
+                      a.btn.btn-outline-info(
+                        href=`${prefixAdmin}/products/detail/${item._id}`
+                        title="Chi tiết"
+                      )
+                        i.bi.bi-eye
+                      a.btn.btn-outline-warning(
+                        href=`${prefixAdmin}/products/edit/${item._id}`
+                        title="Sửa"
+                      )
+                        i.bi.bi-pencil
+                      button.btn.btn-outline-danger(
+                        btn-delete
+                        data-id=item._id
+                        title="Xóa"
+                      )
+                        i.bi.bi-trash
 
-  form(
+  //- Pagination
+  .mt-4
+    +pagination(pagination)
+
+  //- Hidden Forms
+  form#form-change-status(
     action=""
     method="POST"
-    id="form-change-status"
     data-path=`${prefixAdmin}/products/change-status`
-  )  
-  form(
+  )
+  form#form-delete(
     action=""
     method="POST"
-    id="form-delete"
     data-path=`${prefixAdmin}/products/delete`
-  )  
+  )
   
   script(src="/admin/js/product.js")

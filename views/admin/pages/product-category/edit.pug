@@ -1,8 +1,8 @@
 extends ../../layout/default.pug
 include ../../mixins/alert.pug
+include ../../mixins/select-tree.pug
 
 block main
-  +alert-success(5000)
   +alert-error(5000)
   
   //- Page Header
@@ -10,23 +10,23 @@ block main
     div
       h2.fw-bold.mb-1
         i.bi.bi-pencil-square.me-2.text-warning
-        | Chỉnh Sửa Sản Phẩm
-      p.text-muted.mb-0 Cập nhật thông tin sản phẩm
-    a.btn.btn-outline-secondary(href=`${prefixAdmin}/products`)
+        | Chỉnh Sửa Danh Mục
+      p.text-muted.mb-0 Cập nhật thông tin danh mục
+    a.btn.btn-outline-secondary(href=`${prefixAdmin}/product-category`)
       i.bi.bi-arrow-left.me-2
       | Quay Lại
 
   //- Form
   form(
-    action=`${prefixAdmin}/products/edit/${product._id}?_method=PATCH`
+    action=`${prefixAdmin}/product-category/edit/${category._id}?_method=PATCH`
     method="POST"
     enctype="multipart/form-data"
-    id="form-edit-product"
+    id="form-edit-category"
   )
     .row
       //- Left Column
       .col-lg-8
-        //- Basic Info Card
+        //- Basic Info
         .card.mb-3.border-0.shadow-sm
           .card-header.bg-white
             h6.mb-0.fw-semibold
@@ -36,86 +36,45 @@ block main
             //- Title
             .mb-3
               label.form-label.fw-semibold(for="title")
-                | Tiêu đề sản phẩm
+                | Tên danh mục
                 span.text-danger *
               input.form-control(
                 type="text"
                 id="title"
                 name="title"
-                placeholder="Nhập tên sản phẩm..."
-                value=product.title
+                placeholder="Nhập tên danh mục..."
+                value=category.title
               )
+              .form-text Tên danh mục hiển thị trên website
+
+            //- Parent Category
+            .mb-3
+              label.form-label.fw-semibold(for="parent_id")
+                i.bi.bi-diagram-3.me-1
+                | Danh mục cha
+              select.form-select(
+                id="parent_id"
+                name="parent_id"
+              )
+                option(value="") -- Chọn danh mục cha --
+                if listCategory
+                  +select-tree(listCategory,0,category._id)
+              .form-text Để trống nếu là danh mục gốc
 
             //- Description
             .mb-3
-              label.form-label.fw-semibold(for="desc") Mô tả chi tiết
+              label.form-label.fw-semibold(for="description") Mô tả
               textarea.form-control.tinymce(
-                id="desc"
+                id="description"
                 name="description"
                 rows="5"
-                placeholder="Nhập mô tả sản phẩm..."
-              ) #{product.description}
-
-        //- Pricing & Inventory Card
-        .card.mb-3.border-0.shadow-sm
-          .card-header.bg-white
-            h6.mb-0.fw-semibold
-              i.bi.bi-currency-dollar.me-2
-              | Giá & Kho Hàng
-          .card-body
-            .row.g-3
-              //- Price
-              .col-md-4
-                label.form-label.fw-semibold(for="price")
-                  i.bi.bi-tag.me-1
-                  | Giá bán
-                  span.text-danger *
-                .input-group
-                  input.form-control(
-                    type="number"
-                    id="price"
-                    name="price"
-                    value=product.price
-                    min="0"
-                    step="0.01"
-                    required
-                  )
-                  span.input-group-text $
-
-              //- Discount
-              .col-md-4
-                label.form-label.fw-semibold(for="discount")
-                  i.bi.bi-percent.me-1
-                  | Giảm giá
-                .input-group
-                  input.form-control(
-                    type="number"
-                    id="discount"
-                    name="discountPercentage"
-                    value=product.discountPercentage
-                    min="0"
-                    max="100"
-                  )
-                  span.input-group-text %
-
-              //- Stock
-              .col-md-4
-                label.form-label.fw-semibold(for="stock")
-                  i.bi.bi-box.me-1
-                  | Số lượng
-                  span.text-danger *
-                input.form-control(
-                  type="number"
-                  id="stock"
-                  name="stock"
-                  value=product.stock
-                  min="0"
-                  required
-                )
+                placeholder="Nhập mô tả danh mục..."
+              ) #{category.description}
+              .form-text Mô tả chi tiết về danh mục
 
       //- Right Column
       .col-lg-4
-        //- Image Card
+        //- Image
         .card.mb-3.border-0.shadow-sm
           .card-header.bg-white
             h6.mb-0.fw-semibold
@@ -125,12 +84,12 @@ block main
             label.form-label.fw-semibold(for="thumbnail") Ảnh đại diện
             
             //- Current Image
-            if product.thumbnail
+            if category.thumbnail
               .mb-3.text-center
                 p.text-muted.small Ảnh hiện tại:
                 img.img-thumbnail.rounded(
-                  src=product.thumbnail
-                  alt=product.title
+                  src=category.thumbnail
+                  alt=category.title
                   style="max-width: 200px"
                 )
             
@@ -154,13 +113,13 @@ block main
             .form-imagePreview.d-none.text-center
               button.btn-close(type="button" btn-remove-imagePreview)
               img.img-thumbnail.rounded(
-                src=""
+                src=category.thumbnail
                 alt="Preview"
                 upload-image-preview
                 style="max-width: 100%"
               )
 
-        //- Settings Card
+        //- Settings
         .card.mb-3.border-0.shadow-sm
           .card-header.bg-white
             h6.mb-0.fw-semibold
@@ -177,55 +136,48 @@ block main
                 id="position"
                 name="position"
                 min="1"
-                value=product.position
+                value=category.position
               )
+              .form-text Để trống để tự động
 
             //- Status
             .mb-3
               label.form-label.fw-semibold.d-block.mb-2
-                i.bi.bi-check-circle.me-1
-                | Trạng thái kho
+                i.bi.bi-toggle-on.me-1
+                | Trạng thái
               
               .form-check.border.rounded.p-3.mb-2
                 input.form-check-input(
                   type="radio"
-                  id="statusActive"
-                  name="availabilityStatus"
+                  id="statusInStock"
+                  name="status"
                   value="In Stock"
-                  checked=(product.availabilityStatus === "In Stock")
+                  checked =(category.status==="In Stock"? true:false)
                 )
-                label.form-check-label.ms-2(for="statusActive")
+                label.form-check-label.ms-2(for="statusInStock")
                   i.bi.bi-check-circle-fill.text-success
-                  |  Còn hàng
+                  |  còn hàng
 
               .form-check.border.rounded.p-3
                 input.form-check-input(
                   type="radio"
-                  id="statusInActive"
-                  name="availabilityStatus"
+                  id="statusLowStock"
+                  name="status"
                   value="Low Stock"
-                  checked=(product.availabilityStatus === "Low Stock")
+                  checked =(category.status==="Low Stock"? true:false)
                 )
-                label.form-check-label.ms-2(for="statusInActive")
-                  i.bi.bi-exclamation-circle-fill.text-warning
-                  |  Sắp hết
+                label.form-check-label.ms-2(for="statusLowStock")
+                  i.bi.bi-x-circle-fill.text-danger
+                  |  hết hàng
 
     //- Actions
     .card.border-0.shadow-sm.mt-4
       .card-body
         .d-flex.justify-content-between.align-items-center
           div
-            a.btn.btn-outline-danger(href=`${prefixAdmin}/products`)
+            a.btn.btn-outline-danger(href=`${prefixAdmin}/product-category`)
               i.bi.bi-x-circle.me-2
-              | Hủy Bỏ
-            button.btn.btn-outline-secondary.ms-2(
-              type="button"
-              onclick="history.back()"
-            )
-              i.bi.bi-arrow-left.me-2
-              | Quay Lại
-          
+              | Hủy
           button.btn.btn-warning.btn-lg.text-white(type="submit")
             i.bi.bi-check-circle.me-2
-            | Cập Nhật Sản Phẩm
-
+            | Cập Nhật

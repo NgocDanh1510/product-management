@@ -1,0 +1,153 @@
+extends ../../layout/default.pug
+
+block main
+  //- Page Header
+  .d-flex.justify-content-between.align-items-center.mb-4
+    div
+      h2.fw-bold.mb-1
+        i.bi.bi-info-circle.me-2.text-info
+        | Chi Tiết Danh Mục
+      p.text-muted.mb-0 Thông tin chi tiết danh mục sản phẩm
+    div
+      a.btn.btn-outline-secondary.me-2(href=`${prefixAdmin}/product-category`)
+        i.bi.bi-arrow-left.me-2
+        | Quay Lại
+      a.btn.btn-warning.text-white(href=`${prefixAdmin}/product-category/edit/${category._id}`)
+        i.bi.bi-pencil.me-2
+        | Chỉnh Sửa
+
+  .row
+    //- Left Column - Main Info
+    .col-lg-8
+      //- Basic Information
+      .card.mb-3.border-0.shadow-sm
+        .card-header.bg-white
+          h5.mb-0.fw-semibold
+            i.bi.bi-file-text.me-2
+            | Thông Tin Cơ Bản
+        .card-body
+          .row.mb-3
+            .col-md-3
+              label.text-muted.fw-semibold Tên danh mục:
+            .col-md-9
+              p.mb-0.fs-5.fw-bold= category.title
+
+          .row.mb-3
+            .col-md-3
+              label.text-muted.fw-semibold Danh mục cha:
+            .col-md-9
+              if category.parent_id
+                span.badge.bg-secondary.fs-6
+                  i.bi.bi-folder.me-1
+                  = category.parent_id.title
+              else
+                span.text-muted.fst-italic Danh mục gốc
+
+          .row.mb-3
+            .col-md-3
+              label.text-muted.fw-semibold Vị trí:
+            .col-md-9
+              span.badge.bg-info.fs-6
+                i.bi.bi-sort-numeric-down.me-1
+                = category.position
+
+          .row
+            .col-md-3
+              label.text-muted.fw-semibold Trạng thái:
+            .col-md-9
+              if category.status === "active"
+                span.badge.bg-success.fs-6
+                  i.bi.bi-check-circle.me-1
+                  | Hoạt động
+              else
+                span.badge.bg-danger.fs-6
+                  i.bi.bi-x-circle.me-1
+                  | Dừng hoạt động
+
+      //- Description
+      .card.mb-3.border-0.shadow-sm
+        .card-header.bg-white
+          h5.mb-0.fw-semibold
+            i.bi.bi-card-text.me-2
+            | Mô Tả Chi Tiết
+        .card-body
+          if category.description
+            .description-content!= category.description
+          else
+            p.text-muted.fst-italic Chưa có mô tả
+
+    //- Right Column - Media & Meta
+    .col-lg-4
+      //- Thumbnail
+      .card.mb-3.border-0.shadow-sm
+        .card-header.bg-white
+          h5.mb-0.fw-semibold
+            i.bi.bi-image.me-2
+            | Hình Ảnh
+        .card-body.text-center
+          if category.thumbnail
+            img.img-fluid.rounded.shadow(
+              src=category.thumbnail
+              alt=category.title
+              style="max-width: 100%; height: auto;"
+            )
+          else
+            .bg-light.rounded.d-flex.align-items-center.justify-content-center(
+              style="height: 200px;"
+            )
+              i.bi.bi-image.display-1.text-muted
+
+      //- Meta Information
+      .card.mb-3.border-0.shadow-sm
+        .card-header.bg-white
+          h5.mb-0.fw-semibold
+            i.bi.bi-clock-history.me-2
+            | Thông Tin Khác
+        .card-body
+          .mb-3
+            small.text-muted ID:
+            br
+            code.text-dark= category._id
+
+          .mb-3
+            small.text-muted Ngày tạo:
+            br
+            strong= new Date(category.createdAt).toLocaleString('vi-VN')
+
+          .mb-0
+            small.text-muted Cập nhật:
+            br
+            strong= new Date(category.updatedAt).toLocaleString('vi-VN')
+
+      //- Actions
+      .card.border-0.shadow-sm
+        .card-header.bg-white
+          h5.mb-0.fw-semibold
+            i.bi.bi-lightning.me-2
+            | Thao Tác
+        .card-body
+          .d-grid.gap-2
+            a.btn.btn-warning.text-white(href=`${prefixAdmin}/product-category/edit/${category._id}`)
+              i.bi.bi-pencil.me-2
+              | Chỉnh Sửa
+            
+            button.btn.btn-danger(
+              btn-delete
+              data-id=category._id
+            )
+              i.bi.bi-trash.me-2
+              | Xóa Danh Mục
+            
+            a.btn.btn-outline-secondary(href=`${prefixAdmin}/product-category`)
+              i.bi.bi-arrow-left.me-2
+              | Quay Lại
+
+  //- Hidden Form for Delete
+  form#form-delete(
+    action=""
+    method="POST"
+    data-path=`${prefixAdmin}/product-category/delete`
+  )
+
+
+  script(src="/admin/js/product-category.js")

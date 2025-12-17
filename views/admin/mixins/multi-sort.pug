@@ -1,11 +1,7 @@
-mixin multi-sort()
+mixin multi-sort(sortOptions)
   .input-group.w-25
     select(name="type" class="form-select" select-sort)
       option(disable selected value="") -- chọn sắp xếp -- 
-      option(value="position-desc") vị trí giảm dần 
-      option(value="position-asc") vị trí tăng dần
-      option(value="price-desc") giá giảm dần
-      option(value="price-asc") giá tăng dần
-      option(value="title-asc") tiêu đề A - Z
-      option(value="title-desc") tiêu đề Z - A
+      each item in sortOptions
+        option(value=item.value) #{item.name}
     button(type="button" class="btn btn-danger" btn-sort) áp dụng

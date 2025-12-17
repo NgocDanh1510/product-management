@@ -1,0 +1,242 @@
+extends ../../layout/default.pug
+include ../../mixins/alert.pug
+
+block main
+  +alert-error(5000)
+  
+  //- Page Header
+  .d-flex.justify-content-between.align-items-center.mb-4
+    div
+      h2.fw-bold.mb-1
+        i.bi.bi-plus-circle.me-2.text-primary
+        | Thêm Vai Trò Mới
+      p.text-muted.mb-0 Tạo vai trò và phân quyền
+    a.btn.btn-outline-secondary(href=`${prefixAdmin}/roles`)
+      i.bi.bi-arrow-left.me-2
+      | Quay Lại
+
+  //- Form
+  form(
+    action=`${prefixAdmin}/roles/create`
+    method="POST"
+    id="form-create-role"
+  )
+    .row
+      //- Left Column - Basic Info
+      .col-lg-8
+        .card.mb-3.border-0.shadow-sm
+          .card-header.bg-white
+            h6.mb-0.fw-semibold
+              i.bi.bi-info-circle.me-2
+              | Thông Tin Cơ Bản
+          .card-body
+            //- Title
+            .mb-3
+              label.form-label.fw-semibold(for="title")
+                | Tên vai trò
+                span.text-danger *
+              input.form-control(
+                type="text"
+                id="title"
+                name="title"
+                placeholder="VD: Quản trị viên, Nhân viên bán hàng..."
+                required
+              )
+              .form-text Tên vai trò hiển thị trong hệ thống
+
+            //- Description
+            .mb-3
+              label.form-label.fw-semibold(for="description") Mô tả
+              textarea.form-control(
+                id="description"
+                name="description"
+                rows="3"
+                placeholder="Mô tả vai trò và trách nhiệm..."
+              )
+              .form-text Mô tả ngắn gọn về vai trò này
+
+        //- Permissions Card
+        .card.mb-3.border-0.shadow-sm
+          .card-header.bg-white
+            h6.mb-0.fw-semibold
+              i.bi.bi-key.me-2
+              | Phân Quyền
+          .card-body
+            p.text-muted.small.mb-3
+              i.bi.bi-info-circle.me-1
+              | Chọn các quyền cho vai trò này. Bạn có thể thay đổi sau.
+
+            //- Products Permissions
+            .mb-4
+              h6.fw-semibold.mb-3
+                i.bi.bi-box-seam.me-2.text-primary
+                | Quản lý Sản phẩm
+              .row
+                -
+                  const productPermission = [
+                    { id: 'view', label: 'Xem sản phẩm', icon: 'eye', color: 'info' },
+                    { id: 'create', label: 'Thêm sản phẩm', icon: 'plus-circle', color: 'success' },
+                    { id: 'edit', label: 'Sửa sản phẩm', icon: 'pencil', color: 'warning' },
+                    { id: 'delete', label: 'Xóa sản phẩm', icon: 'trash', color: 'danger' }
+                    ]
+                each item in productPermission
+                  .col-md-6.mb-2
+                    .form-check.border.rounded.p-3
+                      input.form-check-input(
+                        type="checkbox"
+                        name="permissions"
+                        value=`products_${item.id}`
+                        id=`perm-products-${item.id}`
+                      )
+                      label.form-check-label.ms-2(for=`perm-products-${item.id}`)
+                        i(class=`bi bi-${item.icon} text-${item.color} me-1`)
+                        | #{item.label}
+
+            //- Products Category Permissions
+            .mb-4
+              h6.fw-semibold.mb-3
+                i.bi.bi-list-ul.me-2.text-primary
+                | Quản lý Danh mục
+              .row
+                -
+                  const categoryPermission = [
+                    { id: 'view', label: 'Xem danh mục', icon: 'eye', color: 'info' },
+                    { id: 'create', label: 'Thêm danh mục', icon: 'plus-circle', color: 'success' },
+                    { id: 'edit', label: 'Sửa danh mục', icon: 'pencil', color: 'warning' },
+                    { id: 'delete', label: 'Xóa danh mục', icon: 'trash', color: 'danger' }
+                  ]
+                each item in categoryPermission
+                  .col-md-6.mb-2
+                    .form-check.border.rounded.p-3
+                      input.form-check-input(
+                        type="checkbox"
+                        name="permissions"
+                        value=`products-category_${item.id}`
+                        id=`perm-products-category-${item.id}`
+                      )
+                      label.form-check-label.ms-2(for=`perm-products-category-${item.id}`)
+                        i(class=`bi bi-${item.icon} text-${item.color} me-1`)
+                        | #{item.label}
+
+
+            //- Roles Permissions
+            .mb-4
+              h6.fw-semibold.mb-3
+                i.bi.bi-shield-lock.me-2.text-primary
+                | Quản lý Vai trò
+              .row
+                -
+                  const rolesPermission = [
+                    { id: 'view', label: 'Xem vai trò' },
+                    { id: 'create', label: 'Thêm vai trò' },
+                    { id: 'edit', label: 'Sửa vai trò' },
+                    { id: 'delete', label: 'Xóa vai trò' },
+                    { id: 'permissions', label: 'Phân quyền' }
+                  ]
+                each item in rolesPermission
+                  .col-md-6.mb-2
+                    .form-check.border.rounded.p-3
+                      input.form-check-input(
+                        type="checkbox"
+                        name="permissions"
+                        value=`roles_${item.id}`
+                        id=`perm-roles-${item.id}`
+                      )
+                      label.form-check-label.ms-2(for=`perm-roles-${item.id}`)
+                        | #{item.label}
+
+
+            //- Accounts Permissions
+            .mb-4
+              h6.fw-semibold.mb-3
+                i.bi.bi-person-badge.me-2.text-primary
+                | Quản lý Tài khoản
+              .row
+                -
+                  const AccountsPermissions = [
+                    { id: 'view', label: 'Xem tài khoản' },
+                    { id: 'create', label: 'Thêm tài khoản' },
+                    { id: 'edit', label: 'Sửa tài khoản' },
+                    { id: 'delete', label: 'Xóa tài khoản' }
+                  ]
+                each item in AccountsPermissions
+                  .col-md-6.mb-2
+                    .form-check.border.rounded.p-3
+                      input.form-check-input(
+                        type="checkbox"
+                        name="permissions"
+                        value=`accounts_${item.id}`
+                        id=`perm-accounts-${item.id}`
+                      )
+                      label.form-check-label.ms-2(for=`perm-accounts-${item.id}`)
+                        | #{item.label}
+
+      //- Right Column - Settings
+      .col-lg-4
+        //- Status Card
+        .card.mb-3.border-0.shadow-sm
+          .card-header.bg-white
+            h6.mb-0.fw-semibold
+              i.bi.bi-gear.me-2
+              | Cài Đặt
+          .card-body
+            label.form-label.fw-semibold.d-block.mb-3
+              i.bi.bi-toggle-on.me-1
+              | Trạng thái
+            
+            .form-check.border.rounded.p-3.mb-2
+              input.form-check-input(
+                type="radio"
+                id="statusActive"
+                name="status"
+                value="active"
+                checked
+              )
+              label.form-check-label.ms-2(for="statusActive")
+                i.bi.bi-check-circle-fill.text-success
+                |  Hoạt động
+
+            .form-check.border.rounded.p-3
+              input.form-check-input(
+                type="radio"
+                id="statusInactive"
+                name="status"
+                value="inactive"
+              )
+              label.form-check-label.ms-2(for="statusInactive")
+                i.bi.bi-x-circle-fill.text-danger
+                |  Dừng hoạt động
+
+        //- Quick Actions
+        .card.mb-3.border-0.shadow-sm
+          .card-header.bg-white
+            h6.mb-0.fw-semibold
+              i.bi.bi-lightning.me-2
+              | Thao Tác Nhanh
+          .card-body
+            .d-grid.gap-2
+              button.btn.btn-outline-primary(type="button" onclick="checkAllPermissions()")
+                i.bi.bi-check-all.me-2
+                | Chọn Tất Cả
+              
+              button.btn.btn-outline-secondary(type="button" onclick="uncheckAllPermissions()")
+                i.bi.bi-x-circle.me-2
+                | Bỏ Chọn Tất Cả
+
+    //- Actions
+    .card.border-0.shadow-sm.mt-4
+      .card-body
+        .d-flex.justify-content-between.align-items-center
+          div
+            button.btn.btn-outline-secondary.me-2(type="reset")
+              i.bi.bi-arrow-counterclockwise.me-2
+              | Đặt Lại
+            a.btn.btn-outline-danger(href=`${prefixAdmin}/roles`)
+              i.bi.bi-x-circle.me-2
+              | Hủy
+          button.btn.btn-primary.btn-lg(type="submit")
+            i.bi.bi-check-circle.me-2
+            | Tạo Vai Trò
+    
+  script(src="/admin/js/role.js")
+

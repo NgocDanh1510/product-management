@@ -1,0 +1,118 @@
+extends ../../layout/default
+include ../../mixins/alert.pug
+
+block main
+  +alert-success(5000)
+  +alert-error(5000)
+  
+  //- Page Header
+  .d-flex.justify-content-between.align-items-center.mb-4
+    div
+      h2.fw-bold.mb-1
+        i.bi.bi-shield-check.me-2.text-primary
+        | Quản Lý Vai Trò
+      p.text-muted.mb-0 Quản lý vai trò và phân quyền hệ thống
+    a.btn.btn-primary(href=`${prefixAdmin}/roles/create`)
+      i.bi.bi-plus-circle.me-2
+      | Thêm Vai Trò
+
+  //- Roles List
+  .card.border-0.shadow-sm
+    .card-header.bg-white.d-flex.justify-content-between.align-items-center
+      h6.mb-0.fw-semibold
+        i.bi.bi-list-ul.me-2
+        | Danh Sách Vai Trò
+      span.badge.bg-primary #{listRole ? listRole.length : 0} vai trò
+
+    .card-body
+      .table-responsive
+        table.table.table-hover.align-middle
+          thead.table-light
+            tr
+              th.text-center STT
+              th Tên Vai Trò
+              th Mô Tả
+              th.text-center Số Quyền
+              th.text-center Trạng Thái
+              th.text-center Thao Tác
+
+          tbody
+            if !listRole || listRole.length === 0
+              tr
+                td.text-center.py-5(colspan="6")
+                  i.bi.bi-inbox.display-1.text-muted.d-block
+                  p.text-muted Chưa có vai trò nào
+            else
+              each item, index in listRole
+                tr
+                  td.text-center.fw-semibold #{index + 1}
+                  
+                  td
+                    .d-flex.align-items-center
+                      .bg-primary.bg-opacity-10.rounded.p-2.me-3
+                        i.bi.bi-shield-fill-check.text-primary.fs-5
+                      div
+                        .fw-semibold #{item.title}
+                        if item.permissions && item.permissions.length > 0
+                          small.text-muted
+                            i.bi.bi-key.me-1
+                            | #{item.permissions.length} quyền
+                  
+                  td
+                    if item.description
+                      p.mb-0.text-muted.text-truncate(style="max-width: 300px") #{item.description}
+                    else
+                      span.text-muted.fst-italic Chưa có mô tả
+                  
+                  td.text-center
+                    if item.permissions && item.permissions.length > 0
+                      span.badge.bg-info.fs-6
+                        i.bi.bi-key.me-1
+                        | #{item.permissions.length}
+                    else
+                      span.text-muted 0
+                  
+                  td.text-center
+                    button.badge.border-0.fs-6(
+                      class=item.status === "active" ? "bg-success" : "bg-danger"
+                      data-status=item.status
+                      data-id=item._id
+                      btn-change-status
+                    )
+                      i.bi(class=item.status === "active" ? "bi-check-circle" : "bi-x-circle")
+                      |  #{item.status === "active" ? "Hoạt động" : "Dừng"}
+                  
+                  td.text-center
+                    .btn-group.btn-group-sm
+                      a.btn.btn-outline-info(
+                        href=`${prefixAdmin}/roles/detail/${item._id}`
+                        title="Chi tiết"
+                      )
+                        i.bi.bi-eye
+                      
+                      a.btn.btn-outline-warning(
+                        href=`${prefixAdmin}/roles/edit/${item._id}`
+                        title="Sửa"
+                      )
+                        i.bi.bi-pencil
+                      
+                      button.btn.btn-outline-danger(
+                        btn-delete
+                        data-id=item._id
+                        title="Xóa"
+                      )
+                        i.bi.bi-trash
+
+  //- Hidden Forms
+  form#form-change-status(
+    action=""
+    method="POST"
+    data-path=`${prefixAdmin}/roles/change-status`
+  )
+  form#form-delete(
+    action=""
+    method="POST"
+    data-path=`${prefixAdmin}/roles/delete`
+  )
+  
+  script(src="/admin/js/role.js")

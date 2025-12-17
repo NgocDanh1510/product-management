@@ -1,29 +1,67 @@
-.sidebar.bg-dark.text-white.d-flex.flex-column.position-fixed.h-100.shadow
-  .sidebar-content.flex-grow-1.overflow-auto.py-3
-    nav.nav.flex-column
-      .nav-section.mb-3
-        h6.text-uppercase.text-muted.px-3.mb-2.small Tổng quan
-        a.nav-link.d-flex.align-items-center.px-3.py-2.rounded-3.mb-1(href=`${prefixAdmin}/dashboard`)
-          i.bi.bi-speedometer2.me-3.fs-5
-          span Dashboard
-      
-      .nav-section.mb-3
-        h6.text-uppercase.text-muted.px-3.mb-2.small Quản lý
-        a.nav-link.d-flex.align-items-center.px-3.py-2.rounded-3.mb-1(href=`${prefixAdmin}/products`)
-          i.bi.bi-box-seam.me-3.fs-5
-          span Sản phẩm
-        a.nav-link.d-flex.align-items-center.px-3.py-2.rounded-3.mb-1(href=`${prefixAdmin}/categories`)
-          i.bi.bi-list-ul.me-3.fs-5
-          span Danh mục
-        a.nav-link.d-flex.align-items-center.px-3.py-2.rounded-3.mb-1(href=`${prefixAdmin}/orders`)
-          i.bi.bi-cart-check.me-3.fs-5
-          span Đơn hàng
-        a.nav-link.d-flex.align-items-center.px-3.py-2.rounded-3.mb-1(href=`${prefixAdmin}/users`)
-          i.bi.bi-people.me-3.fs-5
-          span Người dùng
-      
-      .nav-section
-        h6.text-uppercase.text-muted.px-3.mb-2.small Hệ thống
-        a.nav-link.d-flex.align-items-center.px-3.py-2.rounded-3.mb-1(href=`${prefixAdmin}/settings`)
-          i.bi.bi-gear.me-3.fs-5
-          span Cài đặt
+.d-flex.flex-column.bg-dark.text-white.position-fixed.vh-100(style="width: 250px; top: 56px; left: 0; z-index: 1000;")
+  .flex-grow-1.overflow-auto.py-3
+    //- Dashboard Section
+    .px-3.mb-3
+      small.text-uppercase.text-muted.fw-bold TỔNG QUAN
+    
+    a.d-flex.align-items-center.text-white.text-decoration-none.px-3.py-2.mb-1(
+      href=`${prefixAdmin}/dashboard`
+      class="hover-bg-light"
+    )
+      i.bi.bi-speedometer2.me-3
+      | Dashboard
+    
+    //- Management Section
+    .px-3.mb-2.mt-3
+      small.text-uppercase.text-muted.fw-bold QUẢN LÝ
+    
+    a.d-flex.align-items-center.text-white.text-decoration-none.px-3.py-2.mb-1(
+      href=`${prefixAdmin}/products`
+      class="hover-bg-light"
+    )
+      i.bi.bi-box-seam.me-3
+      | Sản phẩm
+    
+    a.d-flex.align-items-center.text-white.text-decoration-none.px-3.py-2.mb-1(
+      href=`${prefixAdmin}/product-category`
+      class="hover-bg-light"
+    )
+      i.bi.bi-list-ul.me-3
+      | Danh mục
+    a.d-flex.align-items-center.text-white.text-decoration-none.px-3.py-2.mb-1(
+      href=`${prefixAdmin}/roles`
+      class="hover-bg-light"
+    )
+      i.bi.bi-shield-lock.me-3
+      | Vai trò
+    a.d-flex.align-items-center.text-white.text-decoration-none.px-3.py-2.mb-1(
+      href=`${prefixAdmin}/roles/permission`
+      class="hover-bg-light"
+    )
+      i.bi.bi-key.me-3
+      | Phân quyền
+    
+    //- a.d-flex.align-items-center.text-white.text-decoration-none.px-3.py-2.mb-1(
+    //-   href=`${prefixAdmin}/orders`
+    //-   class="hover-bg-light"
+    //- )
+    //-   i.bi.bi-cart-check.me-3
+    //-   | Đơn hàng
+    
+    a.d-flex.align-items-center.text-white.text-decoration-none.px-3.py-2.mb-1(
+      href=`${prefixAdmin}/accounts`
+      class="hover-bg-light"
+    )
+      i.bi.bi-people.me-3
+      | Người dùng
+    
+    //- System Section
+    .px-3.mb-2.mt-3
+      small.text-uppercase.text-muted.fw-bold HỆ THỐNG
+    
+    a.d-flex.align-items-center.text-white.text-decoration-none.px-3.py-2.mb-1(
+      href=`${prefixAdmin}/settings`
+      class="hover-bg-light"
+    )
+      i.bi.bi-gear.me-3
+      | Cài đặt
