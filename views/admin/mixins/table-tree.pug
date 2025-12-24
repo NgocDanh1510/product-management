@@ -78,3 +78,84 @@ mixin table-tree(listCategory, level = 0)
 
       if (item.children)
         +table-tree(item.children, level + 1)
+        
+mixin post-category-table-tree(listCategory, level = 0)
+  - const prefix = Array(level + 1).join("---- ")
+  if !listCategory || listCategory.length === 0
+    tr
+      td.text-center.py-5(colspan="7")
+        i.bi.bi-inbox.display-1.text-muted.d-block
+        p.text-muted Chưa có danh mục nào
+  else
+    each item, index in listCategory
+      tr
+        td.text-center
+          input.form-check-input(type="checkbox" value=item._id name="check-change")
+        td.text-center.fw-semibold 
+          if item.index >= 0
+            span #{item.index + 1}
+          else 
+            span #{index +1}
+        td.text-center
+          if item.thumbnail
+            img.rounded.border(
+              src=item.thumbnail
+              alt=item.title
+              style="width: 50px; height: 50px; object-fit: cover;"
+            )
+          else
+            .bg-light.rounded.d-flex.align-items-center.justify-content-center(
+              style="width: 50px; height: 50px;"
+            )
+              i.bi.bi-image.text-muted
+
+        td
+          .fw-semibold #{`${prefix}${item.title}`}
+          //- if item.description
+            //- small.text-muted.d-block.text-truncate(style="max-width: 300px") #{item.description}
+
+        td.text-center
+          input.form-control.form-control-sm.text-center(
+            type="number"
+            style="width: 70px"
+            name="position"
+            min="1"
+            data-id=item._id
+            value=item.position
+          )
+
+        td.text-center
+          button.badge.border-0.fs-6(
+            class=item.status === "active" ? "bg-success" : "bg-danger"
+            data-status=item.status
+            data-id=item._id
+            btn-change-status
+          )
+            i.bi(class=item.status === "active" ? "bi-check-circle" : "bi-x-circle")
+            | #{item.status === "active" ? "hoạt động" : "dừng"}
+        td
+          .fw-normal #{item.updatedByFullName }
+          .fw-normal #{new Date(item.updatedAt).toLocaleDateString("vi-VN") }
+        td.text-center
+          .btn-group.btn-group-sm
+            a.btn.btn-outline-info(
+              href=`${prefixAdmin}/post-category/detail/${item._id}`
+              title="Chi tiết"
+            )
+              i.bi.bi-eye
+            if role.permissions.includes("posts-category_edit")
+              a.btn.btn-outline-warning(
+                href=`${prefixAdmin}/post-category/edit/${item._id}`
+                title="Sửa"
+              )
+                i.bi.bi-pencil
+            if role.permissions.includes("posts-category_delete")
+              button.btn.btn-outline-danger(
+                btn-delete
+                data-id=item._id
+                title="Xóa"
+              )
+                i.bi.bi-trash
+
+      if (item.children)
+        +post-category-table-tree(item.children, level + 1)

@@ -6,13 +6,18 @@ const md5 = require("md5");
 //[GET] /admin/accounts
 module.exports.index = async (req, res) => {
   let find = { deleted: false };
-  const account = await Account.find(find).select("-password -token");
-  const roles = await Role.find(find).select("id title");
+  const accounts = await Account.find(find).select("-password -token");
+
+  for (const element of accounts) {
+    if (element.role_id) {
+      const role = await Role.findOne({ _id: element.role_id, deleted: false });
+      element.nameRole = role.title;
+    }
+  }
 
   res.render("admin/pages/accounts/index", {
     titlePage: "tai khoan",
-    listAccount: account,
-    roles: roles,
+    listAccount: accounts,
   });
 };
 

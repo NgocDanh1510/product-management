@@ -12,13 +12,13 @@ block main
         i.bi.bi-pencil-square.me-2.text-warning
         | Chỉnh Sửa Danh Mục
       p.text-muted.mb-0 Cập nhật thông tin danh mục
-    a.btn.btn-outline-secondary(href=`${prefixAdmin}/product-category`)
+    a.btn.btn-outline-secondary(href=`${prefixAdmin}/post-category`)
       i.bi.bi-arrow-left.me-2
       | Quay Lại
 
   //- Form
   form(
-    action=`${prefixAdmin}/product-category/edit/${category._id}?_method=PATCH`
+    action=`${prefixAdmin}/post-category/edit/${category._id}?_method=PATCH`
     method="POST"
     enctype="multipart/form-data"
     id="form-edit-category"
@@ -175,7 +175,7 @@ block main
       .card-body
         .d-flex.justify-content-between.align-items-center
           div
-            a.btn.btn-outline-danger(href=`${prefixAdmin}/product-category`)
+            a.btn.btn-outline-danger(href=`${prefixAdmin}/post-category`)
               i.bi.bi-x-circle.me-2
               | Hủy
           button.btn.btn-warning.btn-lg.text-white(type="submit")

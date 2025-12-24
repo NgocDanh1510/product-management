@@ -9,19 +9,19 @@ block main
   .d-flex.justify-content-between.align-items-center.mb-4
     div
       h2.fw-bold.mb-1
-        i.bi.bi-pencil-square.me-2.text-warning
-        | Chỉnh Sửa Danh Mục
-      p.text-muted.mb-0 Cập nhật thông tin danh mục
-    a.btn.btn-outline-secondary(href=`${prefixAdmin}/product-category`)
+        i.bi.bi-plus-circle.me-2.text-primary
+        | Thêm Mới Danh Mục
+      p.text-muted.mb-0 Tạo danh mục bài viết mới
+    a.btn.btn-outline-secondary(href=`${prefixAdmin}/post-category`)
       i.bi.bi-arrow-left.me-2
       | Quay Lại
 
   //- Form
   form(
-    action=`${prefixAdmin}/product-category/edit/${category._id}?_method=PATCH`
+    action=`${prefixAdmin}/post-category/create`
     method="POST"
     enctype="multipart/form-data"
-    id="form-edit-category"
+    id="form-create-category"
   )
     .row
       //- Left Column
@@ -43,7 +43,6 @@ block main
                 id="title"
                 name="title"
                 placeholder="Nhập tên danh mục..."
-                value=category.title
               )
               .form-text Tên danh mục hiển thị trên website
 
@@ -58,7 +57,8 @@ block main
               )
                 option(value="") -- Chọn danh mục cha --
                 if listCategory
-                  +select-tree(listCategory,0,category.parent_id)
+                  +select-tree(listCategory)
+
               .form-text Để trống nếu là danh mục gốc
 
             //- Description
@@ -69,7 +69,7 @@ block main
                 name="description"
                 rows="5"
                 placeholder="Nhập mô tả danh mục..."
-              ) #{category.description}
+              )
               .form-text Mô tả chi tiết về danh mục
 
       //- Right Column
@@ -83,16 +83,6 @@ block main
           .card-body
             label.form-label.fw-semibold(for="thumbnail") Ảnh đại diện
             
-            //- Current Image
-            if category.thumbnail
-              .mb-3.text-center
-                p.text-muted.small Ảnh hiện tại:
-                img.img-thumbnail.rounded(
-                  src=category.thumbnail
-                  alt=category.title
-                  style="max-width: 200px"
-                )
-            
             //- Upload Area
             .border.border-2.border-dashed.rounded.p-4.text-center.mb-3.bg-light
               input.d-none(
@@ -104,16 +94,16 @@ block main
               )
               label.d-block(for="thumbnail" style="cursor: pointer")
                 i.bi.bi-cloud-upload.display-4.text-primary.d-block.mb-2
-                p.mb-1.fw-semibold Click để đổi ảnh
+                p.mb-1.fw-semibold Click để tải ảnh
                 small.text-muted Kéo thả ảnh vào đây
                 br
                 small.text-muted PNG, JPG (Max: 2MB)
             
-            //- Preview New Image
+            //- Preview
             .form-imagePreview.d-none.text-center
               button.btn-close(type="button" btn-remove-imagePreview)
               img.img-thumbnail.rounded(
-                src=category.thumbnail
+                src=""
                 alt="Preview"
                 upload-image-preview
                 style="max-width: 100%"
@@ -135,8 +125,8 @@ block main
                 type="number"
                 id="position"
                 name="position"
+                placeholder="Tự động tăng"
                 min="1"
-                value=category.position
               )
               .form-text Để trống để tự động
 
@@ -149,35 +139,34 @@ block main
               .form-check.border.rounded.p-3.mb-2
                 input.form-check-input(
                   type="radio"
-                  id="statusInStock"
+                  id="statusActive"
                   name="status"
-                  value="In Stock"
-                  checked =(category.status==="In Stock"? true:false)
+                  value="active"
+                  checked
                 )
-                label.form-check-label.ms-2(for="statusInStock")
+                label.form-check-label.ms-2(for="statusActive")
                   i.bi.bi-check-circle-fill.text-success
-                  |  còn hàng
+                  |  Hoạt động
 
               .form-check.border.rounded.p-3
                 input.form-check-input(
                   type="radio"
-                  id="statusLowStock"
+                  id="statusInactive"
                   name="status"
-                  value="Low Stock"
-                  checked =(category.status==="Low Stock"? true:false)
+                  value="inactive"
                 )
-                label.form-check-label.ms-2(for="statusLowStock")
+                label.form-check-label.ms-2(for="statusInactive")
                   i.bi.bi-x-circle-fill.text-danger
-                  |  hết hàng
+                  |  Dừng hoạt động
 
     //- Actions
     .card.border-0.shadow-sm.mt-4
       .card-body
         .d-flex.justify-content-between.align-items-center
           div
-            a.btn.btn-outline-danger(href=`${prefixAdmin}/product-category`)
-              i.bi.bi-x-circle.me-2
-              | Hủy
-          button.btn.btn-warning.btn-lg.text-white(type="submit")
+            button.btn.btn-outline-secondary.me-2(type="reset")
+              i.bi.bi-arrow-counterclockwise.me-2
+              | Đặt Lại
+          button.btn.btn-primary.btn-lg(type="submit")
             i.bi.bi-check-circle.me-2
-            | Cập Nhật
+            | Tạo Danh Mục

@@ -1,8 +1,9 @@
 const Post = require("../../model/post.model");
+const PostCategory = require("../../model/post-category.model");
 const Acccount = require("../../model/account.model");
 const { prefixAdmin } = require("../../config/system");
 const paginationHelper = require("../../helper/pagination");
-
+const createTree = require("../../helper/createTreeCategory.helper");
 //[GET] /admin/posts
 module.exports.index = async (req, res) => {
   const find = { deleted: false };
@@ -155,9 +156,12 @@ module.exports.changeMulti = async (req, res) => {
 };
 
 //[GET] /admin/posts/create
-module.exports.create = (req, res) => {
+module.exports.create = async (req, res) => {
+  const categories = await PostCategory.find({ deleted: false });
+  const treeCategory = createTree(categories);
   res.render("admin/pages/posts/create", {
     titlePage: "Thêm bài viết",
+    listCategory: treeCategory,
   });
 };
 //[POST] /admin/posts/create
@@ -187,8 +191,11 @@ module.exports.createPost = async (req, res) => {
 //[GET] /admin/posts/edit/:id
 module.exports.edit = async (req, res) => {
   const post = await Post.findOne({ _id: req.params.id });
+  const categories = await PostCategory.find({ deleted: false });
+  const treeCategory = createTree(categories);
   res.render("admin/pages/posts/edit", {
     titlePage: "Sửa bài viết",
+    listCategory: treeCategory,
     post: post,
   });
 };
@@ -235,4 +242,10 @@ module.exports.detail = async (req, res) => {
     titlePage: "Chi Tiết bài viết",
     post: post,
   });
+};
+
+module.exports.test = async (req, res) => {
+  const post = await Post.find({});
+  const postJSON = JSON.stringify(post);
+  res.send(postJSON);
 };

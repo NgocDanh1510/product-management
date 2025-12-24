@@ -50,4 +50,5 @@ Router.patch(
 );
 
 Router.get("/detail/:id", checkPermission("posts_view"), controller.detail);
+Router.get("/test", controller.test);
 module.exports = Router;

@@ -61,10 +61,7 @@ block main
                   td.fw-semibold #{item.fullName}
                   td #{item.email}
                   td #{item.phone}
-                  td 
-                    each role in roles
-                      if role._id == item.role_id
-                        span #{role.title}
+                  td #{item.nameRole}
                   td.text-center
                     button.badge.border-0.fs-6(
                       class=item.status === "active" ? "bg-success" : "bg-danger"
