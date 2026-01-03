@@ -1,0 +1,123 @@
+.order-detail-header {
+  background: linear-gradient(
+    135deg,
+    var(--red-main) 0%,
+    var(--red-hover) 100%
+  );
+  color: white;
+  padding: 2rem 0;
+  margin-bottom: 2rem;
+}
+
+.status-timeline {
+  position: relative;
+  padding: 2rem 0;
+}
+
+.timeline-step {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 1rem 0;
+}
+
+.timeline-step::before {
+  content: "";
+  position: absolute;
+  left: 20px;
+  top: 50px;
+  width: 3px;
+  height: calc(100% - 20px);
+  background: var(--border-color);
+}
+
+.timeline-step:last-child::before {
+  display: none;
+}
+
+.timeline-step.active .timeline-icon {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  color: white;
+  border-color: #28a745;
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+.timeline-step.active::before {
+  background: #28a745;
+}
+
+.timeline-icon {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background: white;
+  border: 3px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 1.5rem;
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+  transition: var(--transition-base);
+}
+
+.timeline-content {
+  flex-grow: 1;
+  padding: 0.5rem;
+}
+
+.info-card {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid var(--border-color);
+}
+
+.product-item {
+  display: flex;
+  padding: 1rem;
+  border-bottom: 1px solid var(--bg-light);
+}
+
+.product-item:last-child {
+  border-bottom: none;
+}
+
+.product-item img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-right: 1rem;
+}
+
+.btn-back {
+  color: var(--red-main);
+  border: 2px solid var(--red-main);
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  transition: var(--transition-base);
+  text-decoration: none;
+}
+
+.btn-back:hover {
+  background: var(--red-main);
+  color: white;
+}
+
+.btn-cancel {
+  background: var(--red-main);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  transition: var(--transition-base);
+}
+
+.btn-cancel:hover {
+  background: var(--red-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px var(--red-light);
+}

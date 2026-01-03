@@ -1,0 +1,111 @@
+.success-container {
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.success-card {
+  background: white;
+  border-radius: 12px;
+  padding: 3rem;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+}
+
+.success-icon {
+  width: 100px;
+  height: 100px;
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 2rem;
+  animation: scaleIn 0.5s ease;
+}
+
+.success-icon i {
+  font-size: 3rem;
+  color: white;
+}
+
+@keyframes scaleIn {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.order-code {
+  background: var(--bg-light);
+  border: 2px dashed var(--border-color);
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 2rem 0;
+}
+
+.order-code strong {
+  color: var(--red-main);
+  font-size: 1.5rem;
+}
+
+.btn-detail {
+  background: var(--red-main);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: var(--transition-base);
+  text-decoration: none;
+  display: inline-block;
+}
+
+.btn-detail:hover {
+  background: var(--red-hover);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px var(--red-light);
+}
+
+.btn-home {
+  color: var(--red-main);
+  border: 2px solid var(--red-main);
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  transition: var(--transition-base);
+  text-decoration: none;
+  display: inline-block;
+  margin-left: 1rem;
+}
+
+.btn-home:hover {
+  background: var(--red-main);
+  color: white;
+}
+
+.info-box {
+  background: var(--bg-light);
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-top: 2rem;
+  text-align: left;
+}
+
+.info-box .info-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.info-box .info-item:last-child {
+  border-bottom: none;
+}

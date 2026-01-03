@@ -1,0 +1,234 @@
+extends ../../layout/default.pug
+
+block css 
+  link(rel="stylesheet", href="/css/pages/checkout.css")
+
+block main
+  //- Header
+  .checkout-header
+    .container
+      h1.mb-2
+        i.bi.bi-credit-card.me-3
+        | Thanh Toán
+      p.mb-0.opacity-75 Hoàn tất đơn hàng của bạn
+
+  .container.pb-5
+    //- Steps
+    .checkout-steps
+      .step.active
+        .step-number 1
+        span Giỏ hàng
+      .step-divider
+      .step.active
+        .step-number 2
+        span Thông tin
+      .step-divider
+      .step
+        .step-number 3
+        span Hoàn tất
+
+    form(action="/checkout/order" method="POST" id="checkoutForm")
+      .row
+        //- Left Column - Forms
+        .col-lg-7
+          //- Shipping Info
+          .checkout-card
+            h5
+              i.bi.bi-truck.me-2
+              | Thông Tin Giao Hàng
+            
+            .row
+              .col-md-6.mb-3
+                label.form-label.fw-semibold(for="fullName")
+                  | Họ và tên
+                  span.text-danger *
+                input.form-control(
+                  type="text"
+                  id="fullName"
+                  name="fullName"
+                  placeholder="Nguyễn Văn A"
+                  required
+                )
+              
+              .col-md-6.mb-3
+                label.form-label.fw-semibold(for="phone")
+                  | Số điện thoại
+                  span.text-danger *
+                input.form-control(
+                  type="tel"
+                  id="phone"
+                  name="phone"
+                  placeholder="0987654321"
+                  required
+                )
+            
+            .mb-3
+              label.form-label.fw-semibold(for="email")
+                | Email
+              input.form-control(
+                type="email"
+                id="email"
+                name="email"
+                placeholder="email@example.com"
+              )
+            
+            .mb-3
+              label.form-label.fw-semibold(for="address")
+                | Địa chỉ
+                span.text-danger *
+              input.form-control(
+                type="text"
+                id="address"
+                name="address"
+                placeholder="Số nhà, tên đường..."
+                required
+              )
+            
+            //- .row
+            //-   .col-md-4.mb-3
+            //-     label.form-label.fw-semibold(for="city")
+            //-       | Tỉnh/Thành phố
+            //-       span.text-danger *
+            //-     select.form-select(id="city" name="city" required)
+            //-       option(value="" selected) Chọn tỉnh/thành
+            //-       option(value="Hồ Chí Minh") TP. Hồ Chí Minh
+            //-       option(value="Hà Nội") Hà Nội
+            //-       option(value="Đà Nẵng") Đà Nẵng
+              
+            //-   .col-md-4.mb-3
+            //-     label.form-label.fw-semibold(for="district")
+            //-       | Quận/Huyện
+            //-       span.text-danger *
+            //-     select.form-select(id="district" name="district" required)
+            //-       option(value="" selected) Chọn quận/huyện
+              
+            //-   .col-md-4.mb-3
+            //-     label.form-label.fw-semibold(for="ward")
+            //-       | Phường/Xã
+            //-       span.text-danger *
+            //-     select.form-select(id="ward" name="ward" required)
+            //-       option(value="" selected) Chọn phường/xã
+
+            .mb-3
+              label.form-label.fw-semibold(for="note") Ghi chú đơn hàng
+              textarea.form-control(
+                id="note"
+                name="note"
+                rows="3"
+                placeholder="Ghi chú thêm về đơn hàng (tùy chọn)..."
+              )
+
+          //- Payment Method
+          .checkout-card
+            h5
+              i.bi.bi-wallet2.me-2
+              | Phương Thức Thanh Toán
+            
+            .payment-method
+              .form-check
+                input.form-check-input(
+                  type="radio"
+                  name="paymentMethod"
+                  id="cod"
+                  value="cod"
+                  checked
+                )
+                label.form-check-label.w-100(for="cod")
+                  .d-flex.justify-content-between.align-items-center
+                    div
+                      i.bi.bi-cash-coin.me-2.fs-5.text-success
+                      strong Thanh toán khi nhận hàng (COD)
+                    i.bi.bi-chevron-right
+                  small.text-muted.d-block.mt-2 Thanh toán bằng tiền mặt khi nhận hàng
+            
+            .payment-method
+              .form-check
+                input.form-check-input(
+                  type="radio"
+                  name="paymentMethod"
+                  id="bank"
+                  value="bank"
+                )
+                label.form-check-label.w-100(for="bank")
+                  .d-flex.justify-content-between.align-items-center
+                    div
+                      i.bi.bi-bank.me-2.fs-5.text-primary
+                      strong Chuyển khoản ngân hàng
+                    i.bi.bi-chevron-right
+                  small.text-muted.d-block.mt-2 Chuyển khoản qua Internet Banking
+            
+            .payment-method
+              .form-check
+                input.form-check-input(
+                  type="radio"
+                  name="paymentMethod"
+                  id="momo"
+                  value="momo"
+                )
+                label.form-check-label.w-100(for="momo")
+                  .d-flex.justify-content-between.align-items-center
+                    div
+                      i.bi.bi-phone.me-2.fs-5.text-danger
+                      strong Ví điện tử MoMo
+                    i.bi.bi-chevron-right
+                  small.text-muted.d-block.mt-2 Thanh toán qua ví MoMo
+
+        //- Right Column - Order Summary
+        .col-lg-5
+          .order-summary
+            h5.mb-3
+              i.bi.bi-receipt.me-2
+              | Đơn Hàng Của Bạn
+            
+            //- Order Items
+            .mb-3
+              each item in cart.products
+                .order-item
+                  if item.thumbnail
+                    img(src=item.thumbnail alt=item.title)
+                  else
+                    .bg-light.d-flex.align-items-center.justify-content-center(
+                      style="width: 60px; height: 60px; border-radius: 6px;"
+                    )
+                      i.bi.bi-image.text-muted
+                  div.flex-grow-1
+                    .fw-semibold.mb-1= item.title
+                    .text-muted.small x#{item.quantity}
+                  .text-end
+                    .fw-bold= item.totalPrice.toLocaleString('vi-VN') + '$'
+            
+            //- Summary
+            .summary-row
+              span Tạm tính:
+              span.fw-bold= cart.totalPrice.toLocaleString('vi-VN') + '$'
+            
+            if cart.totalDiscount > 0
+              .summary-row
+                span Giảm giá:
+                span.text-danger.fw-bold -#{cart.totalDiscount.toLocaleString('vi-VN')}$
+            
+            .summary-row
+              span Phí vận chuyển:
+              span.text-success.fw-bold Miễn phí
+            
+            .summary-row.border-0.mb-3
+              span.fs-5 Tổng cộng:
+              span.summary-total= cart.totalPriceNew.toLocaleString('vi-VN') + '$'
+            
+            //- Place Order Button
+            button.btn-place-order(type="submit")
+              i.bi.bi-check-circle.me-2
+              | Đặt Hàng
+            
+            .mt-3.text-center
+              small.text-muted
+                i.bi.bi-shield-check.me-1
+                | Thông tin của bạn được bảo mật
+            
+            //- Back to Cart
+            .mt-3.text-center
+              a.text-decoration-none(href="/cart" style="color: var(--red-main)")
+                i.bi.bi-arrow-left.me-1
+                | Quay lại giỏ hàng
+
+  script(src="/js/checkout.js")

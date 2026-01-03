@@ -1,51 +1,146 @@
 include ../mixins/sub-menu
 
-Header
+header.header
   .inner-header.border-bottom.py-3
     .container
       .row.align-items-center
-        .col-2
-          a.inner-logo(href=`/`) 
+        //- CỘT 1: LOGO
+        .col-lg-2.col-md-3.col-4
+          a.inner-logo(href="/") 
             img(
               src="https://res.cloudinary.com/dygsbwyjo/image/upload/v1765963478/Gemini_Generated_Image_po5ntrpo5ntrpo5n_k01pti.png"
-              alt="logo"
-              style="max-width:140px"
+              alt="Mega Mart"
+              style="max-width: 140px; height: auto;"
             )
-        .col-4
-            form.d-flex.m-0(
-              action=``
-              form-search
+
+        //- CỘT 2: TÌM KIẾM
+        .col-lg-4.col-md-5.col-8
+          form.d-flex.m-0(
+            action="/search"
+            method="GET"
+          )
+            input.form-control.me-2.search-input(
+              type="text"
+              name="keyword"
+              placeholder="Tìm kiếm sản phẩm, danh mục..."
+              aria-label="Search"
+              value=keyword || ""
             )
-              input.form-control.me-2.search-input(
-                type="search"
-                name="keyword"
-                placeholder="Tìm kiếm..."
-                aria-label="Search"
-              )
-              button.btn.btn-search(type="submit") 
-                i.bi.bi-search
-        .col-5
-          nav.inner-menu.d-flex.justify-content-evenly.align-items-center.gap-3
+            button.btn.btn-search(type="submit") 
+              i.bi.bi-search
 
-            ul.nav.align-items-center.g-2
-              li.nav-item
-                a.nav-link(href=`/`) Trang Chủ
-
-              li.nav-item.menu-item
-                a.nav-link.d-inline(href=`/products`) Sản Phẩm
+        //- CỘT 3: MENU + USER
+        .col-lg-6.col-md-4.d-none.d-md-block
+          nav.inner-menu.d-flex.justify-content-center.align-items-center
+            ul.nav.align-items-center.mb-0
+              li.nav-item.menu-item.position-relative
+                a.nav-link(href="/products") 
+                  i.bi.bi-grid.me-1
+                  | Sản Phẩm
                   i.bi.bi-chevron-down.ms-1
-                +sub-menu(treeCategory, `/products`)
+                if treeCategory
+                  +sub-menu(treeCategory, "/products")
 
               li.nav-item
-                a.nav-link(href=`/posts`) Tin tức
+                a.nav-link(href="/posts") 
+                  i.bi.bi-newspaper.me-1
+                  | Tin tức
 
               li.nav-item
-                a.nav-link(href=`/contact`) Liên hệ
+                a.nav-link(href="/contact") 
+                  i.bi.bi-envelope.me-1
+                  | Liên hệ
 
-              li.nav-item
-                a.nav-link.fs-3(href=`/cart`) 
-                  i.bi.bi-cart2 
-                  span.fs-5 (#{cart.products.length})
-            
+              //- GIỎ HÀNG
+              li.nav-item.ms-2
+                a.nav-link.position-relative(href="/cart") 
+                  i.bi.bi-cart3.fs-5
+                  if cartTotalProduct && cartTotalProduct > 0
+                    span.position-absolute.top-0.start-100.translate-middle.badge.rounded-pill.bg-danger= cartTotalProduct
+              
+              //- PHẦN TÀI KHOẢN
+              if user
+                //- Đã đăng nhập: Hiển thị Dropdown
+                li.nav-item.dropdown.ms-2
+                  a.nav-link.dropdown-toggle.d-flex.align-items-center(
+                    href="#"
+                    role="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  )
+                    if user.avatar
+                      img.rounded-circle.me-2(
+                        src=user.avatar
+                        alt=user.fullName
+                        style="width: 32px; height: 32px; object-fit: cover; border: 2px solid var(--red-main);"
+                      )
+                    else
+                      i.bi.bi-person-circle.fs-4.me-2
+                    span.d-none.d-lg-inline= user.fullName
+                  
+                  ul.dropdown-menu.dropdown-menu-end.shadow
+                    li
+                      .dropdown-header
+                        strong= user.fullName
+                        br
+                        small.text-muted= user.email
+                    li
+                      hr.dropdown-divider
+                    li
+                      a.dropdown-item(href="/user/info") 
+                        i.bi.bi-person.me-2
+                        | Thông tin cá nhân
+                    li
+                      a.dropdown-item(href="/user/orders") 
+                        i.bi.bi-clock-history.me-2
+                        | Lịch sử mua hàng
+                    li
+                      a.dropdown-item(href="/user/wishlist") 
+                        i.bi.bi-heart.me-2
+                        | Sản phẩm yêu thích
+                    li
+                      hr.dropdown-divider
+                    li
+                      a.dropdown-item.text-danger(href="/user/logout") 
+                        i.bi.bi-box-arrow-right.me-2
+                        | Đăng xuất
+              else
+                //- Chưa đăng nhập
+                li.nav-item.ms-5
+                  a.btn.btn-outline-danger.btn-sm.px-3(href="/user/login") 
+                    i.bi.bi-box-arrow-in-right.me-2
+                    | Đăng nhập
 
-
+  //- MOBILE MENU (Hiển thị trên màn hình nhỏ)
+  .mobile-menu.d-md-none.border-top.py-2
+    .container
+      .d-flex.justify-content-around.align-items-center
+        //- a.text-decoration-none.text-center(href="/")
+        //-   i.bi.bi-house-door.fs-4.d-block.text-dark
+        //-   small Trang chủ
+        
+        a.text-decoration-none.text-center(href="/products")
+          i.bi.bi-grid.fs-4.d-block.text-dark
+          small Sản phẩm
+        
+        a.text-decoration-none.text-center.position-relative(href="/cart")
+          i.bi.bi-cart3.fs-4.d-block.text-dark
+          if cartTotalProduct && cartTotalProduct > 0
+            span.position-absolute.top-0.start-50.translate-middle.badge.rounded-pill.bg-danger(style="font-size: 0.6rem;")= cartTotalProduct
+          small Giỏ hàng
+        
+        if user
+          a.text-decoration-none.text-center(href="/user/info")
+            if user.avatar
+              img.rounded-circle.d-block.mx-auto.mb-1(
+                src=user.avatar
+                alt=user.fullName
+                style="width: 24px; height: 24px; object-fit: cover;"
+              )
+            else
+              i.bi.bi-person-circle.fs-4.d-block.text-dark
+            small Tài khoản
+        else
+          a.text-decoration-none.text-center(href="/user/login")
+            i.bi.bi-box-arrow-in-right.fs-4.d-block.text-dark
+            small Đăng nhập

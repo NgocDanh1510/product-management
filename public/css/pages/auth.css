@@ -1,0 +1,27 @@
+.login-container {
+  max-width: 450px;
+  margin: 0 auto;
+}
+.btn-brand {
+  background-color: var(--red-main);
+  color: white;
+  border: none;
+}
+.btn-brand:hover {
+  background-color: var(--red-hover);
+  color: white;
+}
+a {
+  color: var(--red-main);
+  text-decoration: none;
+}
+a:hover {
+  color: var(--red-hover);
+}
+.text-main-red {
+  color: var(--red-main);
+}
+.register-container {
+  max-width: 550px;
+  margin: 0 auto;
+}

@@ -33,7 +33,9 @@ module.exports.loginPost = async (req, res) => {
     req.flash("error", "tài khoản đã bị khóa!");
     return res.redirect(req.get("Referrer"));
   }
-  res.cookie("token", user.token);
+  res.cookie("token", user.token, {
+    expires: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
+  });
   res.redirect(`${systemConfig.prefixAdmin}/dashboard`);
 };
 

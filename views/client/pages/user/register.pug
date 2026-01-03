@@ -1,0 +1,84 @@
+extends ../../layout/default.pug
+
+block css
+  link(rel="stylesheet", href="/css/pages/auth.css")
+
+block main
+  .container.py-5
+    .register-container
+      .mb-3
+        a.text-muted.small(href="/") 
+          i.bi.bi-arrow-left.me-1
+          | Quay lại trang chủ
+
+      .card.shadow-sm.border-0
+        if messages.success
+          .alert.alert-success.small.py-5.text-center.fs-2.mb-3 
+            i.bi.bi-check2-circle.me-2
+            span #{messages.success}!
+          a.btn.btn-outline-danger(href=`/user/login`)
+            | Chuyển đến đăng nhập
+            i.bi.bi-arrow-right.ms-2
+        else
+          .card-body.p-4
+            .text-center.mb-4
+              h3.fw-bold.text-uppercase Đăng Ký
+              p.text-muted.small Tạo tài khoản để mua hàng nhanh hơn
+
+            form(action="/user/register", method="POST")
+              
+              //- Họ tên
+              .mb-3
+                label.form-label(for="fullName") Họ và tên
+                input#fullName.form-control(
+                  type="text", 
+                  name="fullName", 
+                  required
+                )
+
+              //- Email
+              .mb-3
+                label.form-label(for="email") Email
+                input#email.form-control(
+                  type="email", 
+                  name="email", 
+                  placeholder="email@example.com", 
+                  required
+                )
+
+              //- Mật khẩu & Confirm (2 cột)
+              .row
+                .col-md-6.mb-3
+                  label.form-label(for="password") Mật khẩu
+                  input#password.form-control(
+                    type="password", 
+                    name="password", 
+                    required,
+                    minlength="6"
+                  )
+                
+                .col-md-6.mb-3
+                  label.form-label(for="confirmPassword") Nhập lại
+                  input#confirmPassword.form-control(
+                    type="password", 
+                    name="confirmPassword", 
+                    required,
+                    minlength="6"
+                  )
+              if messages.error 
+                .mb-3 
+                  .text-main-red *#{messages.error}
+
+
+              .form-check.mb-4
+                input#policy.form-check-input(type="checkbox", required)
+                label.form-check-label.small(for="policy")
+                  | Tôi đồng ý với 
+                  a(href="#") Điều khoản dịch vụ
+                  |  của cửa hàng.
+
+              button.btn.btn-brand.w-100.py-2.fw-bold(type="submit") ĐĂNG KÝ
+
+            .card-footer.bg-white.border-0.text-center.py-3
+              p.mb-0.small Đã có tài khoản? 
+                a.fw-bold(href="/user/login") Đăng nhập ngay

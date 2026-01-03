@@ -1,0 +1,71 @@
+extends ../../layout/default.pug
+
+block css
+  link(rel="stylesheet", href="/css/pages/auth.css")
+
+block main
+  .bg-light
+    .container.py-5
+      .login-container
+        //- Breadcrumb nhỏ để quay về trang chủ
+        .mb-3
+          a.text-muted.small(href="/") 
+            i.bi.bi-arrow-left.me-1
+            | Quay lại trang chủ
+
+        .card.shadow-sm.border-0
+          .card-body.p-4
+            .text-center.mb-4
+              h3.fw-bold.text-uppercase Đăng Nhập
+              p.text-muted.small Xin chào, vui lòng nhập thông tin
+
+            //- Thông báo lỗi/thành công
+            if messages.error
+              .alert.alert-danger.small.p-2.text-center #{messages.error}
+
+            form(action="/user/login", method="POST")
+              .mb-3
+                label.form-label(for="email") Email
+                .input-group
+                  span.input-group-text.bg-white.text-muted
+                    i.bi.bi-envelope
+                  input#email.form-control(
+                    type="email", 
+                    name="email", 
+                    placeholder="email@example.com", 
+                    required
+                  )
+
+              .mb-3
+                label.form-label(for="password") Mật khẩu
+                .input-group
+                  span.input-group-text.bg-white.text-muted
+                    i.bi.bi-lock
+                  input#password.form-control(
+                    type="password", 
+                    name="password", 
+                    placeholder="******", 
+                    required
+                  )
+              .d-flex.justify-content-between.mb-4
+                div.form-check
+                  input#remember.form-check-input(type="checkbox")
+                  label.form-check-label.small(for="remember") Ghi nhớ
+                a.small(href="/user/password/forgot") Quên mật khẩu?
+
+              button.btn.btn-brand.w-100.py-2.fw-bold.mb-3(type="submit") ĐĂNG NHẬP
+
+              //- Social login (Optional - Ví dụ placeholder)
+              //- .text-center.mb-3
+              //-   span.text-muted.small hoặc đăng nhập bằng
+              //-   .d-flex.justify-content-center.gap-2.mt-2
+              //-     button.btn.btn-outline-secondary.btn-sm(type="button")
+              //-       i.bi.bi-google.me-1
+              //-       | Google
+              //-     button.btn.btn-outline-secondary.btn-sm(type="button")
+              //-       i.bi.bi-facebook.me-1
+              //-       | Facebook
+
+            .card-footer.bg-white.border-0.text-center.py-3
+              p.mb-0.small Bạn chưa có tài khoản? 
+                a.fw-bold(href="/user/register") Đăng ký ngay

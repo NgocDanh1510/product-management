@@ -2,19 +2,215 @@ extends ../../layout/default
 include ../../mixins/box-head.pug
 include ../../mixins/list-product.pug
 
+block css
+  link(rel="stylesheet", href="/css/pages/product.css")
+
 block main
-  .inner-main.bg-light.py-5
-    .container 
+  .inner-main.bg-light.py-4
+    .container
       +box-head("Danh Sách Sản Phẩm")
       
-      +list-product(listProduct)
+      .row.g-4
+        //- BỘ LỌC BÊN TRÁI
+        .col-lg-3.col-md-12
+          .filter-sidebar
+            //- Lọc theo danh mục
+            .card.filter-card.shadow-sm
+              .card-body
+                h5.filter-title
+                  i.bi.bi-grid.me-2
+                  | Danh mục
+                
+                each category in categories
+                  .form-check.mb-2
+                    input.form-check-input(
+                      type="checkbox"
+                      id=`category-${category._id}`
+                      name="category"
+                      value=category.slug
+                      checked=selectedCategory === category.slug
+                    )
+                    label.form-check-label(for=`category-${category._id}`)= category.title
+            
+            //- Lọc theo khoảng giá
+            .card.filter-card.shadow-sm
+              .card-body
+                h5.filter-title
+                  i.bi.bi-currency-dollar.me-2
+                  | Khoảng giá
+                
+                .mb-3
+                  label.form-label.small Giá tối thiểu
+                  input.form-control.price-range-input(
+                    type="number"
+                    name="minPrice"
+                    placeholder=defaultPriceMin
+                    min=0
+                    value=filters.minPrice || defaultPriceMin
+                  )
+                
+                .mb-3
+                  label.form-label.small Giá tối đa
+                  input.form-control.price-range-input(
+                    type="number"
+                    name="maxPrice"
+                    placeholder=defaultPriceMax
+                    min=0
+                    value=filters.maxPrice || defaultPriceMax
+                  )
+                
+                button.btn.btn-primary.w-100(type="button" onclick="applyPriceFilter()")
+                  i.bi.bi-funnel.me-2
+                  | Áp dụng
+            
+            //- Lọc theo đánh giá
+            //- .card.filter-card.shadow-sm
+            //-   .card-body
+            //-     h5.filter-title
+            //-       i.bi.bi-star.me-2
+            //-       | Đánh giá
+                
+            //-     each rating in [5, 4, 3, 2, 1]
+            //-       .form-check.mb-2
+            //-         input.form-check-input(
+            //-           type="radio"
+            //-           name="rating"
+            //-           id=`rating-${rating}`
+            //-           value=rating
+            //-           checked=filters.rating == rating
+            //-         )
+            //-         label.form-check-label(for=`rating-${rating}`)
+            //-           - for (var i = 0; i < rating; i++)
+            //-             i.bi.bi-star-fill.text-warning
+            //-           - for (var i = rating; i < 5; i++)
+            //-             i.bi.bi-star.text-warning
+            //-           span.ms-2.small= `${rating} sao trở lên`
+            
+            //- Nút xóa bộ lọc
+            .card.filter-card.shadow-sm
+              .card-body.text-center
+                a.btn.btn-outline-danger.w-100(href="/products")
+                  i.bi.bi-x-circle.me-2
+                  | Xóa tất cả bộ lọc
 
-      //- Empty State
-      if !listProduct || listProduct.length === 0
-        .text-center.py-5
-          i.bi.bi-box-seam.fs-1.text-muted.d-block.mb-3
-          h5.text-muted Không có sản phẩm nào
-          p.text-muted.small Vui lòng quay lại sau
+        //- SẢN PHẨM Ở GIỮA
+        .col-lg-6.col-md-12
+          .product-section
+            //- Thanh sắp xếp
+            .sort-bar.d-flex.justify-content-between.align-items-center.flex-wrap.gap-3
+              .d-flex.align-items-center
+                i.bi.bi-funnel-fill.text-primary.me-2
+                span.fw-semibold Tìm thấy #{totalProducts || 0} sản phẩm
+              
+              .d-flex.align-items-center.gap-2
+                label.mb-0.text-muted.small Sắp xếp:
+                select.form-select.form-select-sm.sort-select(onchange="sortProducts(this.value)")
+                  option(value="default" selected=sortBy === "default") Mặc định
+                  option(value="price-asc" selected=sortBy === "price-asc") Giá: Thấp đến cao
+                  option(value="price-desc" selected=sortBy === "price-desc") Giá: Cao đến thấp
+                  //- option(value="newest" selected=sortBy === "newest") Mới nhất
+                  //- option(value="popular" selected=sortBy === "popular") Phổ biến nhất
+            
+            //- Danh sách sản phẩm
+            if listProduct && listProduct.length > 0
+              +list-product(listProduct)
+              
+              //- Pagination
+              if pagination && pagination.totalPages > 1
+                nav.mt-4(aria-label="Product pagination")
+                  ul.pagination.justify-content-center
+                    if pagination.currentPage > 1
+                      li.page-item
+                        a.page-link(href=`?page=${pagination.currentPage - 1}${queryString}`)
+                          i.bi.bi-chevron-left
+                    
+                    - for (var i = 1; i <= pagination.totalPages; i++)
+                      li.page-item(class=i === pagination.currentPage ? 'active' : '')
+                        a.page-link(href=`?page=${i}${queryString}`)= i
+                    
+                    if pagination.currentPage < pagination.totalPages
+                      li.page-item
+                        a.page-link(href=`?page=${pagination.currentPage + 1}${queryString}`)
+                          i.bi.bi-chevron-right
+            else
+              //- Empty State
+              .text-center.py-5
+                i.bi.bi-box-seam.display-1.text-muted.d-block.mb-3
+                h5.text-muted Không tìm thấy sản phẩm
+                p.text-muted.small Vui lòng thử lại với bộ lọc khác
+                a.btn.btn-primary.mt-3(href="/products")
+                  i.bi.bi-arrow-clockwise.me-2
+                  | Xem tất cả sản phẩm
 
+        //- TIN TỨC BÊN PHẢI
+        .col-lg-3.col-md-12
+          .news-sidebar
+            .card.shadow-sm.border-0
+              .card-body
+                h5.filter-title.mb-3
+                  i.bi.bi-newspaper.me-2
+                  | Tin tức mới nhất
+                
+                if articles && articles.length > 0
+                  each article in articles
+                    a.news-item.d-block.text-decoration-none(href=`/blog/${article.slug}`)
+                      .d-flex.gap-3
+                        img(src=article.thumbnail  alt=article.title)
+                        div.flex-grow-1
+                          h6.text-dark= article.title
+                          .news-meta
+                            i.bi.bi-calendar3.me-1
+                            span  #{new Date(article.createdAt).toLocaleDateString("vi-VN")} 
+                else
+                  .text-center.text-muted.py-4
+                    i.bi.bi-newspaper.fs-3.d-block.mb-2
+                    small Chưa có tin tức
+            
+            //- Banner quảng cáo (optional)
+            .card.shadow-sm.border-0.mt-3
+              img.card-img-top(src="/images/banner-sidebar.jpg" alt="Banner quảng cáo")
+              .card-body.text-center
+                h6 Ưu đãi đặc biệt!
+                p.small.text-muted Giảm giá lên đến 50% cho khách hàng mới
+                a.btn.btn-sm.btn-primary(href="/promotions") Xem ngay
 
-
+  //- JavaScript cho bộ lọc
+  script.
+    function applyPriceFilter() {
+      const minPrice = document.querySelector('input[name="minPrice"]').value;
+      const maxPrice = document.querySelector('input[name="maxPrice"]').value;
+      const url = new URL(window.location.href);
+      
+      if (minPrice) url.searchParams.set('minPrice', minPrice);
+      if (maxPrice) url.searchParams.set('maxPrice', maxPrice);
+      
+      window.location.href = url.toString();
+    }
+    
+    function sortProducts(sortBy) {
+      const url = new URL(window.location.href);
+      url.searchParams.set('sortBy', sortBy);
+      window.location.href = url.toString();
+    }
+    
+    // Xử lý checkbox category
+    document.querySelectorAll('input[name="category"]').forEach(checkbox => {
+      checkbox.addEventListener('change', function() {
+        const url = new URL(window.location.href);
+        if (this.checked) {
+          url.searchParams.set('category', this.value);
+        } else {
+          url.searchParams.delete('category');
+        }
+        window.location.href = url.toString();
+      });
+    });
+    
+    // Xử lý radio rating
+    document.querySelectorAll('input[name="rating"]').forEach(radio => {
+      radio.addEventListener('change', function() {
+        const url = new URL(window.location.href);
+        url.searchParams.set('rating', this.value);
+        window.location.href = url.toString();
+      });
+    });

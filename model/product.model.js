@@ -12,6 +12,10 @@ const productSchema = new mongoose.Schema(
     thumbnail: String,
     availabilityStatus: String,
     position: Number,
+    isFeatured: {
+      type: Boolean,
+      default: false,
+    },
     slug: {
       type: String,
       slug: "title",

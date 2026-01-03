@@ -102,7 +102,7 @@ block main
               span.fs-5 Tổng cộng:
               span.summary-total= cart.totalPriceNew + '$'
             
-            button.btn-checkout(type="button" onclick="checkout()")
+            a.btn.btn-checkout(href='/checkout')
               i.bi.bi-credit-card.me-2
               | Thanh Toán
             
@@ -135,7 +135,7 @@ block main
         i.bi.bi-cart-x
         h3.mb-3 Giỏ Hàng Trống
         p.text-muted.mb-4 Bạn chưa có sản phẩm nào trong giỏ hàng
-        a.btn-checkout.d-inline-block.w-auto.px-5(href="/products")
+        a.btn-checkout.d-inline-block.w-auto.px-5.nav-link(href="/products")
           i.bi.bi-shop.me-2
           | Khám Phá Sản Phẩm
 

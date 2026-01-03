@@ -1,4 +1,188 @@
-extends ../../layout/default
+extends ../../layout/default.pug
+include ../../mixins/list-product.pug
+block css
+  link(rel="stylesheet", href="/css/pages/home.css")
 
 block main
-  h3 trang chu
+  //- HERO BANNER - Full Width
+  section.hero-banner
+    img.hero-banner-img(src=hero.image alt='Mega Mart Banner')
+    .hero-overlay
+      .hero-content
+        h1= hero.title
+        p= hero.description
+        .d-flex.gap-3.flex-wrap
+          a.btn.btn-primary.btn-lg(href='/products')
+            i.bi.bi-search.me-2
+            | Khám phá ngay
+          a.btn.btn-outline-light.btn-lg(href='#categories')
+            i.bi.bi-grid.me-2
+            | Danh mục
+
+  //- FEATURES SECTION
+  section.py-5.bg-light
+    .container
+      .row.g-4
+        each feature in features
+          .col-md-4
+            .card.feature-card.h-100.shadow-sm.text-center.p-4
+              .display-4.text-primary.mb-3
+                i(class=`bi ${feature.icon}`)
+              h5.mb-3= feature.title
+              p.text-muted.mb-0= feature.description
+
+  //- CATEGORIES SECTION
+  section#categories.py-5
+    .container
+      h2.text-center.section-title
+        | Danh mục nổi bật
+      .row.g-4
+        each category in categories
+          .col-lg-3.col-md-4.col-sm-6
+            a.text-decoration-none(href=`/products?category=${category.slug}`)
+              .card.category-card.h-100.shadow-sm
+                if category.thumbnail
+                  .overflow-hidden.position-relative
+                    img.card-img-top(src=category.thumbnail alt=category.title)
+                    .position-absolute.top-0.end-0.m-2
+                      if category.isFeatured
+                        span.badge.bg-danger
+                          i.bi.bi-star-fill.me-1
+                          | Nổi bật
+                .card-body.text-center
+                  h5.card-title.mb-2.text-dark= category.title
+                  if category.description
+                    p.text-muted.small.mb-3= category.description
+                  .d-flex.justify-content-center.align-items-center.gap-2
+                    span.text-primary.fw-semibold Xem thêm
+                    i.bi.bi-arrow-right      
+
+
+  //- PRODUCTS SECTION
+  section.py-5.bg-light
+    .container
+      .d-flex.justify-content-between.align-items-center.mb-5
+        h2.mb-0
+          i.bi.bi-box-seam.text-primary.me-2
+          | Sản phẩm nổi bật
+        a.btn.btn-outline-primary(href='/products')
+          | Xem tất cả
+          i.bi.bi-arrow-right.ms-2
+      
+      +list-product(products)
+
+  //- NEWS/BLOG SECTION
+  section.py-5
+    .container
+      h2.text-center.section-title.mb-5
+        | Tin tức & Blog
+      
+      .row.g-4
+        each article in articles
+          .col-lg-4.col-md-6
+            .card.news-card.h-100.shadow-sm
+              .overflow-hidden
+                img.card-img-top(src=article.image alt=article.title)
+              .card-body
+                .news-meta.mb-3
+                  i.bi.bi-calendar3.me-2
+                  span= article.date
+                  span.mx-2 |
+                  i.bi.bi-person.me-2
+                  span= article.author
+                h5.card-title
+                  a.text-decoration-none.text-dark(href=`/blog/${article.slug}`)= article.title
+                p.card-text.text-muted= article.excerpt
+              .card-footer.bg-white.border-0
+                a.text-primary.text-decoration-none.fw-semibold(href=`/blog/${article.slug}`)
+                  | Đọc thêm
+                  i.bi.bi-arrow-right.ms-2
+
+  //- TESTIMONIALS SECTION
+  section.py-5.bg-light
+    .container
+      h2.text-center.section-title
+        | Khách hàng nói gì về Mega Mart
+      
+      .row.g-4
+        each testimonial in testimonials
+          .col-md-4
+            .card.testimonial-card.h-100.shadow-sm
+              .card-body
+                .d-flex.align-items-center.mb-3
+                  img.rounded-circle.me-3(src=testimonial.avatar alt=testimonial.name width='60' height='60')
+                  div
+                    h6.mb-0.fw-bold= testimonial.name
+                    .text-warning.small
+                      - for (var i = 0; i < testimonial.rating; i++)
+                        i.bi.bi-star-fill
+                p.card-text.text-muted.fst-italic
+                  i.bi.bi-quote.text-primary.fs-4
+                  = ' ' + testimonial.comment
+
+  //- NEWSLETTER SECTION
+  section.newsletter-section
+    .container
+      .row.justify-content-center.text-center
+        .col-lg-8
+          i.bi.bi-envelope-heart.display-3.mb-3
+          h2.mb-3 Đăng ký nhận tin từ Mega Mart
+          p.mb-4 Nhận thông tin về sản phẩm mới, ưu đãi đặc biệt và nhiều hơn nữa
+          form.row.g-0.justify-content-center(method='POST' action='/newsletter/subscribe')
+            .col-md-8
+              .input-group.input-group-lg
+                input.form-control.newsletter-input(type='email' name='email' placeholder='Nhập email của bạn' required)
+                button.btn.newsletter-btn(type='submit')
+                  i.bi.bi-send-fill.me-2
+                  | Đăng ký
+
+  //- CONTACT SECTION
+  section#contact.py-5
+    .container
+      h2.text-center.section-title
+        | Liên hệ với chúng tôi
+      
+      .row.justify-content-center
+        .col-lg-8
+          .card.shadow-sm.border-0
+            .card-body.p-4
+              form(method='POST' action='/contact')
+                .row.g-3
+                  .col-md-6
+                    label.form-label(for='name')
+                      i.bi.bi-person.me-1
+                      | Họ và tên
+                    input#name.form-control(type='text' name='name' placeholder='Nhập họ tên' required)
+                  
+                  .col-md-6
+                    label.form-label(for='email')
+                      i.bi.bi-envelope.me-1
+                      | Email
+                    input#email.form-control(type='email' name='email' placeholder='Nhập email' required)
+                  
+                  .col-md-6
+                    label.form-label(for='phone')
+                      i.bi.bi-telephone.me-1
+                      | Số điện thoại
+                    input#phone.form-control(type='tel' name='phone' placeholder='Nhập số điện thoại' required)
+                  
+                  .col-md-6
+                    label.form-label(for='subject')
+                      i.bi.bi-tag.me-1
+                      | Chủ đề
+                    select#subject.form-select(name='subject' required)
+                      option(value='') Chọn chủ đề
+                      option(value='support') Hỗ trợ
+                      option(value='sales') Bán hàng
+                      option(value='other') Khác
+                  
+                  .col-12
+                    label.form-label(for='message')
+                      i.bi.bi-chat-left-text.me-1
+                      | Tin nhắn
+                    textarea#message.form-control(name='message' rows='4' placeholder='Nhập tin nhắn của bạn' required)
+                  
+                  .col-12
+                    button.btn.btn-primary.w-100(type='submit')
+                      i.bi.bi-send.me-2
+                      | Gửi tin nhắn

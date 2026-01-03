@@ -1,40 +1,210 @@
-@import url("variables.css");
-/* ======= header ======= */
+/* ======= HEADER ======= */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background-color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
 .inner-header {
   background-color: #fff;
 }
 
-/* menu link */
-.inner-menu .nav-link {
-  padding: 8px 14px;
-  font-weight: 500;
-  color: #212529;
+.inner-logo img {
+  transition: var(--transition-base);
 }
 
-.inner-menu .nav-link:hover {
-  color: var(--red-main);
+.inner-logo:hover img {
+  transform: scale(1.05);
 }
 
-/* input bootstrap */
+/* ======= SEARCH INPUT ======= */
 .search-input {
-  border-radius: 999px;
-  border-color: #ddd;
+  border-radius: 25px;
+  border: 2px solid var(--border-color);
+  padding: 10px 20px;
+  transition: var(--transition-base);
 }
 
 .search-input:focus {
   border-color: var(--red-main);
-  box-shadow: 0 0 0 0.2rem var(--red-light);
+  box-shadow: 0 0 0 0.25rem var(--red-light);
+  outline: none;
 }
 
-/* button bootstrap */
+.search-input::placeholder {
+  color: #999;
+}
+
+/* ======= SEARCH BUTTON ======= */
 .btn-search {
   background-color: var(--red-main);
   color: #fff;
-  border-radius: 999px;
-  padding: 6px 16px;
+  border: none;
+  border-radius: 25px;
+  padding: 10px 20px;
+  transition: var(--transition-base);
+  font-weight: 600;
 }
 
 .btn-search:hover {
   background-color: var(--red-hover);
   color: #fff;
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px var(--red-light);
+}
+
+/* ======= NAVIGATION MENU ======= */
+.inner-menu .nav {
+  gap: 0.25rem;
+}
+
+.inner-menu .nav-link {
+  padding: 8px 14px;
+  font-weight: 500;
+  color: var(--text-color);
+  transition: var(--transition-base);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.inner-menu .nav-link:hover {
+  color: var(--red-main);
+  background-color: var(--red-light);
+}
+
+.inner-menu .nav-link i {
+  transition: var(--transition-base);
+}
+
+.inner-menu .nav-link:hover i {
+  transform: scale(1.1);
+}
+
+/* ======= DROPDOWN MENU ======= */
+.dropdown-toggle::after {
+  display: none;
+}
+
+.dropdown-menu {
+  border: 1px solid var(--border-color);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  border-radius: 12px;
+  padding: 8px 0;
+  min-width: 240px;
+  margin-top: 0.5rem;
+}
+
+.dropdown-header {
+  padding: 12px 20px;
+  color: var(--text-color);
+}
+
+.dropdown-item {
+  padding: 10px 20px;
+  transition: var(--transition-base);
+  color: var(--text-color);
+  display: flex;
+  align-items: center;
+}
+
+.dropdown-item i {
+  width: 20px;
+  color: var(--red-main);
+}
+
+.dropdown-item:hover {
+  background-color: var(--red-light);
+  color: var(--red-main);
+  padding-left: 24px;
+}
+
+.dropdown-item.text-danger:hover {
+  background-color: rgba(220, 53, 69, 0.1);
+  color: #dc3545;
+}
+
+.dropdown-divider {
+  margin: 8px 0;
+  border-color: var(--border-color);
+}
+
+/* ======= CART BADGE ======= */
+.nav-link .badge {
+  font-size: 0.65rem;
+  padding: 3px 6px;
+  font-weight: 600;
+}
+
+/* ======= USER AVATAR ======= */
+.nav-link img.rounded-circle {
+  transition: var(--transition-base);
+}
+
+.nav-link:hover img.rounded-circle {
+  transform: scale(1.1);
+  box-shadow: 0 0 0 3px var(--red-light);
+}
+
+/* ======= MOBILE MENU ======= */
+.mobile-menu a {
+  flex: 1;
+  padding: 8px;
+  transition: var(--transition-base);
+}
+
+.mobile-menu a:hover {
+  background-color: var(--red-light);
+  border-radius: 8px;
+}
+
+.mobile-menu a i {
+  color: var(--text-color);
+  margin-bottom: 4px;
+}
+
+.mobile-menu a:hover i {
+  color: var(--red-main);
+  transform: scale(1.1);
+}
+
+.mobile-menu small {
+  font-size: 0.7rem;
+  color: var(--text-color);
+  display: block;
+}
+
+/* ======= ANIMATIONS ======= */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dropdown-menu,
+.sub-menu {
+  animation: slideDown 0.2s ease-out;
+}
+
+/* ======= BUTTON STYLES ======= */
+.btn-outline-danger {
+  border-color: var(--red-main);
+  color: var(--red-main);
+  transition: var(--transition-base);
+}
+
+.btn-outline-danger:hover {
+  background-color: var(--red-main);
+  border-color: var(--red-main);
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px var(--red-light);
 }

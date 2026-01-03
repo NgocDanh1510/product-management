@@ -1,0 +1,300 @@
+extends ../../layout/default.pug
+
+block css 
+  link(rel="stylesheet", href="/css/pages/order-detail.css")
+
+block main
+  //- Header
+  .order-detail-header
+    .container
+      .d-flex.justify-content-between.align-items-center
+        div
+          h2.mb-2
+            i.bi.bi-receipt.me-3
+            | Đơn Hàng ##{order._id}
+          p.mb-0.opacity-75
+            i.bi.bi-calendar.me-2
+            | Đặt ngày: #{new Date(order.createdAt).toLocaleString('vi-VN')}
+        div
+          if order.status === 'pending'
+            span.badge.bg-warning.fs-6.px-3.py-2
+              i.bi.bi-clock.me-1
+              | Chờ xử lý
+          else if order.status === 'confirmed'
+            span.badge.bg-info.fs-6.px-3.py-2
+              i.bi.bi-check-circle.me-1
+              | Đã xác nhận
+          else if order.status === 'shipping'
+            span.badge.bg-primary.fs-6.px-3.py-2
+              i.bi.bi-truck.me-1
+              | Đang giao
+          else if order.status === 'delivered'
+            span.badge.bg-success.fs-6.px-3.py-2
+              i.bi.bi-box-seam.me-1
+              | Đã giao
+          else if order.status === 'cancelled'
+            span.badge.bg-danger.fs-6.px-3.py-2
+              i.bi.bi-x-circle.me-1
+              | Đã hủy
+
+  .container.pb-5
+    .row
+      //- Left Column
+      .col-lg-8
+        //- Timeline
+        .info-card
+          h5.mb-4
+            i.bi.bi-clock-history.me-2.text-primary
+            | Trạng Thái Đơn Hàng
+          
+          .status-timeline
+            .timeline-step.active
+              .timeline-icon
+                i.bi.bi-cart-check.fs-5
+              .timeline-content
+                strong Đơn hàng đã đặt
+                .text-muted.small= new Date(order.createdAt).toLocaleString('vi-VN')
+                .text-muted.small Đơn hàng của bạn đã được tiếp nhận
+            
+            .timeline-step(class=order.status === 'confirmed' || order.status === 'shipping' || order.status === 'delivered' ? 'active' : '')
+              .timeline-icon
+                i.bi.bi-check-circle.fs-5
+              .timeline-content
+                strong Đã xác nhận
+                if order.confirmedAt
+                  .text-muted.small= new Date(order.confirmedAt).toLocaleString('vi-VN')
+                  .text-muted.small Đơn hàng đã được xác nhận
+                else
+                  .text-muted.small Chờ xác nhận
+            
+            .timeline-step(class=order.status === 'shipping' || order.status === 'delivered' ? 'active' : '')
+              .timeline-icon
+                i.bi.bi-truck.fs-5
+              .timeline-content
+                strong Đang giao hàng
+                if order.shippingAt
+                  .text-muted.small= new Date(order.shippingAt).toLocaleString('vi-VN')
+                  .text-muted.small Đơn hàng đang được vận chuyển
+                else
+                  .text-muted.small Chờ giao hàng
+            
+            .timeline-step(class=order.status === 'delivered' ? 'active' : '')
+              .timeline-icon
+                i.bi.bi-box-seam.fs-5
+              .timeline-content
+                strong Giao hàng thành công
+                if order.deliveredAt
+                  .text-muted.small= new Date(order.deliveredAt).toLocaleString('vi-VN')
+                  .text-muted.small Đơn hàng đã được giao thành công
+                else
+                  .text-muted.small Chưa giao
+            
+            if order.status === 'cancelled'
+              .timeline-step.active
+                .timeline-icon(style="background: #dc3545; color: white; border-color: #dc3545;")
+                  i.bi.bi-x-circle.fs-5
+                .timeline-content
+                  strong.text-danger Đã hủy đơn hàng
+                  if order.cancelledAt
+                    .text-muted.small= new Date(order.cancelledAt).toLocaleString('vi-VN')
+                  if order.cancelReason
+                    .small.text-danger
+                      i.bi.bi-info-circle.me-1
+                      strong Lý do: 
+                      = order.cancelReason
+
+        //- Products
+        .info-card
+          h5.mb-4
+            i.bi.bi-box-seam.me-2.text-primary
+            | Sản Phẩm (#{order.products.length})
+          
+          each item in order.products
+            .product-item
+              if item.thumbnail
+                img(src=item.thumbnail alt=item.title)
+              else
+                .bg-light.d-flex.align-items-center.justify-content-center(
+                  style="width: 80px; height: 80px; border-radius: 8px; margin-right: 1rem;"
+                )
+                  i.bi.bi-image.text-muted.fs-1
+              
+              .flex-grow-1
+                .fw-semibold.mb-2= item.title
+                .row.align-items-center
+                  .col-md-4
+                    if item.discountPercentage > 0
+                      .small.text-muted.text-decoration-line-through= item.price + '$'
+                      .text-danger= item.priceNew + '$'
+                      .badge.bg-danger.small #{item.discountPercentage}% OFF
+                    else
+                      .text-dark= item.price.toLocaleString('vi-VN') + '$'
+                  
+                  .col-md-4.text-center
+                    .text-muted.small Số lượng
+                    .fw-bold x#{item.quantity}
+                  
+                  .col-md-4.text-end
+                    .text-muted.small Thành tiền
+                    .fw-bold.text-danger.fs-5= item.totalPrice + '$'
+
+      //- Right Column
+      .col-lg-4
+        //- Shipping Info
+        .info-card
+          h6.mb-3
+            i.bi.bi-truck.me-2.text-primary
+            | Thông Tin Giao Hàng
+          
+          .mb-3
+            .text-muted.small.mb-1
+              i.bi.bi-person.me-1
+              | Người nhận
+            .fw-semibold= order.userInfor.fullName
+          
+          .mb-3
+            .text-muted.small.mb-1
+              i.bi.bi-telephone.me-1
+              | Số điện thoại
+            .fw-semibold= order.userInfor.phone
+          
+          if order.userInfor.email
+            .mb-3
+              .text-muted.small.mb-1
+                i.bi.bi-envelope.me-1
+                | Email
+              .fw-semibold= order.userInfor.email
+          
+          .mb-0
+            .text-muted.small.mb-1
+              i.bi.bi-geo-alt.me-1
+              | Địa chỉ
+            .fw-semibold= order.userInfor.address
+            //- if order.ward && order.district && order.city
+            //-   .small.text-muted.mt-1= `${order.ward}, ${order.district}, ${order.city}`
+
+        //- Payment Summary
+        .info-card
+          h6.mb-3
+            i.bi.bi-wallet2.me-2.text-primary
+            | Thanh Toán
+          
+          .mb-3
+            .text-muted.small.mb-1 Phương thức thanh toán
+            if order.paymentMethod === 'cod'
+              span.badge.bg-warning COD - Thanh toán khi nhận hàng
+            else if order.paymentMethod === 'bank'
+              span.badge.bg-info Chuyển khoản ngân hàng
+            else
+              span.badge.bg-danger Ví MoMo
+          
+          .border-top.pt-3
+            .d-flex.justify-content-between.mb-2
+              span Tạm tính:
+              strong= order.totalOriginalPrice + '$'
+            
+            if order.discount
+              .d-flex.justify-content-between.mb-2
+                span Giảm giá:
+                strong.text-success -#{order.discount}$
+            
+            .d-flex.justify-content-between.mb-3
+              span Phí vận chuyển:
+              strong.text-success Miễn phí
+            
+            .border-top.pt-3
+              .d-flex.justify-content-between.align-items-center
+                span.fs-5 Tổng cộng:
+                strong.fs-4.text-danger= order.totalPrice + '$'
+
+        //- Note
+        if order.note
+          .info-card
+            h6.mb-3
+              i.bi.bi-sticky.me-2.text-primary
+              | Ghi Chú
+            p.mb-0.text-muted= order.note
+
+        //- Actions
+        .info-card
+          .d-grid.gap-2
+            a.btn-back(href="/orders")
+              i.bi.bi-arrow-left.me-2
+              | Quay Lại Đơn Hàng
+            
+            if order.status === 'pending' || order.status === 'confirmed'
+              button.btn-cancel(
+                type="button"
+                onclick=`cancelOrder('${order.id}')`
+              )
+                i.bi.bi-x-circle.me-2
+                | Hủy Đơn Hàng
+
+  script.
+    function cancelOrder(orderId) {
+      if (!confirm('Bạn có chắc chắn muốn hủy đơn hàng này?')) return;
+      
+      const reason = prompt('Vui lòng nhập lý do hủy đơn:');
+      if (!reason || !reason.trim()) {
+        alert('Vui lòng nhập lý do hủy đơn!');
+        return;
+      }
+      
+      fetch(`/order/cancel/${orderId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reason: reason })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          alert('Hủy đơn hàng thành công!');
+          window.location.href = '/orders';
+        } else {
+          alert(data.message || 'Có lỗi xảy ra!');
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        alert('Có lỗi xảy ra!');
+      });
+    }
+    function updateStatus(status) {
+      if (!confirm('Xác nhận thay đổi trạng thái đơn hàng?')) return;
+      
+      fetch(window.location.pathname + '/update-status', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: status })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          location.reload();
+        } else {
+          alert('Có lỗi xảy ra!');
+        }
+      });
+    }
+    
+    function confirmCancel() {
+      const reason = document.getElementById('cancelReason').value;
+      if (!reason.trim()) {
+        alert('Vui lòng nhập lý do hủy đơn!');
+        return;
+      }
+      
+      fetch(window.location.pathname + '/cancel', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reason: reason })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          location.reload();
+        } else {
+          alert('Có lỗi xảy ra!');
+        }
+      });
+    }

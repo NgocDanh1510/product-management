@@ -1,0 +1,12 @@
+mixin alert-success(time)
+  - if(messages.success)
+    .alert.alert-success.alert-dismissible.fade.show.position-fixed(role='alert' style="right: 2%; z-index: 100;" data-time=time alert-success)
+      strong Success!   
+        span.fw-normal #{messages.success}
+      button.btn-close(type='button' data-bs-dismiss='alert' aria-label='Close')
+mixin alert-error(time)
+  - if(messages.error)
+    .alert.alert-danger.alert-dismissible.fade.show.position-fixed(role='alert' style="right: 2%; z-index: 100;" data-time=time alert-success)
+      strong error!   
+        span.fw-normal #{messages.error}
+      button.btn-close(type='button' data-bs-dismiss='alert' aria-label='Close')

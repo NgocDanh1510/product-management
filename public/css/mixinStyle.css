@@ -1,6 +1,6 @@
-@import url("variables.css");
+/* @import url("variables.css"); */
 
-/* sub-menu */
+/* ============ sub-menu ============*/
 /* menu cấp 1 */
 
 /* 1. Reset chung cho menu */
@@ -50,9 +50,9 @@
   background-color: var(--bg-light, #f8f9fa);
   color: var(--red-main);
 }
-/* end sub-menu */
+/*========= end sub-menu =========== */
 
-/* list-product */
+/*======== list-product ============*/
 
 /* Tổng thể danh sách */
 .inner-list {

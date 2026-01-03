@@ -9,7 +9,8 @@ module.exports = async (req, res, next) => {
     });
   } else {
     const cart = await Cart.findById(cartId).lean();
-    res.locals.cart = cart;
+
+    res.locals.cartTotalProduct = cart.products.length;
   }
   next();
 };

@@ -1,0 +1,59 @@
+extends ../../layout/default.pug
+
+block css 
+  link(rel="stylesheet", href="/css/pages/success.css")
+
+block main
+  .success-container
+    .my-4
+      .success-card
+        .success-icon
+          i.bi.bi-check-circle-fill
+        
+        h2.fw-bold.mb-3 Đặt Hàng Thành Công!
+        p.text-muted.mb-4 Cảm ơn bạn đã đặt hàng. Chúng tôi sẽ xử lý đơn hàng của bạn sớm nhất.
+        
+        .order-code
+          .mb-2 Mã đơn hàng của bạn
+          strong ##{orderId}
+        
+        if order
+          .info-box
+            .info-item
+              span
+                i.bi.bi-person.me-2.text-muted
+                | Người nhận:
+              strong= order.fullName
+            
+            .info-item
+              span
+                i.bi.bi-telephone.me-2.text-muted
+                | Số điện thoại:
+              strong= order.phone
+            
+            .info-item
+              span
+                i.bi.bi-geo-alt.me-2.text-muted
+                | Địa chỉ:
+              strong= order.address
+            
+            .info-item
+              span
+                i.bi.bi-wallet2.me-2.text-muted
+                | Thanh toán:
+              strong= order.paymentMethod == 'cod' ? 'COD' : order.paymentMethod == 'bank' ? 'Chuyển khoản' : 'MoMo'
+            
+            .info-item
+              span
+                i.bi.bi-cash.me-2.text-muted
+                | Tổng tiền:
+              strong.text-danger= order.totalPrice.toLocaleString('vi-VN') + 'đ'
+        
+        .mt-4
+          a.btn-detail(href=`/order/detail/${orderId}`)
+            i.bi.bi-eye.me-2
+            | Xem Chi Tiết Đơn Hàng
+          
+          a.btn-home(href="/")
+            i.bi.bi-house.me-2
+            | Về Trang Chủ
