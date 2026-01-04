@@ -28,7 +28,8 @@ app.use(express.static(`${__dirname}/public`));
 app.use(methodOverride("_method"));
 
 // parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
 // cookieParser
 app.use(cookieParser("keyboard cat"));

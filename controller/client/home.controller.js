@@ -35,7 +35,7 @@ module.exports.index = async (req, res) => {
     .limit(3);
 
   res.render("client/pages/home/index", {
-    pageTitle: "Trang chủ",
+    titlePage: res.locals.settingGeneral.general.site_title,
 
     // Hero Banner - Full Width
     hero: {

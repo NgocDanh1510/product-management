@@ -1,0 +1,88 @@
+extends ../../layout/default
+include ../../mixins/box-head.pug
+include ../../mixins/pagination.pug
+
+block css
+  link(rel="stylesheet", href="/css/pages/post.css")
+
+
+block main
+  //- Hero Section
+  .posts-hero
+    .container.text-center
+      h1
+        i.bi.bi-newspaper.me-3
+        | Tin Tức & Blog
+      p.lead.mb-0 Cập nhật tin tức công nghệ, review sản phẩm và nhiều hơn nữa
+
+  .container.py-4
+    //- Category Filter
+    if postCategories && postCategories.length > 0
+      .category-filter
+        .d-flex.justify-content-center.align-items-center.flex-wrap
+          span.me-3.fw-semibold
+            i.bi.bi-funnel.me-2
+            | Danh mục:
+          a.btn.btn-outline-primary(href="/posts" class=!selectedCategory ? 'active' : '') Tất cả
+          each category in postCategories
+            a.btn.btn-outline-primary(
+              href=`/posts?category=${category.slug}`
+              class=selectedCategory === category.slug ? 'active' : ''
+            )= category.title
+
+    //- Featured Post (Tin nổi bật)
+    if featuredPost
+      .featured-post
+        a.text-decoration-none(href=`/posts/${featuredPost.slug}`)
+          img(src=featuredPost.thumbnail alt=featuredPost.title)
+          .featured-badge
+            i.bi.bi-star-fill.me-1
+            | Nổi bật
+          .featured-overlay
+            if featuredPost.category
+              span.post-category= featuredPost.category
+            h2= featuredPost.title
+            p.mb-3= featuredPost.description
+            .post-meta
+              span
+                i.bi.bi-calendar3.me-1
+                = new Date(featuredPost.createdAt).toLocaleDateString('vi-VN')
+              span
+                i.bi.bi-eye.me-1
+                | #{featuredPost.views || 0} lượt xem
+
+    //- Posts Grid
+    if listPosts && listPosts.length > 0
+      .row.g-4.mb-4
+        each post in listPosts
+          .col-lg-4.col-md-6
+            .card.post-card.shadow-sm
+              a.text-decoration-none(href=`/posts/${post.slug}`)
+                .overflow-hidden
+                  img.card-img-top(src=post.thumbnail alt=post.title)
+                .card-body
+                  if post.category
+                    span.post-category= post.category
+                  h5.card-title.text-dark= post.title
+                  p.card-text= post.description
+                  .post-meta
+                    span
+                      i.bi.bi-calendar3.me-1
+                      = new Date(post.createdAt).toLocaleDateString('vi-VN')
+                    span
+                      i.bi.bi-eye.me-1
+                      | #{post.views || 0}
+
+      //- Pagination
+      if pagination && pagination.pageTotal > 1
+        .mt-4.d-flex.justify-content-center
+          +pagination(pagination)
+    else
+      //- Empty State
+      .empty-state
+        i.bi.bi-newspaper
+        h4.text-muted Chưa có bài viết nào
+        p.text-muted Vui lòng quay lại sau
+        a.btn.btn-primary.mt-3(href="/posts")
+          i.bi.bi-arrow-clockwise.me-2
+          | Tải lại trang

@@ -1,0 +1,407 @@
+extends ../../layout/default
+
+block css
+  style.
+    /* Post Detail Styles */
+    .post-detail-wrapper {
+      padding: 2rem 0;
+    }
+    
+    /* Left Content Area */
+    .post-content-area {
+      background: white;
+      border-radius: 16px;
+      padding: 2.5rem;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    }
+    
+    .post-header {
+      margin-bottom: 2rem;
+    }
+    
+    .post-category-badge {
+      display: inline-block;
+      background: var(--red-main);
+      color: white;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+    
+    .post-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--text-color);
+      margin-bottom: 1rem;
+      line-height: 1.3;
+    }
+    
+    .post-meta-info {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      padding: 1rem 0;
+      border-top: 1px solid #eee;
+      border-bottom: 1px solid #eee;
+      color: #6c757d;
+      font-size: 0.95rem;
+    }
+    
+    .post-meta-info i {
+      color: var(--red-main);
+      margin-right: 0.5rem;
+    }
+    
+    .post-thumbnail {
+      width: 100%;
+      border-radius: 12px;
+      margin: 2rem 0;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    }
+    
+    .post-description {
+      font-size: 1.2rem;
+      color: #495057;
+      font-weight: 500;
+      line-height: 1.8;
+      margin: 2rem 0;
+      padding: 1.5rem;
+      background: var(--bg-light);
+      border-left: 4px solid var(--red-main);
+      border-radius: 8px;
+    }
+    
+    .post-content {
+      font-size: 1.05rem;
+      line-height: 1.9;
+      color: var(--text-color);
+    }
+    
+    .post-content h2,
+    .post-content h3,
+    .post-content h4 {
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      font-weight: 600;
+      color: var(--text-color);
+    }
+    
+    .post-content h2 {
+      font-size: 1.8rem;
+      border-bottom: 2px solid var(--red-main);
+      padding-bottom: 0.5rem;
+    }
+    
+    .post-content p {
+      margin-bottom: 1.5rem;
+    }
+    
+    .post-content img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+      margin: 1.5rem 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .post-content ul,
+    .post-content ol {
+      padding-left: 2rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .post-content li {
+      margin-bottom: 0.5rem;
+    }
+    
+    .post-content blockquote {
+      border-left: 4px solid var(--red-main);
+      padding-left: 1.5rem;
+      margin: 2rem 0;
+      font-style: italic;
+      color: #495057;
+    }
+    
+    /* Share Buttons */
+    .post-share {
+      margin-top: 3rem;
+      padding-top: 2rem;
+      border-top: 2px solid #eee;
+    }
+    
+    .share-buttons .btn {
+      border-radius: 8px;
+      padding: 10px 20px;
+      font-weight: 600;
+      transition: var(--transition-base);
+    }
+    
+    .share-buttons .btn:hover {
+      transform: translateY(-2px);
+    }
+    
+    /* Right Sidebar */
+    .post-sidebar {
+      position: sticky;
+      top: 80px;
+      max-height: calc(100vh - 100px);
+      overflow-y: auto;
+    }
+    
+    .post-sidebar::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    .post-sidebar::-webkit-scrollbar-thumb {
+      background-color: var(--red-main);
+      border-radius: 3px;
+    }
+    
+    .sidebar-card {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    
+    .sidebar-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-color);
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 2px solid var(--red-main);
+    }
+    
+    /* Featured Posts in Sidebar */
+    .sidebar-post-item {
+      display: flex;
+      gap: 1rem;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      transition: var(--transition-base);
+      border: 1px solid transparent;
+    }
+    
+    .sidebar-post-item:hover {
+      background: var(--bg-light);
+      border-color: var(--red-main);
+      transform: translateX(5px);
+    }
+    
+    .sidebar-post-item img {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 8px;
+      flex-shrink: 0;
+    }
+    
+    .sidebar-post-info h6 {
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      line-height: 1.4;
+    }
+    
+    .sidebar-post-meta {
+      font-size: 0.75rem;
+      color: #6c757d;
+    }
+    
+    .sidebar-post-meta i {
+      color: var(--red-main);
+    }
+    
+    /* Related Posts */
+    .related-posts {
+      margin-top: 4rem;
+      padding-top: 3rem;
+      border-top: 2px solid #eee;
+    }
+    
+    .related-post-card {
+      border: none;
+      border-radius: 12px;
+      overflow: hidden;
+      transition: var(--transition-base);
+    }
+    
+    .related-post-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    }
+    
+    .related-post-card img {
+      height: 180px;
+      object-fit: cover;
+    }
+    
+    /* Responsive */
+    @media (max-width: 991px) {
+      .post-sidebar {
+        position: static;
+        max-height: none;
+        margin-top: 3rem;
+      }
+      
+      .post-title {
+        font-size: 2rem;
+      }
+      
+      .post-content-area {
+        padding: 1.5rem;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .post-title {
+        font-size: 1.5rem;
+      }
+      
+      .post-meta-info {
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: flex-start;
+      }
+      
+      .post-description {
+        font-size: 1.05rem;
+      }
+    }
+
+block main
+  .post-detail-wrapper.bg-light
+    .container
+      .row.g-4
+        //- BÊN TRÁI - NỘI DUNG BÀI VIẾT (8 cột)
+        .col-lg-8
+          .post-content-area
+            .post-header
+              if post.category
+                span.post-category-badge
+                  i.bi.bi-bookmark-fill.me-1
+                  = post.category
+              
+              h1.post-title= post.title
+              
+              .post-meta-info
+                span
+                  i.bi.bi-person-circle
+                  | #{post.author || 'Admin'}
+                span
+                  i.bi.bi-calendar3
+                  = new Date(post.createdAt).toLocaleDateString('vi-VN', { year: 'numeric', month: 'long', day: 'numeric' })
+                span
+                  i.bi.bi-eye
+                  | #{post.views || 0} lượt xem
+                span
+                  i.bi.bi-clock
+                  | #{post.readTime || '5'} phút đọc
+            
+            if post.thumbnail
+              img.post-thumbnail(src=post.thumbnail alt=post.title)
+            
+            if post.description
+              .post-description= post.description
+            
+            .post-content!= post.content
+            
+            //- Share Buttons
+            .post-share
+              h5.mb-3
+                i.bi.bi-share.me-2
+                | Chia sẻ bài viết
+              .share-buttons.d-flex.gap-2.flex-wrap
+                a.btn.btn-primary(href=`https://www.facebook.com/sharer/sharer.php?u=${currentUrl}` target="_blank")
+                  i.bi.bi-facebook.me-2
+                  | Facebook
+                a.btn.btn-info.text-white(href=`https://twitter.com/intent/tweet?url=${currentUrl}&text=${post.title}` target="_blank")
+                  i.bi.bi-twitter.me-2
+                  | Twitter
+                a.btn.btn-success(href=`https://api.whatsapp.com/send?text=${post.title} ${currentUrl}` target="_blank")
+                  i.bi.bi-whatsapp.me-2
+                  | WhatsApp
+                button.btn.btn-secondary(onclick="copyToClipboard()")
+                  i.bi.bi-link-45deg.me-2
+                  | Sao chép link
+            
+            //- Related Posts
+            if relatedPosts && relatedPosts.length > 0
+              .related-posts
+                h4.mb-4
+                  i.bi.bi-file-earmark-text.text-primary.me-2
+                  | Bài viết liên quan
+                .row.g-3
+                  each relatedPost in relatedPosts
+                    .col-md-6
+                      .card.related-post-card.shadow-sm
+                        a.text-decoration-none(href=`/posts/${relatedPost.slug}`)
+                          img.card-img-top(src=relatedPost.thumbnail alt=relatedPost.title)
+                          .card-body
+                            h6.text-dark= relatedPost.title
+                            p.small.text-muted.mb-2= relatedPost.description
+                            .d-flex.justify-content-between.align-items-center
+                              small.text-muted
+                                i.bi.bi-calendar3.me-1
+                                = new Date(relatedPost.createdAt).toLocaleDateString('vi-VN')
+                              small.text-primary Đọc thêm →
+
+        //- BÊN PHẢI - SIDEBAR (4 cột)
+        .col-lg-4
+          .post-sidebar
+            //- Bài viết nổi bật
+            if featuredPosts && featuredPosts.length > 0
+              .sidebar-card
+                h5.sidebar-title
+                  i.bi.bi-star-fill.text-warning.me-2
+                  | Bài viết nổi bật
+                each featuredPost in featuredPosts
+                  a.sidebar-post-item.text-decoration-none(href=`/posts/${featuredPost.slug}`)
+                    img(src=featuredPost.thumbnail alt=featuredPost.title)
+                    .sidebar-post-info
+                      h6.text-dark= featuredPost.title
+                      .sidebar-post-meta
+                        i.bi.bi-calendar3.me-1
+                        = new Date(featuredPost.createdAt).toLocaleDateString('vi-VN')
+            
+            //- Bài viết mới nhất
+            if latestPosts && latestPosts.length > 0
+              .sidebar-card
+                h5.sidebar-title
+                  i.bi.bi-clock-history.text-primary.me-2
+                  | Bài viết mới nhất
+                each latestPost in latestPosts
+                  a.sidebar-post-item.text-decoration-none(href=`/posts/${latestPost.slug}`)
+                    img(src=latestPost.thumbnail alt=latestPost.title)
+                    .sidebar-post-info
+                      h6.text-dark= latestPost.title
+                      .sidebar-post-meta
+                        i.bi.bi-calendar3.me-1
+                        = new Date(latestPost.createdAt).toLocaleDateString('vi-VN')
+            
+            //- Banner quảng cáo
+            .sidebar-card.text-center
+              img.img-fluid.rounded.mb-3(src="/images/ad-banner.jpg" alt="Quảng cáo")
+              h6 Ưu đãi đặc biệt!
+              p.small.text-muted Giảm giá lên đến 50% cho sản phẩm công nghệ
+              a.btn.btn-sm.btn-primary(href="/products") Mua ngay
+
+  //- JavaScript for copy link
+  script.
+    function copyToClipboard() {
+      const url = window.location.href;
+      navigator.clipboard.writeText(url).then(() => {
+        alert('Đã sao chép link vào clipboard!');
+      }).catch(err => {
+        console.error('Error copying:', err);
+      });
+    }

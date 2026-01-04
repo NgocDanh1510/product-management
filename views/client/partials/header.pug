@@ -1,6 +1,19 @@
 include ../mixins/sub-menu
 
 header.header
+  //- TOP BAR - THÔNG TIN LIÊN HỆ
+  .top-bar.bg-light.border-bottom.d-none.d-md-block
+    .container
+      .d-flex.justify-content-between.align-items-center.py-1.small
+        //- BÊN TRÁI
+        .contact-left
+          span.me-3
+            i.bi.bi-telephone-fill.text-danger.me-1
+            | Hotline: 
+            strong.text-danger #{settingGeneral.contact.phone}
+          span.me-3
+            i.bi.bi-envelope-fill.text-danger.me-1
+            | #{settingGeneral.contact.email}
   .inner-header.border-bottom.py-3
     .container
       .row.align-items-center
@@ -8,7 +21,7 @@ header.header
         .col-lg-2.col-md-3.col-4
           a.inner-logo(href="/") 
             img(
-              src="https://res.cloudinary.com/dygsbwyjo/image/upload/v1765963478/Gemini_Generated_Image_po5ntrpo5ntrpo5n_k01pti.png"
+              src=settingGeneral.general.logo_url
               alt="Mega Mart"
               style="max-width: 140px; height: auto;"
             )

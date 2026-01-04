@@ -1,0 +1,383 @@
+extends ../../layout/default
+
+block main
+  .container-fluid.px-4.py-4
+    //- Page Header
+    .d-flex.justify-content-between.align-items-center.mb-4
+      div
+        h1.h3.mb-0
+          i.bi.bi-gear-fill.me-2
+          | Cài đặt hệ thống
+        p.text-muted.mb-0 Quản lý thông tin và cấu hình website
+      
+      button.btn.btn-primary(type="submit" form="formSettings")
+        i.bi.bi-check-circle.me-2
+        | Lưu tất cả thay đổi
+
+    //- Alert Messages
+    if success
+      .alert.alert-success.alert-dismissible.fade.show(role="alert")
+        i.bi.bi-check-circle-fill.me-2
+        = success
+        button.btn-close(type="button" data-bs-dismiss="alert")
+    
+    if error
+      .alert.alert-danger.alert-dismissible.fade.show(role="alert")
+        i.bi.bi-exclamation-triangle-fill.me-2
+        = error
+        button.btn-close(type="button" data-bs-dismiss="alert")
+
+    form#formSettings(method="POST" action=`${prefixAdmin}/settings?_method=PATCH` enctype="multipart/form-data")
+      .row
+        .col-lg-8
+          //- ===== 1. THÔNG TIN CHUNG =====
+          .card.shadow-sm.mb-4
+            .card-header.bg-primary.text-white
+              h5.mb-0
+                i.bi.bi-info-circle.me-2
+                | Thông tin chung
+            .card-body
+              .row.g-3
+                .col-md-6
+                  label.form-label(for="site_title")
+                    i.bi.bi-journal-text.me-1
+                    | Tên website
+                    span.text-danger *
+                  input#site_title.form-control(
+                    type="text"
+                    name="general[site_title]"
+                    value=(settings && settings.general ? settings.general.site_title : "")
+                    required
+                  )
+                  .form-text Tên hiển thị trên tiêu đề trang
+                
+                .col-md-6
+                  label.form-label(for="copyright")
+                    i.bi.bi-c-circle.me-1
+                    | Copyright
+                  input#copyright.form-control(
+                    type="text"
+                    name="general[copyright]"
+                    value=(settings && settings.general ? settings.general.copyright : "")
+                  )
+                
+                .col-12
+                  label.form-label(for="site_description")
+                    i.bi.bi-card-text.me-1
+                    | Mô tả website
+                  textarea#site_description.form-control(
+                    name="general[site_description]"
+                    rows="3"
+                  )= (settings && settings.general ? settings.general.site_description : "")
+                  .form-text Mô tả ngắn về website (dùng cho SEO)
+                //- UP IMG LOGO 
+                .col-md-6
+                  .upload-image
+                    label.form-label(for="logo_url")
+                      i.bi.bi-image.me-1
+                      | Logo website
+                    //- Preview
+                    .form-imagePreview.d-none.text-center
+                      button.btn-close(type="button" btn-remove-imagePreview)
+                      img.img-thumbnail.rounded(
+                        src=""
+                        alt="Preview"
+                        upload-image-preview
+                        style="max-width: 100%"
+                      )
+                    input#logo_url.form-control(
+                      type="file"
+                      name="logo"
+                      accept="image/*"
+                      upload-image-input
+                    )
+                    if (settings && settings.general && settings.general.logo_url)
+                      .mt-2
+                        img.img-thumbnail(src=settings.general.logo_url width="150" alt="Logo")
+                        input(type="hidden" name="general[logo_url]" value=settings.general.logo_url)
+                    .form-text Tải lên logo mới (PNG, JPG, SVG)
+                //- UP IMG FAVICON                
+                .col-md-6
+                  .upload-image
+                    label.form-label(for="favicon_url")
+                      i.bi.bi-bookmark-star.me-1
+                      | Favicon
+                    //- Preview
+                    .form-imagePreview.d-none.text-center
+                      button.btn-close(type="button" btn-remove-imagePreview)
+                      img.img-thumbnail.rounded(
+                        src=""
+                        alt="Preview"
+                        upload-image-preview
+                        style="max-width: 100%"
+                      )
+                    input#favicon_url.form-control(
+                      type="file"
+                      name="favicon"
+                      accept="image/x-icon,image/png"
+                      upload-image-input
+                    )
+                    if (settings && settings.general && settings.general.favicon_url)
+                      .mt-2
+                        img.img-thumbnail(src=settings.general.favicon_url width="50" alt="Favicon")
+                        input(type="hidden" name="general[favicon_url]" value=settings.general.favicon_url)
+                    .form-text Icon hiển thị trên tab trình duyệt
+
+          //- ===== 2. THÔNG TIN LIÊN HỆ =====
+          .card.shadow-sm.mb-4
+            .card-header.bg-success.text-white
+              h5.mb-0
+                i.bi.bi-telephone.me-2
+                | Thông tin liên hệ
+            .card-body
+              .row.g-3
+                .col-md-6
+                  label.form-label(for="contact_email")
+                    i.bi.bi-envelope.me-1
+                    | Email liên hệ
+                  input#contact_email.form-control(
+                    type="email"
+                    name="contact[email]"
+                    value=(settings && settings.contact ? settings.contact.email : "")
+                  )
+                
+                .col-md-6
+                  label.form-label(for="contact_phone")
+                    i.bi.bi-phone.me-1
+                    | Số điện thoại
+                  input#contact_phone.form-control(
+                    type="tel"
+                    name="contact[phone]"
+                    value=(settings && settings.contact ? settings.contact.phone : "")
+                  )
+                
+                .col-12
+                  label.form-label(for="contact_address")
+                    i.bi.bi-geo-alt.me-1
+                    | Địa chỉ
+                  textarea#contact_address.form-control(
+                    name="contact[address]"
+                    rows="2"
+                  )= (settings && settings.contact ? settings.contact.address : "")
+                
+                .col-12
+                  label.form-label(for="map_iframe")
+                    i.bi.bi-map.me-1
+                    | Google Maps Embed
+                  textarea#map_iframe.form-control(
+                    name="contact[map_iframe]"
+                    rows="3"
+                    placeholder='<iframe src="https://www.google.com/maps/embed?..." ...></iframe>'
+                  )= (settings && settings.contact ? settings.contact.map_iframe : "")
+                  .form-text Mã nhúng Google Map (lấy từ Google Maps → Share → Embed)
+
+          //- ===== 3. MẠNG XÃ HỘI =====
+          .card.shadow-sm.mb-4
+            .card-header.bg-info.text-white
+              h5.mb-0
+                i.bi.bi-share.me-2
+                | Mạng xã hội
+            .card-body
+              .row.g-3
+                .col-md-6
+                  label.form-label(for="facebook")
+                    i.bi.bi-facebook.me-1
+                    | Facebook
+                  input#facebook.form-control(
+                    type="url"
+                    name="social_media[facebook]"
+                    value=(settings && settings.social_media ? settings.social_media.facebook : "")
+                    placeholder="https://facebook.com/yourpage"
+                  )
+                
+                .col-md-6
+                  label.form-label(for="twitter")
+                    i.bi.bi-twitter.me-1
+                    | Twitter
+                  input#twitter.form-control(
+                    type="url"
+                    name="social_media[twitter]"
+                    value=(settings && settings.social_media ? settings.social_media.twitter : "")
+                    placeholder="https://twitter.com/yourpage"
+                  )
+                
+                .col-md-6
+                  label.form-label(for="instagram")
+                    i.bi.bi-instagram.me-1
+                    | Instagram
+                  input#instagram.form-control(
+                    type="url"
+                    name="social_media[instagram]"
+                    value=(settings && settings.social_media ? settings.social_media.instagram : "")
+                    placeholder="https://instagram.com/yourpage"
+                  )
+                
+                .col-md-6
+                  label.form-label(for="youtube")
+                    i.bi.bi-youtube.me-1
+                    | YouTube
+                  input#youtube.form-control(
+                    type="url"
+                    name="social_media[youtube]"
+                    value=(settings && settings.social_media ? settings.social_media.youtube : "")
+                    placeholder="https://youtube.com/c/yourchannel"
+                  )
+                
+                .col-md-6
+                  label.form-label(for="linkedin")
+                    i.bi.bi-linkedin.me-1
+                    | LinkedIn
+                  input#linkedin.form-control(
+                    type="url"
+                    name="social_media[linkedin]"
+                    value=(settings && settings.social_media ? settings.social_media.linkedin : "")
+                    placeholder="https://linkedin.com/company/yourcompany"
+                  )
+
+          //- ===== 4. CẤU HÌNH EMAIL =====
+          .card.shadow-sm.mb-4
+            .card-header.bg-warning.text-dark
+              h5.mb-0
+                i.bi.bi-envelope-at.me-2
+                | Cấu hình Email (SMTP)
+            .card-body
+              .alert.alert-warning.d-flex.align-items-center(role="alert")
+                i.bi.bi-exclamation-triangle-fill.me-2
+                div
+                  strong Lưu ý:
+                  |  Thông tin này dùng để gửi email tự động. Không chia sẻ với người khác!
+              
+              .row.g-3
+                .col-md-6
+                  label.form-label(for="email_from")
+                    i.bi.bi-envelope-paper.me-1
+                    | Email gửi đi
+                  input#email_from.form-control(
+                    type="email"
+                    name="mail_config[email_from]"
+                    value=(settings && settings.mail_config ? settings.mail_config.email_from : "")
+                    placeholder="noreply@megamart.com"
+                  )
+                
+                .col-md-6
+                  label.form-label(for="mail_host")
+                    i.bi.bi-hdd-network.me-1
+                    | SMTP Host
+                  input#mail_host.form-control(
+                    type="text"
+                    name="mail_config[host]"
+                    value=(settings && settings.mail_config ? settings.mail_config.host : "")
+                    placeholder="smtp.gmail.com"
+                  )
+                
+                .col-md-6
+                  label.form-label(for="mail_port")
+                    i.bi.bi-server.me-1
+                    | SMTP Port
+                  input#mail_port.form-control(
+                    type="number"
+                    name="mail_config[port]"
+                    value=(settings && settings.mail_config ? settings.mail_config.port : 587)
+                  )
+                
+                .col-md-6
+                  label.form-label(for="mail_username")
+                    i.bi.bi-person-badge.me-1
+                    | Username
+                  input#mail_username.form-control(
+                    type="text"
+                    name="mail_config[username]"
+                    value=(settings && settings.mail_config ? settings.mail_config.username : "")
+                  )
+                
+                .col-md-6
+                  label.form-label(for="mail_password")
+                    i.bi.bi-key.me-1
+                    | Password
+                  input#mail_password.form-control(
+                    type="password"
+                    name="mail_config[password]"
+                    value=(settings && settings.mail_config ? settings.mail_config.password : "")
+                    placeholder="••••••••"
+                  )
+                
+                .col-md-6
+                  label.form-label(for="mail_secure")
+                    i.bi.bi-shield-lock.me-1
+                    | Bảo mật SSL/TLS
+                  select#mail_secure.form-select(name="mail_config[secure]")
+                    option(value="false" selected=(settings && settings.mail_config && !settings.mail_config.secure)) Không
+                    option(value="true" selected=(settings && settings.mail_config && settings.mail_config.secure)) Có
+
+        //- ===== SIDEBAR PHẢI =====
+        .col-lg-4
+          //- ===== 5. CÀI ĐẶT NÂNG CAO =====
+          //- .card.shadow-sm.mb-4
+          //-   .card-header.bg-danger.text-white
+          //-     h5.mb-0
+          //-       i.bi.bi-sliders.me-2
+          //-       | Cài đặt nâng cao
+          //-   .card-body
+          //-     .mb-3
+          //-       label.form-label(for="currency")
+          //-         i.bi.bi-currency-exchange.me-1
+          //-         | Đơn vị tiền tệ
+          //-       select#currency.form-select(name="advanced[currency]")
+          //-         option(value="VND" selected=(settings && settings.advanced && settings.advanced.currency === "VND")) VND - Việt Nam Đồng
+          //-         option(value="USD" selected=(settings && settings.advanced && settings.advanced.currency === "USD")) USD - Đô la Mỹ
+          //-         option(value="EUR" selected=(settings && settings.advanced && settings.advanced.currency === "EUR")) EUR - Euro
+              
+          //-     .mb-3
+          //-       label.form-label(for="shipping_fee_default")
+          //-         i.bi.bi-truck.me-1
+          //-         | Phí vận chuyển mặc định
+          //-       .input-group
+          //-         input#shipping_fee_default.form-control(
+          //-           type="number"
+          //-           name="advanced[shipping_fee_default]"
+          //-           value=(settings && settings.advanced ? settings.advanced.shipping_fee_default : 30000)
+          //-           min="0"
+          //-         )
+          //-         span.input-group-text VND
+              
+          //-     .mb-3
+          //-       .form-check.form-switch
+          //-         input#maintenance_mode.form-check-input(
+          //-           type="checkbox"
+          //-           name="advanced[maintenance_mode]"
+          //-           value="true"
+          //-           checked=(settings && settings.advanced && settings.advanced.maintenance_mode)
+          //-         )
+          //-         label.form-check-label(for="maintenance_mode")
+          //-           i.bi.bi-cone-striped.me-1
+          //-           strong Chế độ bảo trì
+          //-       .form-text.text-danger Bật chế độ này sẽ chặn khách hàng truy cập website
+
+          //- ===== THÔNG TIN CẬP NHẬT =====
+          .card.shadow-sm.mb-4.border-secondary
+            .card-header.bg-light
+              h6.mb-0
+                i.bi.bi-clock-history.me-2
+                | Thông tin cập nhật
+            .card-body
+              if (settings && settings.updatedAt)
+                p.mb-2
+                  strong Lần cuối cập nhật:
+                  br
+                  span.text-muted= new Date(settings.updatedAt).toLocaleString('vi-VN')
+              if (settings && settings.createdAt)
+                p.mb-0
+                  strong Ngày tạo:
+                  br
+                  span.text-muted= new Date(settings.createdAt).toLocaleString('vi-VN')
+          
+          //- ===== ACTIONS =====
+          .card.shadow-sm.border-primary
+            .card-body.text-center
+              button.btn.btn-primary.btn-lg.w-100.mb-2(type="submit" form="formSettings")
+                i.bi.bi-check-circle-fill.me-2
+                | Lưu tất cả thay đổi
+              
+              button.btn.btn-outline-secondary.w-100(type="button" onclick="window.location.reload()")
+                i.bi.bi-arrow-clockwise.me-2
+                | Làm mới trang

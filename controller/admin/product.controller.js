@@ -58,7 +58,6 @@ module.exports.index = async (req, res) => {
       product.updatedByFullName = "";
     }
   }
-  console.log(objectPagination);
 
   res.render("admin/pages/products/index", {
     titlePage: "ProductAdmin",

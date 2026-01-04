@@ -125,24 +125,31 @@ if (showAlert) {
 }
 
 //show image on upload image
-const inputImg = document.querySelector("[upload-image-input]");
-const formImgPreview = document.querySelector(".form-imagePreview");
-const previewImg = document.querySelector("[upload-image-preview]");
+const blockUploads = document.querySelectorAll(".upload-image");
+console.log(blockUploads);
 
-if (inputImg && previewImg) {
-  inputImg.addEventListener("change", (e) => {
-    formImgPreview.classList.remove("d-none");
-    const [file] = e.target.files;
-    previewImg.src = URL.createObjectURL(file);
-  });
-}
+if (blockUploads) {
+  blockUploads.forEach((element) => {
+    const inputImg = element.querySelector("[upload-image-input]");
+    const formImgPreview = element.querySelector(".form-imagePreview");
+    const previewImg = element.querySelector("[upload-image-preview]");
 
-//handle click remove image upload
-const btnRemoveImg = document.querySelector("[btn-remove-imagePreview]");
-if (btnRemoveImg) {
-  btnRemoveImg.addEventListener("click", (e) => {
-    inputImg.value = "";
-    formImgPreview.classList.add("d-none");
+    if (inputImg && previewImg) {
+      inputImg.addEventListener("change", (e) => {
+        formImgPreview.classList.remove("d-none");
+        const [file] = e.target.files;
+        previewImg.src = URL.createObjectURL(file);
+      });
+    }
+
+    //handle click remove image upload
+    const btnRemoveImg = element.querySelector("[btn-remove-imagePreview]");
+    if (btnRemoveImg) {
+      btnRemoveImg.addEventListener("click", (e) => {
+        inputImg.value = "";
+        formImgPreview.classList.add("d-none");
+      });
+    }
   });
 }
 

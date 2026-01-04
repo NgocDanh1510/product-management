@@ -5,6 +5,7 @@ const postRoute = require("./post.route");
 const postCategoryRoute = require("./post-category.route");
 const roleRoute = require("./role.route");
 const accountRoute = require("./account.route");
+const settingRoute = require("./setting.route");
 const loginRoute = require("./auth.route");
 
 //system
@@ -30,5 +31,6 @@ module.exports = (app) => {
   app.use(PATH_ADMIN + "/posts", postRoute);
   app.use(PATH_ADMIN + "/post-category", postCategoryRoute);
   app.use(PATH_ADMIN + "/roles", roleRoute);
+  app.use(PATH_ADMIN + "/settings", settingRoute);
   app.use(PATH_ADMIN + "/accounts", accountRoute);
 };

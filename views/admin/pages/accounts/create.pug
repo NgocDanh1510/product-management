@@ -67,21 +67,22 @@ block main
         .card.shadow-sm.mb-3
           .card-body
             .mb-3(upload-image)
-              label.form-label(for="avatar") Ảnh đại diện
-              input.form-control(
-                type="file"
-                id="avatar"
-                name="avatar"
-                accept="image/*"
-                upload-image-input
-              )
-              .form-imagePreview.text-center.mt-3.d-none
-                button.btn-close(type="button" btn-remove-imagePreview)
-                img.img-thumbnail(
-                  src=""
-                  style="max-width: 200px;"
-                  upload-image-preview
+              .upload-image
+                label.form-label(for="avatar") Ảnh đại diện
+                input.form-control(
+                  type="file"
+                  id="avatar"
+                  name="avatar"
+                  accept="image/*"
+                  upload-image-input
                 )
+                .form-imagePreview.text-center.mt-3.d-none
+                  button.btn-close(type="button" btn-remove-imagePreview)
+                  img.img-thumbnail(
+                    src=""
+                    style="max-width: 200px;"
+                    upload-image-preview
+                  )
         
         .card.shadow-sm.mb-3
           .card-body

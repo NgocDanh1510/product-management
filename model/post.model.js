@@ -17,9 +17,9 @@ const postSchema = new mongoose.Schema(
       type: String,
       default: "active",
     },
-    featured: {
-      type: String,
-      default: "0",
+    isFeatured: {
+      type: Boolean,
+      default: true,
     },
     position: Number,
     slug: {

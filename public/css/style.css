@@ -18,6 +18,85 @@
 .inner-logo:hover img {
   transform: scale(1.05);
 }
+/* ======= FOOTER ======= */
+.footer {
+  background-color: #212529;
+  margin-top: auto;
+}
+
+.footer h5,
+.footer h6 {
+  color: white;
+  font-weight: 600;
+}
+
+.footer a {
+  transition: var(--transition-base);
+}
+
+.footer a:hover {
+  color: var(--red-main) !important;
+  padding-left: 5px;
+}
+
+/* Social Links */
+.social-links a {
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  transition: var(--transition-base);
+}
+
+.social-links a:hover {
+  background: var(--red-main);
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(206, 66, 66, 0.4);
+}
+
+/* Payment Icons */
+.payment-methods i {
+  transition: var(--transition-base);
+}
+
+.payment-methods i:hover {
+  color: var(--red-main) !important;
+  transform: scale(1.2);
+}
+
+/* Scroll to Top Button */
+#scrollToTop {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: var(--transition-base);
+  background-color: var(--red-main);
+  border: none;
+}
+
+#scrollToTop:hover {
+  background-color: var(--red-hover);
+  transform: scale(1.1);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .footer .row {
+    text-align: center;
+  }
+
+  .footer .social-links {
+    justify-content: center;
+  }
+
+  #scrollToTop {
+    bottom: 20px;
+    right: 20px;
+    width: 45px;
+    height: 45px;
+  }
+}
 
 /* ======= SEARCH INPUT ======= */
 .search-input {

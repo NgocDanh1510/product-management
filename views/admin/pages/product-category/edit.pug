@@ -94,30 +94,31 @@ block main
                 )
             
             //- Upload Area
-            .border.border-2.border-dashed.rounded.p-4.text-center.mb-3.bg-light
-              input.d-none(
-                type="file"
-                id="thumbnail"
-                name="thumbnail"
-                accept="image/*"
-                upload-image-input
-              )
-              label.d-block(for="thumbnail" style="cursor: pointer")
-                i.bi.bi-cloud-upload.display-4.text-primary.d-block.mb-2
-                p.mb-1.fw-semibold Click để đổi ảnh
-                small.text-muted Kéo thả ảnh vào đây
-                br
-                small.text-muted PNG, JPG (Max: 2MB)
-            
-            //- Preview New Image
-            .form-imagePreview.d-none.text-center
-              button.btn-close(type="button" btn-remove-imagePreview)
-              img.img-thumbnail.rounded(
-                src=category.thumbnail
-                alt="Preview"
-                upload-image-preview
-                style="max-width: 100%"
-              )
+            .upload-image
+              .border.border-2.border-dashed.rounded.p-4.text-center.mb-3.bg-light
+                input.d-none(
+                  type="file"
+                  id="thumbnail"
+                  name="thumbnail"
+                  accept="image/*"
+                  upload-image-input
+                )
+                label.d-block(for="thumbnail" style="cursor: pointer")
+                  i.bi.bi-cloud-upload.display-4.text-primary.d-block.mb-2
+                  p.mb-1.fw-semibold Click để đổi ảnh
+                  small.text-muted Kéo thả ảnh vào đây
+                  br
+                  small.text-muted PNG, JPG (Max: 2MB)
+              
+              //- Preview New Image
+              .form-imagePreview.d-none.text-center
+                button.btn-close(type="button" btn-remove-imagePreview)
+                img.img-thumbnail.rounded(
+                  src=category.thumbnail
+                  alt="Preview"
+                  upload-image-preview
+                  style="max-width: 100%"
+                )
 
         //- Settings
         .card.mb-3.border-0.shadow-sm

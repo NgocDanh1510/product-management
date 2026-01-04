@@ -1,2 +1,150 @@
-footer
-  .inner-footer.text-center.p-3.bg-dark.text-light.fs-4 Coppyright 2025 VND
+//- views/partials/footer.pug
+footer.footer.bg-dark.text-white
+  .container
+    .row.py-5.g-4
+      //- CỘT 1: THÔNG TIN CÔNG TY
+      .col-lg-4.col-md-6
+        h5.mb-3
+          if settingGeneral.general.logo_url
+            img.me-2(src=settingGeneral.general.logo_url alt="Logo" style="max-height: 40px;")
+          else
+            i.bi.bi-shop.me-2
+          = settingGeneral.general.site_title || "Mega Mart"
+        
+        if settingGeneral.general.site_description
+          p.text-white-50.mb-3= settingGeneral.general.site_description
+        
+        //- MẠNG XÃ HỘI
+        if settingGeneral.social_media
+          .social-links.d-flex.gap-3.mt-3
+            if settingGeneral.social_media.facebook
+              a.text-white.fs-4(href=settingGeneral.social_media.facebook target="_blank" rel="noopener" title="Facebook")
+                i.bi.bi-facebook
+            if settingGeneral.social_media.twitter
+              a.text-white.fs-4(href=settingGeneral.social_media.twitter target="_blank" rel="noopener" title="Twitter")
+                i.bi.bi-twitter
+            if settingGeneral.social_media.instagram
+              a.text-white.fs-4(href=settingGeneral.social_media.instagram target="_blank" rel="noopener" title="Instagram")
+                i.bi.bi-instagram
+            if settingGeneral.social_media.youtube
+              a.text-white.fs-4(href=settingGeneral.social_media.youtube target="_blank" rel="noopener" title="YouTube")
+                i.bi.bi-youtube
+            if settingGeneral.social_media.linkedin
+              a.text-white.fs-4(href=settingGeneral.social_media.linkedin target="_blank" rel="noopener" title="LinkedIn")
+                i.bi.bi-linkedin
+
+      //- CỘT 2: LIÊN KẾT NHANH
+      .col-lg-2.col-md-6.col-6
+        h6.mb-3.fw-bold
+          i.bi.bi-link-45deg.me-2
+          | Liên kết
+        ul.list-unstyled
+          li.mb-2
+            a.text-white-50.text-decoration-none(href="/")
+              i.bi.bi-chevron-right.me-1
+              | Trang chủ
+          li.mb-2
+            a.text-white-50.text-decoration-none(href="/products")
+              i.bi.bi-chevron-right.me-1
+              | Sản phẩm
+          li.mb-2
+            a.text-white-50.text-decoration-none(href="/posts")
+              i.bi.bi-chevron-right.me-1
+              | Tin tức
+          li.mb-2
+            a.text-white-50.text-decoration-none(href="/contact")
+              i.bi.bi-chevron-right.me-1
+              | Liên hệ
+          li.mb-2
+            a.text-white-50.text-decoration-none(href="/about")
+              i.bi.bi-chevron-right.me-1
+              | Giới thiệu
+
+      //- CỘT 3: HỖ TRỢ KHÁCH HÀNG
+      .col-lg-3.col-md-6.col-6
+        h6.mb-3.fw-bold
+          i.bi.bi-headset.me-2
+          | Hỗ trợ
+        ul.list-unstyled
+          li.mb-2
+            a.text-white-50.text-decoration-none(href="/user/orders")
+              i.bi.bi-chevron-right.me-1
+              | Đơn hàng
+          li.mb-2
+            a.text-white-50.text-decoration-none(href="/return-policy")
+              i.bi.bi-chevron-right.me-1
+              | Chính sách đổi trả
+          li.mb-2
+            a.text-white-50.text-decoration-none(href="/shipping-policy")
+              i.bi.bi-chevron-right.me-1
+              | Chính sách vận chuyển
+          li.mb-2
+            a.text-white-50.text-decoration-none(href="/payment-guide")
+              i.bi.bi-chevron-right.me-1
+              | Hướng dẫn thanh toán
+          li.mb-2
+            a.text-white-50.text-decoration-none(href="/privacy-policy")
+              i.bi.bi-chevron-right.me-1
+              | Chính sách bảo mật
+
+      //- CỘT 4: THÔNG TIN LIÊN HỆ
+      .col-lg-3.col-md-6
+        h6.mb-3.fw-bold
+          i.bi.bi-geo-alt.me-2
+          | Liên hệ
+        ul.list-unstyled
+          if settingGeneral.contact.address
+            li.mb-2.text-white-50
+              i.bi.bi-geo-alt-fill.me-2
+              = settingGeneral.contact.address
+          if settingGeneral.contact.phone
+            li.mb-2
+              a.text-white-50.text-decoration-none(href=`tel:${settingGeneral.contact.phone}`)
+                i.bi.bi-telephone-fill.me-2
+                = settingGeneral.contact.phone
+          if settingGeneral.contact.email
+            li.mb-2
+              a.text-white-50.text-decoration-none(href=`mailto:${settingGeneral.contact.email}`)
+                i.bi.bi-envelope-fill.me-2
+                = settingGeneral.contact.email
+          li.mb-2.text-white-50
+            i.bi.bi-clock-fill.me-2
+            | Thứ 2 - Chủ nhật: 8:00 - 22:00
+
+    //- ĐƯỜNG PHÂN CÁCH
+    hr.my-4.bg-white.opacity-25
+
+    //- FOOTER BOTTOM
+    .row.pb-3
+      .col-md-6.text-center.text-md-start.mb-3.mb-md-0
+        p.mb-0.text-white-50
+          if settingGeneral.general.copyright
+            = settingGeneral.general.copyright
+          else
+            | © 2026 Mega Mart. All Rights Reserved.
+      
+      .col-md-6.text-center.text-md-end
+        .payment-methods
+          span.text-white-50.me-3 Phương thức thanh toán:
+          i.bi.bi-credit-card.text-white.fs-5.me-2(title="Thẻ tín dụng")
+          i.bi.bi-cash.text-white.fs-5.me-2(title="Tiền mặt")
+          i.bi.bi-bank.text-white.fs-5(title="Chuyển khoản")
+
+  //- SCROLL TO TOP BUTTON
+  button#scrollToTop.btn.btn-primary.rounded-circle.position-fixed(
+    style="bottom: 30px; right: 30px; width: 50px; height: 50px; display: none; z-index: 1000;"
+    onclick="window.scrollTo({top: 0, behavior: 'smooth'})"
+    title="Lên đầu trang"
+  )
+    i.bi.bi-arrow-up.fs-5
+
+  //- JavaScript cho scroll to top
+  script.
+    window.addEventListener('scroll', function() {
+      const scrollBtn = document.getElementById('scrollToTop');
+      if (window.pageYOffset > 300) {
+        scrollBtn.style.display = 'block';
+      } else {
+        scrollBtn.style.display = 'none';
+      }
+    });
