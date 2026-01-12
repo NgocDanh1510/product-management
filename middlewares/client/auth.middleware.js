@@ -8,6 +8,7 @@ module.exports.checkLogin = async (req, res, next) => {
     const user = await User.findOne({ tokenUser: token }).select(
       "-password -tokenUser -status"
     );
+
     if (user) {
       res.locals.user = user;
 

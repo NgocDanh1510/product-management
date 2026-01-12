@@ -85,7 +85,16 @@ module.exports.order = async (req, res) => {
     const cartId = req.cookies.cartId;
     const cart = await Cart.findById(cartId).lean();
 
+    // Nếu user chưa có địa chỉ hoặc số điện thoại → cập nhật từ form đặt hàng
+    if (!res.locals.user.address || !res.locals.user.phone) {
+      await res.locals.user.updateOne({
+        address: req.body.address,
+        phone: req.body.phone,
+      });
+    }
+
     const order = {
+      user_id: res.locals.user.id,
       note: req.body.note,
       paymentMethod: req.body.paymentMethod,
       totalPrice: 0,
