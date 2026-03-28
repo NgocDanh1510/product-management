@@ -1,0 +1,123 @@
+extends ../../layout/default.pug
+
+block css
+  link(rel="stylesheet", href="/css/pages/auth.css")
+
+block main
+  .bg-light
+    .container.py-5
+      .register-container
+
+        //- Breadcrumb
+        .mb-3
+          a.text-muted.small(href="/") 
+            i.bi.bi-arrow-left.me-1
+            | Quay lại trang chủ
+
+        //- Alerts
+        if messages.success
+          .alert.alert-success.alert-dismissible.fade.show(role="alert")
+            i.bi.bi-check-circle.me-2
+            strong Thành công!
+            |  #{messages.success}
+            button.btn-close(type="button", data-bs-dismiss="alert")
+          
+        if messages.error
+          .alert.alert-danger.alert-dismissible.fade.show(role="alert")
+            i.bi.bi-exclamation-circle.me-2
+            strong Lỗi!
+            |  #{messages.error}
+            button.btn-close(type="button", data-bs-dismiss="alert")
+
+        .card.shadow-sm.border-0
+          .card-header.bg-white.border-bottom.py-3
+            .d-flex.justify-content-between.align-items-center
+              h5.mb-0
+                i.bi.bi-person-circle.me-2
+                | Thông Tin Cá Nhân
+
+          .card-body.p-4
+            form(method="POST", action="/user/info?_method=PATCH")
+              
+              //- Email (read-only)
+              .mb-4
+                label.form-label(for="email") 
+                  strong Email
+                input#email.form-control(
+                  type="email",
+                  value=user.email,
+                  disabled
+                )
+                small.text-muted.d-block.mt-2 Email không thể thay đổi
+
+              //- Tên đầy đủ
+              .mb-4
+                label.form-label(for="fullName")
+                  strong Họ và Tên
+                input#fullName.form-control(
+                  type="text",
+                  name="fullName",
+                  value=user.fullName || "",
+                  placeholder="Nhập họ tên đầy đủ",
+                  required
+                )
+
+              //- Số điện thoại & Địa chỉ (2 cột)
+              .row
+                .col-md-6.mb-4
+                  label.form-label(for="phone")
+                    strong Số Điện Thoại
+                  input#phone.form-control(
+                    type="tel",
+                    name="phone",
+                    value=user.phone || "",
+                    placeholder="Nhập số điện thoại",
+                    pattern="[0-9]{10,11}"
+                  )
+                  small.text-muted.d-block.mt-2 Nhập 10-11 số
+
+                .col-md-6.mb-4
+                  label.form-label(for="address")
+                    strong Địa Chỉ
+                  input#address.form-control(
+                    type="text",
+                    name="address",
+                    value=user.address || "",
+                    placeholder="Nhập địa chỉ"
+                  )
+
+              //- Ngày tham gia
+              .mb-4
+                label.form-label
+                  strong Ngày Tham Gia
+                p.text-muted
+                  i.bi.bi-calendar3.me-2
+                  |  #{new Date(user.createdAt).toLocaleDateString('vi-VN')}
+
+              //- Buttons
+              .d-flex.gap-2.justify-content-end
+                a.btn.btn-outline-secondary(href="/")
+                  i.bi.bi-x-circle.me-2
+                  | Hủy
+                button.btn.btn-brand(type="submit")
+                  i.bi.bi-pencil.me-2
+                  | Cập Nhật Thông Tin
+
+        //- Thay đổi mật khẩu
+        .card.shadow-sm.border-0.mt-4
+          .card-header.bg-white.border-bottom.py-3
+            h5.mb-0
+              i.bi.bi-lock-fill.me-2
+              | Thay Đổi Mật Khẩu
+
+          .card-body.p-4
+            p.text-muted.mb-4 Để bảo vệ tài khoản của bạn, vui lòng sử dụng mật khẩu mạnh
+            
+            .d-flex.gap-3.justify-content-between.align-items-center
+              div
+                strong Mật khẩu hiện tại
+                p.text-muted.small Bạn không thể thay đổi mật khẩu trực tiếp tại đây
+              
+              a.btn.btn-outline-primary(href="/user/password/reset")
+                i.bi.bi-arrow-right.me-2
+                | Đi đến trang thay đổi

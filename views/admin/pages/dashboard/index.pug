@@ -3,6 +3,119 @@ include ../../mixins/box-head.pug
 
 block main
   +box-head("Dashboard")
-  h1 Nội Dung Chính Của Trang
-  p Phần này sẽ cuộn lên xuống.
-  p Kết thúc nội dung.
+  
+  //- Thống kê chính (Top 4 cards)
+  .row.mb-5
+    .col-lg-3.col-md-6.mb-3
+      .card.border-0.shadow-sm.bg-light
+        .card-body
+          .d-flex.justify-content-between.align-items-center
+            div
+              small.text-muted.d-block Tổng Đơn Hàng
+              h4.fw-bold.text-primary.mb-0=stats.totalOrders
+            div.text-end
+              i.bi.bi-cart4.fs-2.text-primary.opacity-50
+
+    .col-lg-3.col-md-6.mb-3
+      .card.border-0.shadow-sm.bg-light
+        .card-body
+          .d-flex.justify-content-between.align-items-center
+            div
+              small.text-muted.d-block Tổng Sản Phẩm
+              h4.fw-bold.text-success.mb-0=stats.totalProducts
+            div.text-end
+              i.bi.bi-box.fs-2.text-success.opacity-50
+
+    .col-lg-3.col-md-6.mb-3
+      .card.border-0.shadow-sm.bg-light
+        .card-body
+          .d-flex.justify-content-between.align-items-center
+            div
+              small.text-muted.d-block Tổng Người Dùng
+              h4.fw-bold.text-info.mb-0=stats.totalUsers
+            div.text-end
+              i.bi.bi-people.fs-2.text-info.opacity-50
+
+    .col-lg-3.col-md-6.mb-3
+      .card.border-0.shadow-sm.bg-light
+        .card-body
+          .d-flex.justify-content-between.align-items-center
+            div
+              small.text-muted.d-block Tài Khoản Quản Trị
+              h4.fw-bold.text-warning.mb-0=stats.totalAccounts
+            div.text-end
+              i.bi.bi-shield-lock.fs-2.text-warning.opacity-50
+
+  .row.mb-5
+    //- Doanh thu
+    .col-lg-6.mb-3
+      .card.border-0.shadow-sm
+        .card-header.bg-white.border-bottom
+          h6.mb-0
+            i.bi.bi-cash-coin.me-2
+            | Doanh Thu
+        .card-body
+          .list-group.list-group-flush
+            .list-group-item.px-0
+              .d-flex.justify-content-between
+                span Tổng Doanh Thu
+                strong.text-success= stats.totalRevenue || "0"
+            .list-group-item.px-0
+              .d-flex.justify-content-between
+                span Giá Trị Trung Bình/Đơn
+                strong.text-info= stats.averageOrderValue || "0"
+
+    //- Trạng thái đơn hàng
+    .col-lg-6.mb-3
+      .card.border-0.shadow-sm
+        .card-header.bg-white.border-bottom
+          h6.mb-0
+            i.bi.bi-diagram3.me-2
+            | Trạng Thái Đơn Hàng
+        .card-body
+          .list-group.list-group-flush
+            if orderStatusStats.length > 0
+              each stat in orderStatusStats
+                .list-group-item.px-0
+                  .d-flex.justify-content-between.align-items-center
+                    span(style="text-transform: capitalize;")=stat._id
+                    span.badge.bg-primary=stat.count
+            else
+              .text-center.py-3
+                p.text-muted Chưa có dữ liệu
+
+  //- Đơn hàng gần đây
+  .row
+    .col-12
+      .card.border-0.shadow-sm
+        .card-header.bg-white.border-bottom
+          h6.mb-0
+            i.bi.bi-clock-history.me-2
+            | Đơn Hàng Gần Đây
+        .card-body.p-0
+          if recentOrders.length > 0
+            .table-responsive
+              table.table.mb-0
+                thead.table-light
+                  tr
+                    th Khách Hàng
+                    th Số Tiền
+                    th Trạng Thái
+                    th Ngày
+                tbody
+                  each order in recentOrders
+                    tr
+                      td
+                        strong= (order.userInfor && order.userInfor.fullName) || "N/A"
+                        br
+                        small.text-muted= (order.userInfor && order.userInfor.email) || ""
+                      td.text-end
+                        strong= (order.totalPrice && order.totalPrice.toLocaleString('vi-VN')) || "0"
+                      td
+                        span.badge(class=order.status === "completed" ? "bg-success" : order.status === "pending" ? "bg-warning" : order.status === "cancelled" ? "bg-danger" : "bg-secondary")
+                          =order.status
+                      td.text-muted.small
+                        =new Date(order.createdAt).toLocaleDateString('vi-VN')
+          else
+            .text-center.py-5
+              p.text-muted Chưa có đơn hàng nào

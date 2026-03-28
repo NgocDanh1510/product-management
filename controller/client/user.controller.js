@@ -172,9 +172,47 @@ module.exports.resetPasswordPost = async (req, res) => {
 
   await User.updateOne(
     { _id: res.locals.user._id },
-    { password: md5(password) }
+    { password: md5(password) },
   );
 
   req.flash("success", "Đổi mật khẩu thành công");
   res.redirect(req.get("Referrer"));
+};
+
+// [GET] /user/info
+module.exports.info = async (req, res) => {
+  if (!res.locals.user) {
+    return res.redirect("/user/login");
+  }
+
+  res.render("client/pages/user/info", {
+    titlePage: "Thông tin cá nhân",
+    user: res.locals.user,
+  });
+};
+
+// [PATCH] /user/info
+module.exports.updateInfo = async (req, res) => {
+  try {
+    if (!res.locals.user) {
+      return res.redirect("/user/login");
+    }
+
+    const { fullName, phone, address } = req.body;
+
+    await User.updateOne(
+      { _id: res.locals.user._id },
+      {
+        fullName: fullName || res.locals.user.fullName,
+        phone: phone || res.locals.user.phone,
+        address: address || res.locals.user.address,
+      },
+    );
+
+    req.flash("success", "Cập nhật thông tin thành công!");
+    res.redirect(req.get("Referrer"));
+  } catch (error) {
+    req.flash("error", "Có lỗi xảy ra, vui lòng thử lại!");
+    res.redirect(req.get("Referrer"));
+  }
 };
