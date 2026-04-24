@@ -3,6 +3,7 @@ const ForgotPassword = require("../../model/forgot-password.model");
 const random = require("../../helper/generateRandom");
 const sendMail = require("../../helper/sendMail");
 const bcrypt = require("bcrypt");
+const jwtHelper = require("../../helper/jwt.helper");
 
 // [GET] /user/login
 module.exports.login = (req, res) => {
@@ -41,8 +42,10 @@ module.exports.loginPost = async (req, res) => {
     return res.redirect(req.get("Referrer"));
   }
 
-  res.cookie("tokenUser", user.tokenUser, {
-    expires: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
+  const jwtToken = jwtHelper.generateToken({ _id: user._id });
+  res.cookie("tokenUser", jwtToken, {
+    httpOnly: true,
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 ngày
   });
 
   //back trang chu
@@ -144,9 +147,13 @@ module.exports.otpPost = async (req, res) => {
     return res.redirect(req.get("Referrer"));
   }
 
-  const user = await User.findOne({ email }).select("tokenUser");
+  const user = await User.findOne({ email }).select("_id");
 
-  res.cookie("tokenUser", user.tokenUser);
+  const jwtToken = jwtHelper.generateToken({ _id: user._id });
+  res.cookie("tokenUser", jwtToken, {
+    httpOnly: true,
+    maxAge: 15 * 60 * 1000, // 15 phút cho reset password
+  });
 
   res.redirect(`/user/password/reset`);
 };

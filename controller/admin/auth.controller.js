@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt");
 const systemConfig = require("../../config/system");
 const Account = require("../../model/account.model");
+const jwtHelper = require("../../helper/jwt.helper");
 
 //[GET] /admin/auth/login
 module.exports.login = (req, res) => {
@@ -34,8 +35,13 @@ module.exports.loginPost = async (req, res) => {
     req.flash("error", "tài khoản đã bị khóa!");
     return res.redirect(req.get("Referrer"));
   }
-  res.cookie("token", user.token, {
-    expires: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
+  const jwtToken = jwtHelper.generateToken({
+    _id: user._id,
+    role_id: user.role_id,
+  });
+  res.cookie("token", jwtToken, {
+    httpOnly: true,
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 ngày
   });
   res.redirect(`${systemConfig.prefixAdmin}/dashboard`);
 };

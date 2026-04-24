@@ -1,11 +1,15 @@
 const User = require("../../model/user.model");
 const Cart = require("../../model/cart.model");
+const jwtHelper = require("../../helper/jwt.helper");
 
 module.exports.checkLogin = async (req, res, next) => {
   const token = req.cookies.tokenUser;
 
   if (token) {
-    const user = await User.findOne({ tokenUser: token }).select(
+    const decoded = jwtHelper.verifyToken(token);
+    if (!decoded) return next();
+
+    const user = await User.findOne({ _id: decoded._id }).select(
       "-password -tokenUser -status"
     );
 
