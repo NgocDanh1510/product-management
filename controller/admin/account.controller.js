@@ -1,7 +1,7 @@
 const Account = require("../../model/account.model");
 const systemConfig = require("../../config/system");
 const Role = require("../../model/role.model");
-const md5 = require("md5");
+const bcrypt = require("bcrypt");
 
 //[GET] /admin/accounts
 module.exports.index = async (req, res) => {
@@ -42,7 +42,7 @@ module.exports.createPost = async (req, res) => {
       req.flash("error", "Email đã tồn tại!");
       return res.redirect(`${systemConfig.prefixAdmin}/accounts/create`);
     }
-    req.body.password = md5(req.body.password);
+    req.body.password = await bcrypt.hash(req.body.password, 10);
     const newAccount = new Account(req.body);
     await newAccount.save();
     req.flash("success", "thêm tài khoản thành công!");
@@ -85,7 +85,7 @@ module.exports.editPatch = async (req, res) => {
     if (!req.body.password) {
       delete req.body.password;
     } else {
-      req.body.password = md5(req.body.password);
+      req.body.password = await bcrypt.hash(req.body.password, 10);
     }
 
     await Account.updateOne({ _id: id }, { $set: req.body });

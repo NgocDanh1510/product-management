@@ -1,4 +1,4 @@
-const md5 = require("md5");
+const bcrypt = require("bcrypt");
 const systemConfig = require("../../config/system");
 const Account = require("../../model/account.model");
 
@@ -24,7 +24,8 @@ module.exports.loginPost = async (req, res) => {
     return res.redirect(req.get("Referrer"));
   }
 
-  if (md5(password) != user.password) {
+  const isMatch = await bcrypt.compare(password, user.password);
+  if (!isMatch) {
     req.flash("error", "mật khẩu sai!");
     return res.redirect(req.get("Referrer"));
   }

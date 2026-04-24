@@ -2,7 +2,7 @@ const User = require("../../model/user.model");
 const ForgotPassword = require("../../model/forgot-password.model");
 const random = require("../../helper/generateRandom");
 const sendMail = require("../../helper/sendMail");
-const md5 = require("md5");
+const bcrypt = require("bcrypt");
 
 // [GET] /user/login
 module.exports.login = (req, res) => {
@@ -35,7 +35,8 @@ module.exports.loginPost = async (req, res) => {
     return res.redirect(req.get("Referrer"));
   }
 
-  if (user.password != md5(password)) {
+  const isMatch = await bcrypt.compare(password, user.password);
+  if (!isMatch) {
     req.flash("error", "email hoặc mật khẩu không hợp lệ!");
     return res.redirect(req.get("Referrer"));
   }
@@ -61,7 +62,7 @@ module.exports.registerPost = async (req, res) => {
       return res.redirect(req.get("Referrer"));
     }
 
-    req.body.password = md5(req.body.password);
+    req.body.password = await bcrypt.hash(req.body.password, 10);
     delete req.body.confirmPassword;
 
     await User.create(req.body);
@@ -172,7 +173,7 @@ module.exports.resetPasswordPost = async (req, res) => {
 
   await User.updateOne(
     { _id: res.locals.user._id },
-    { password: md5(password) },
+    { password: await bcrypt.hash(password, 10) },
   );
 
   req.flash("success", "Đổi mật khẩu thành công");
