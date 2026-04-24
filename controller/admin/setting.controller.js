@@ -47,23 +47,51 @@ module.exports.generalPatch = async (req, res) => {
   // Lấy record đầu tiên để update
   const setting = await Setting.findOne({});
 
-  if (req.body.favicon) {
-    req.body.general.favicon_url = req.body.favicon;
-    delete req.body.favicon;
+  // Whitelist các fields được phép cập nhật
+  const updateData = {};
+
+  if (req.body.general) {
+    updateData.general = {
+      site_title: req.body.general.site_title,
+      site_description: req.body.general.site_description,
+      logo_url: req.body.logo || req.body.general.logo_url,
+      favicon_url: req.body.favicon || req.body.general.favicon_url,
+      copyright: req.body.general.copyright,
+    };
   }
-  if (req.body.logo) {
-    req.body.general.logo_url = req.body.logo;
-    delete req.body.logo;
+
+  if (req.body.contact) {
+    updateData.contact = {
+      email: req.body.contact.email,
+      phone: req.body.contact.phone,
+      address: req.body.contact.address,
+      map_iframe: req.body.contact.map_iframe,
+    };
   }
-  console.log(req.body);
+
+  if (req.body.social_media) {
+    updateData.social_media = {
+      facebook: req.body.social_media.facebook,
+      twitter: req.body.social_media.twitter,
+      instagram: req.body.social_media.instagram,
+      youtube: req.body.social_media.youtube,
+      linkedin: req.body.social_media.linkedin,
+    };
+  }
+
+  if (req.body.advanced) {
+    updateData.advanced = {
+      maintenance_mode: req.body.advanced.maintenance_mode === "true" || req.body.advanced.maintenance_mode === true,
+      currency: req.body.advanced.currency,
+      shipping_fee_default: Number(req.body.advanced.shipping_fee_default),
+    };
+  }
+
   if (setting) {
-    // Cập nhật record đã tồn tại
-    await Setting.updateOne({ _id: setting.id }, req.body);
+    await Setting.updateOne({ _id: setting.id }, updateData);
   } else {
-    // Tạo mới nếu chưa có (trường hợp hiếm)
-    await Setting.create(req.body);
+    await Setting.create(updateData);
   }
-  console.log(req.body);
 
   req.flash("success", "Cập nhật cấu hình thành công!");
   res.redirect(`${systemConfig.prefixAdmin}/settings`);

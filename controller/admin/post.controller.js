@@ -31,7 +31,7 @@ module.exports.index = async (req, res) => {
     { limitPage: 5, currentPage: 1 },
     req.query,
     Post,
-    find
+    find,
   );
 
   const posts = await Post.find(find)
@@ -42,7 +42,7 @@ module.exports.index = async (req, res) => {
   for (const element of posts) {
     if (element.createdBy) {
       const account = await Acccount.findOne({ _id: element.createdBy }).select(
-        "fullName"
+        "fullName",
       );
       element.createdByFullName = account.fullName;
     } else element.createdByFullName = "";
@@ -64,7 +64,7 @@ module.exports.changeStatus = async (req, res) => {
 
     await Post.updateOne(
       { _id: id },
-      { status: status, updatedBy: res.locals.user.id }
+      { status: status, updatedBy: res.locals.user.id },
     );
     req.flash("success", `thay đổi trạng thái thành công`);
   } catch (error) {
@@ -75,7 +75,7 @@ module.exports.changeStatus = async (req, res) => {
 
   await Post.updateOne(
     { _id: id },
-    { status: status, updatedBy: res.locals.user.id }
+    { status: status, updatedBy: res.locals.user.id },
   );
 
   //back trang truoc
@@ -90,7 +90,7 @@ module.exports.delete = async (req, res) => {
 
     await Post.updateOne(
       { _id: id },
-      { deleted: true, deletedBy: res.locals.user.id }
+      { deleted: true, deletedBy: res.locals.user.id },
     );
     req.flash("success", `đã xóa thành công`);
   } catch (error) {
@@ -113,21 +113,21 @@ module.exports.changeMulti = async (req, res) => {
       case "active":
         await Post.updateMany(
           { _id: { $in: ids } },
-          { status: "active", updatedBy: res.locals.user.id }
+          { status: "active", updatedBy: res.locals.user.id },
         );
         req.flash("success", `đã cập nhật trạng thái ${ids.length} bài viết`);
         break;
       case "inactive":
         await Post.updateMany(
           { _id: { $in: ids } },
-          { status: "inactive", updatedBy: res.locals.user.id }
+          { status: "inactive", updatedBy: res.locals.user.id },
         );
         req.flash("success", `đã cập nhật trạng thái ${ids.length} bài viết`);
         break;
       case "delete":
         await Post.updateMany(
           { _id: { $in: ids } },
-          { deleted: true, daletedBy: res.locals.user.id }
+          { deleted: true, daletedBy: res.locals.user.id },
         );
         req.flash("success", `đã xóa ${ids.length} bài viết`);
         break;
@@ -136,7 +136,7 @@ module.exports.changeMulti = async (req, res) => {
           const [id, position] = element.split("-");
           await Post.updateOne(
             { _id: id },
-            { position: position, updatedBy: res.locals.user.id }
+            { position: position, updatedBy: res.locals.user.id },
           );
         }
         req.flash("success", `đã cập nhật vị trí ${ids.length} bài viết`);
@@ -167,14 +167,26 @@ module.exports.create = async (req, res) => {
 //[POST] /admin/posts/create
 module.exports.createPost = async (req, res) => {
   try {
+    const postData = {
+      title: req.body.title,
+      post_category_id: req.body.post_category_id,
+      description: req.body.description,
+      content: req.body.content,
+      thumbnail: req.body.thumbnail,
+      status: req.body.status,
+      isFeatured:
+        req.body.isFeatured === "true" || req.body.isFeatured === true,
+      createdBy: res.locals.user.id,
+    };
+
     if (!req.body.position) {
       const countPost = await Post.countDocuments();
-      req.body.position = countPost + 1;
-    } else req.body.position = parseInt(req.body.position);
+      postData.position = countPost + 1;
+    } else {
+      postData.position = parseInt(req.body.position);
+    }
 
-    req.body.createdBy = res.locals.user.id;
-
-    const newPost = new Post(req.body);
+    const newPost = new Post(postData);
     await newPost.save();
 
     req.flash("success", `Thêm bài viết thành công`);
@@ -202,14 +214,26 @@ module.exports.edit = async (req, res) => {
 //[PATCH] /admin/posts/edit/:id
 module.exports.editPost = async (req, res) => {
   try {
+    const updateData = {
+      title: req.body.title,
+      post_category_id: req.body.post_category_id,
+      description: req.body.description,
+      content: req.body.content,
+      thumbnail: req.body.thumbnail,
+      status: req.body.status,
+      isFeatured:
+        req.body.isFeatured === "true" || req.body.isFeatured === true,
+      updatedBy: res.locals.user.id,
+    };
+
     if (!req.body.position) {
       const countPost = await Post.countDocuments();
-      req.body.position = countPost + 1;
-    } else req.body.position = parseInt(req.body.position);
+      updateData.position = countPost + 1;
+    } else {
+      updateData.position = parseInt(req.body.position);
+    }
 
-    req.body.createdBy = res.locals.user.id;
-
-    await Post.updateOne({ _id: req.params.id }, req.body);
+    await Post.updateOne({ _id: req.params.id }, updateData);
 
     req.flash("success", `cập nhật bài viết thành công`);
   } catch (error) {
@@ -226,14 +250,14 @@ module.exports.detail = async (req, res) => {
 
   if (post.createdBy) {
     const account = await Acccount.findOne({ _id: post.createdBy }).select(
-      "fullName"
+      "fullName",
     );
     post.createdByFullName = account.fullName;
   } else post.createdByFullName = "";
 
   if (post.updatedBy) {
     const account = await Acccount.findOne({ _id: post.updatedBy }).select(
-      "fullName"
+      "fullName",
     );
     post.updatedByFullName = account.fullName;
   } else post.updatedByFullName = "";

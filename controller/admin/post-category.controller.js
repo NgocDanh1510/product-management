@@ -158,13 +158,23 @@ module.exports.create = async (req, res) => {
 
 //[POST] /post-category/create
 module.exports.createPostCategory = async (req, res) => {
+  const categoryData = {
+    title: req.body.title,
+    description: req.body.description,
+    parent_id: req.body.parent_id,
+    thumbnail: req.body.thumbnail,
+    status: req.body.status,
+    createdBy: res.locals.user._id,
+  };
+
   if (req.body.position === "") {
     const count = await PostCategory.countDocuments();
-    req.body.position = count + 1;
-  } else req.body.position = parseInt(req.body.position);
+    categoryData.position = count + 1;
+  } else {
+    categoryData.position = parseInt(req.body.position);
+  }
 
-  req.body.createdBy = res.locals.user._id;
-  const record = new PostCategory(req.body);
+  const record = new PostCategory(categoryData);
   await record.save();
 
   req.flash("success", `Đã thêm thành công danh mục sản phẩm `);
@@ -190,14 +200,23 @@ module.exports.edit = async (req, res) => {
 //[PATCH] /post-category/edit/:id
 module.exports.editPostCategory = async (req, res) => {
   const id = req.params.id;
+  const updateData = {
+    title: req.body.title,
+    description: req.body.description,
+    parent_id: req.body.parent_id,
+    thumbnail: req.body.thumbnail,
+    status: req.body.status,
+    updatedBy: res.locals.user._id,
+  };
+
   if (req.body.position === "") {
     const count = await PostCategory.countDocuments();
-    req.body.position = count + 1;
-  } else req.body.position = parseInt(req.body.position);
+    updateData.position = count + 1;
+  } else {
+    updateData.position = parseInt(req.body.position);
+  }
 
-  req.body.updatedBy = res.locals.user._id;
-
-  await PostCategory.updateOne({ _id: id }, req.body);
+  await PostCategory.updateOne({ _id: id }, updateData);
 
   req.flash("success", `Đã cập nhật danh mục sản phẩm thành công `);
   res.redirect(`${systemPrefix.prefixAdmin}/post-category`);

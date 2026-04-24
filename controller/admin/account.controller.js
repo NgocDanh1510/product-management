@@ -43,7 +43,16 @@ module.exports.createPost = async (req, res) => {
       return res.redirect(`${systemConfig.prefixAdmin}/accounts/create`);
     }
     req.body.password = await bcrypt.hash(req.body.password, 10);
-    const newAccount = new Account(req.body);
+    const accountData = {
+      fullName: req.body.fullName,
+      email: req.body.email,
+      phone: req.body.phone,
+      avatar: req.body.avatar,
+      password: req.body.password,
+      role_id: req.body.role_id,
+      status: req.body.status,
+    };
+    const newAccount = new Account(accountData);
     await newAccount.save();
     req.flash("success", "thêm tài khoản thành công!");
   } catch (error) {
@@ -81,14 +90,21 @@ module.exports.editPatch = async (req, res) => {
       return res.redirect(req.get("Referrer"));
     }
 
+    const updateData = {
+      fullName: req.body.fullName,
+      email: req.body.email,
+      phone: req.body.phone,
+      avatar: req.body.avatar,
+      role_id: req.body.role_id,
+      status: req.body.status,
+    };
+
     // Xử lý password
-    if (!req.body.password) {
-      delete req.body.password;
-    } else {
-      req.body.password = await bcrypt.hash(req.body.password, 10);
+    if (req.body.password) {
+      updateData.password = await bcrypt.hash(req.body.password, 10);
     }
 
-    await Account.updateOne({ _id: id }, { $set: req.body });
+    await Account.updateOne({ _id: id }, { $set: updateData });
 
     req.flash("success", "Cập nhật tài khoản thành công!");
   } catch (error) {

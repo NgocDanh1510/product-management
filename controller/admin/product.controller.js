@@ -173,19 +173,27 @@ module.exports.create = async (req, res) => {
 };
 //[POST] /admin/products/create
 module.exports.createProduct = async (req, res) => {
-  req.body.price = parseFloat(req.body.price);
-  req.body.discountPercentage = parseFloat(req.body.discountPercentage);
-  req.body.stock = parseInt(req.body.stock);
+  const productData = {
+    title: req.body.title,
+    product_category_id: req.body.product_category_id,
+    description: req.body.description,
+    price: parseFloat(req.body.price),
+    discountPercentage: parseFloat(req.body.discountPercentage),
+    stock: parseInt(req.body.stock),
+    thumbnail: req.body.thumbnail,
+    availabilityStatus: req.body.availabilityStatus,
+    isFeatured: req.body.isFeatured === "true" || req.body.isFeatured === true,
+    createdBy: res.locals.user._id,
+  };
 
   if (req.body.position === "") {
     const countProducts = await Product.countDocuments();
-    req.body.position = countProducts + 1;
-  } else req.body.position = parseInt(req.body.position);
+    productData.position = countProducts + 1;
+  } else {
+    productData.position = parseInt(req.body.position);
+  }
 
-  req.body.createdBy = res.locals.user._id;
-
-  // them vao database
-  const addProduct = new Product(req.body);
+  const addProduct = new Product(productData);
   await addProduct.save();
 
   req.flash("success", `Đã thêm sản phẩm thành công`);
@@ -215,21 +223,27 @@ module.exports.edit = async (req, res) => {
 module.exports.editProduct = async (req, res) => {
   const id = req.params.id;
 
-  req.body.price = parseFloat(req.body.price);
-  req.body.discountPercentage = parseFloat(req.body.discountPercentage);
-  req.body.stock = parseInt(req.body.stock);
+  const productData = {
+    title: req.body.title,
+    product_category_id: req.body.product_category_id,
+    description: req.body.description,
+    price: parseFloat(req.body.price),
+    discountPercentage: parseFloat(req.body.discountPercentage),
+    stock: parseInt(req.body.stock),
+    thumbnail: req.body.thumbnail,
+    availabilityStatus: req.body.availabilityStatus,
+    isFeatured: req.body.isFeatured === "true" || req.body.isFeatured === true,
+    updatedBy: res.locals.user._id,
+  };
 
   if (req.body.position === "") {
     const countProducts = await Product.countDocuments();
-    req.body.position = countProducts + 1;
+    productData.position = countProducts + 1;
   } else {
-    req.body.position = parseInt(req.body.position);
+    productData.position = parseInt(req.body.position);
   }
 
-  req.body.updatedBy = res.locals.user._id;
-
-  // UPDATE chứ KHÔNG phải tạo mới
-  await Product.updateOne({ _id: id }, req.body);
+  await Product.updateOne({ _id: id }, productData);
 
   req.flash("success", `Đã chỉnh sửa sản phẩm thành công`);
   //back lai trang truoc

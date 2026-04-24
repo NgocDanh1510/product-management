@@ -158,13 +158,24 @@ module.exports.create = async (req, res) => {
 
 //[POST] /product-category/create
 module.exports.createProductCategory = async (req, res) => {
+  const categoryData = {
+    title: req.body.title,
+    description: req.body.description,
+    parent_id: req.body.parent_id,
+    thumbnail: req.body.thumbnail,
+    status: req.body.status,
+    isFeatured: req.body.isFeatured === "true" || req.body.isFeatured === true,
+    createdBy: res.locals.user._id,
+  };
+
   if (req.body.position === "") {
     const count = await ProductCategory.countDocuments();
-    req.body.position = count + 1;
-  } else req.body.position = parseInt(req.body.position);
+    categoryData.position = count + 1;
+  } else {
+    categoryData.position = parseInt(req.body.position);
+  }
 
-  req.body.createdBy = res.locals.user._id;
-  const record = new ProductCategory(req.body);
+  const record = new ProductCategory(categoryData);
   await record.save();
 
   req.flash("success", `Đã thêm thành công danh mục sản phẩm `);
@@ -190,14 +201,24 @@ module.exports.edit = async (req, res) => {
 //[PATCH] /product-category/edit/:id
 module.exports.editProductCategory = async (req, res) => {
   const id = req.params.id;
+  const updateData = {
+    title: req.body.title,
+    description: req.body.description,
+    parent_id: req.body.parent_id,
+    thumbnail: req.body.thumbnail,
+    status: req.body.status,
+    isFeatured: req.body.isFeatured === "true" || req.body.isFeatured === true,
+    updatedBy: res.locals.user._id,
+  };
+
   if (req.body.position === "") {
     const count = await ProductCategory.countDocuments();
-    req.body.position = count + 1;
-  } else req.body.position = parseInt(req.body.position);
+    updateData.position = count + 1;
+  } else {
+    updateData.position = parseInt(req.body.position);
+  }
 
-  req.body.updatedBy = res.locals.user._id;
-
-  await ProductCategory.updateOne({ _id: id }, req.body);
+  await ProductCategory.updateOne({ _id: id }, updateData);
 
   req.flash("success", `Đã cập nhật danh mục sản phẩm thành công `);
   res.redirect(`${systemPrefix.prefixAdmin}/product-category`);

@@ -20,7 +20,11 @@ module.exports.create = async (req, res) => {
 
 //[POST] /admin/roles/create
 module.exports.createPost = async (req, res) => {
-  const newRole = new Role(req.body);
+  const roleData = {
+    title: req.body.title,
+    description: req.body.description,
+  };
+  const newRole = new Role(roleData);
   await newRole.save();
   res.redirect(`${systemConfig.prefixAdmin}/roles`);
 };
@@ -58,8 +62,11 @@ module.exports.edit = async (req, res) => {
 //[PATCH] /admin/roles/edit/:id
 module.exports.editPatch = async (req, res) => {
   const id = req.params.id;
-  const dataUpdate = req.body;
-  await Role.updateOne({ _id: id }, dataUpdate);
+  const updateData = {
+    title: req.body.title,
+    description: req.body.description,
+  };
+  await Role.updateOne({ _id: id }, updateData);
 
   req.flash("success", `Đã chỉnh sửa vai trò thành công`);
   //back lai trang truoc
