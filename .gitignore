@@ -49,3 +49,10 @@ Thumbs.db
 *.tmp
 *.swp
 *.swo
+
+#tool
+commitOne.py
+
+improvement_prompts.md
+
+project_review.md
