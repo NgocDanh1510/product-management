@@ -8,10 +8,6 @@ const accountSchema = new mongoose.Schema(
     phone: String,
     avatar: String,
     password: String,
-    token: {
-      type: String,
-      default: generateRandom.randomString(30),
-    },
     role_id: String,
     status: {
       type: String,
@@ -22,7 +18,7 @@ const accountSchema = new mongoose.Schema(
       default: false,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 const Account = mongoose.model("Account", accountSchema, "accounts");

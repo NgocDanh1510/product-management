@@ -15,10 +15,7 @@ const userSchema = new mongoose.Schema(
       lowercase: true,
       trim: true,
     },
-    tokenUser: {
-      type: String,
-      default: gentoken.randomString(40),
-    },
+
     password: String,
 
     phone: {
@@ -39,7 +36,7 @@ const userSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 module.exports = mongoose.model("User", userSchema, "users");

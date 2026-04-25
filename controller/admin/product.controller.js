@@ -30,7 +30,7 @@ module.exports.index = async (req, res) => {
     },
     req.query,
     Product,
-    find
+    find,
   );
 
   //??sortKey=  &sortValue=
@@ -51,8 +51,9 @@ module.exports.index = async (req, res) => {
   for (const product of products) {
     if (product.updatedBy) {
       const user = await Acccount.findOne({ _id: product.updatedBy }).select(
-        "fullName"
+        "fullName",
       );
+      user;
       product.updatedByFullName = user.fullName;
     } else {
       product.updatedByFullName = "";
@@ -75,7 +76,7 @@ module.exports.changeStatus = async (req, res) => {
 
   await Product.updateOne(
     { _id: id },
-    { availabilityStatus: status, updatedBy: res.locals.user._id }
+    { availabilityStatus: status, updatedBy: res.locals.user._id },
   );
 
   req.flash("success", "Cập nhật trạng thái thành công");
@@ -93,22 +94,22 @@ module.exports.changeMulti = async (req, res) => {
       case "In Stock":
         await Product.updateMany(
           { _id: { $in: ids } },
-          { availabilityStatus: "In Stock", updatedBy: res.locals.user._id }
+          { availabilityStatus: "In Stock", updatedBy: res.locals.user._id },
         );
 
         req.flash(
           "success",
-          `Cập nhật trạng thái thành công ${ids.length} sản phẩm `
+          `Cập nhật trạng thái thành công ${ids.length} sản phẩm `,
         );
         break;
       case "Low Stock":
         await Product.updateMany(
           { _id: { $in: ids } },
-          { availabilityStatus: "Low Stock", updatedBy: res.locals.user._id }
+          { availabilityStatus: "Low Stock", updatedBy: res.locals.user._id },
         );
         req.flash(
           "success",
-          `Cập nhật trạng thái thành công ${ids.length} sản phẩm `
+          `Cập nhật trạng thái thành công ${ids.length} sản phẩm `,
         );
         break;
       case "delete":
@@ -118,7 +119,7 @@ module.exports.changeMulti = async (req, res) => {
             deleted: true,
             deletedAt: new Date(),
             deletedBy: res.locals.user._id,
-          }
+          },
         );
         req.flash("success", `Đã xóa thành công ${ids.length} sản phẩm `);
         break;
@@ -130,7 +131,7 @@ module.exports.changeMulti = async (req, res) => {
         }
         req.flash(
           "success",
-          `Đã cập nhật ví trí thành công ${ids.lenght} sản phẩm `
+          `Đã cập nhật ví trí thành công ${ids.lenght} sản phẩm `,
         );
         break;
 
@@ -153,7 +154,7 @@ module.exports.delete = async (req, res) => {
 
   await Product.updateOne(
     { _id: id },
-    { deleted: true, deletedAt: new Date(), updatedBy: res.locals.user._id }
+    { deleted: true, deletedAt: new Date(), updatedBy: res.locals.user._id },
   );
   req.flash("success", `Đã xóa thành công`);
   //back lai trang truoc
@@ -258,13 +259,13 @@ module.exports.detail = async (req, res) => {
 
   if (product.updatedBy) {
     const user = await Acccount.findOne({ _id: product.updatedBy }).select(
-      "fullName"
+      "fullName",
     );
     product.updatedByFullName = user.fullName;
   }
   if (product.createdBy) {
     const user = await Acccount.findOne({ _id: product.createdBy }).select(
-      "fullName"
+      "fullName",
     );
     product.createdByFullName = user.fullName;
   }

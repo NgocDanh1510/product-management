@@ -141,7 +141,7 @@ block main
                 
                 if articles && articles.length > 0
                   each article in articles
-                    a.news-item.d-block.text-decoration-none(href=`/blog/${article.slug}`)
+                    a.news-item.d-block.text-decoration-none(href=`/posts/${article.slug}`)
                       .d-flex.gap-3
                         img(src=article.thumbnail  alt=article.title)
                         div.flex-grow-1
