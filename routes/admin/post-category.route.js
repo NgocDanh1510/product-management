@@ -1,4 +1,6 @@
 const express = require("express");
+const asyncHandler = require("../../helper/asyncHandler");
+
 const controller = require("../../controller/admin/post-category.controller");
 // const validate = require("../../validates/admin/post.validate");
 const multer = require("multer");
@@ -9,30 +11,30 @@ const {
 } = require("../../middlewares/admin/checkPermission.middleware");
 
 const Router = express.Router();
-Router.get("/", checkPermission("posts-category_view"), controller.index);
+Router.get("/", checkPermission("posts-category_view"), asyncHandler(controller.index));
 
 Router.patch(
   "/change-status/:status/:id",
   checkPermission("posts-category_edit"),
-  controller.changeStatus
+  asyncHandler(controller.changeStatus)
 );
 
 Router.delete(
   "/delete/:id",
   checkPermission("posts-category_delete"),
-  controller.delete
+  asyncHandler(controller.delete)
 );
 
 Router.patch(
   "/change-multi",
   checkPermission("posts-category_edit"),
-  controller.changeMulti
+  asyncHandler(controller.changeMulti)
 );
 
 Router.get(
   "/create",
   checkPermission("posts-category_create"),
-  controller.create
+  asyncHandler(controller.create)
 );
 
 Router.post(
@@ -40,26 +42,26 @@ Router.post(
   checkPermission("posts-category_create"),
   upload.single("thumbnail"),
   uploadCloud.upload,
-  controller.createPostCategory
+  asyncHandler(controller.createPostCategory)
 );
 
 Router.get(
   "/edit/:id",
   checkPermission("posts-category_edit"),
-  controller.edit
+  asyncHandler(controller.edit)
 );
 Router.patch(
   "/edit/:id",
   checkPermission("posts-category_edit"),
   upload.single("thumbnail"),
   uploadCloud.upload,
-  controller.editPostCategory
+  asyncHandler(controller.editPostCategory)
 );
 
 Router.get(
   "/detail/:id",
   checkPermission("posts-category_view"),
-  controller.detail
+  asyncHandler(controller.detail)
 );
 
 module.exports = Router;

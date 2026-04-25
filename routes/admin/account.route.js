@@ -1,4 +1,6 @@
 const express = require("express");
+const asyncHandler = require("../../helper/asyncHandler");
+
 const multer = require("multer");
 const upload = multer();
 const uploadCloud = require("../../middlewares/admin/uploadCloud.middleware");
@@ -10,31 +12,31 @@ const {
   checkPermission,
 } = require("../../middlewares/admin/checkPermission.middleware");
 
-Router.get("/", checkPermission("accounts_view"), controller.index);
+Router.get("/", checkPermission("accounts_view"), asyncHandler(controller.index));
 
-Router.get("/create", checkPermission("accounts_create"), controller.create);
+Router.get("/create", checkPermission("accounts_create"), asyncHandler(controller.create));
 
 Router.post(
   "/create",
   checkPermission("accounts_create"),
   upload.single("avatar"),
   uploadCloud.upload,
-  controller.createPost
+  asyncHandler(controller.createPost)
 );
 
-Router.get("/edit/:id", checkPermission("accounts_edit"), controller.edit);
+Router.get("/edit/:id", checkPermission("accounts_edit"), asyncHandler(controller.edit));
 Router.patch(
   "/edit/:id",
   checkPermission("accounts_edit"),
   upload.single("avatar"),
   uploadCloud.upload,
-  controller.editPatch
+  asyncHandler(controller.editPatch)
 );
 
 Router.delete(
   "/delete/:id",
   checkPermission("accounts_delete"),
-  controller.delete
+  asyncHandler(controller.delete)
 );
 
 module.exports = Router;
