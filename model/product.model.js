@@ -4,11 +4,14 @@ mongoose.plugin(slug);
 const productSchema = new mongoose.Schema(
   {
     title: String,
-    product_category_id: String,
+    product_category_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "ProductCategory",
+    },
     description: String,
     price: Number,
     discountPercentage: Number,
-    stock: String,
+    stock: { type: Number, default: 0 },
     thumbnail: String,
     availabilityStatus: String,
     position: Number,
@@ -21,16 +24,25 @@ const productSchema = new mongoose.Schema(
       slug: "title",
       unique: true,
     },
-    createdBy: String,
-    updatedBy: String,
-    deletedBy: String,
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Account",
+    },
+    updatedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Account",
+    },
+    deletedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Account",
+    },
     deleted: {
       type: Boolean,
       default: false,
     },
     deletedAt: Date,
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 const Product = mongoose.model("Product", productSchema, "products");

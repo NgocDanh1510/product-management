@@ -10,7 +10,7 @@ module.exports.index = async (req, res) => {
       title: regexKeyword,
       deleted: false,
       availabilityStatus: "In Stock",
-    });
+    }).lean();
   }
 
   res.render("client/pages/search/index", {

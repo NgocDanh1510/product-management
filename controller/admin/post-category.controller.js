@@ -29,14 +29,13 @@ module.exports.index = async (req, res) => {
     sort[sortKey] = sortValue;
   }
 
-  const categories = await PostCategory.find(find).sort(sort);
+  const categories = await PostCategory.find(find)
+    .populate("updatedBy", "fullName")
+    .sort(sort).lean();
   //get fullName user update post
   for (const item of categories) {
     if (item.updatedBy) {
-      const user = await Acccount.findOne({ _id: item.updatedBy }).select(
-        "fullName"
-      );
-      item.updatedByFullName = user.fullName;
+      item.updatedByFullName = item.updatedBy.fullName;
     } else {
       item.updatedByFullName = "";
     }
@@ -75,47 +74,47 @@ module.exports.changeMulti = async (req, res) => {
   const ids = req.body.ids.split(", ");
   switch (req.body.type) {
     case "active":
-      ids.forEach(async (e) => {
+      for (const e of ids) {
         await PostCategory.updateOne(
           { _id: e },
           { status: "active", updatedBy: res.locals.user._id }
         );
-      });
+      }
       req.flash(
         "success",
         `Đã thay đổi trạng thái hoạt động cho ${ids.length} danh mục`
       );
       break;
     case "inactive":
-      ids.forEach(async (e) => {
+      for (const e of ids) {
         await PostCategory.updateOne(
           { _id: e },
           { status: "inactive", updatedBy: res.locals.user._id }
         );
-      });
+      }
       req.flash(
         "success",
         `Đã thay đổi trạng thái dừng cho ${ids.length} danh mục`
       );
       break;
     case "delete":
-      ids.forEach(async (e) => {
+      for (const e of ids) {
         await PostCategory.updateOne(
           { _id: e },
           { deleted: true, deletedBy: res.locals.user._id }
         );
-      });
+      }
       req.flash("success", `Đã xóa ${ids.length} danh mục`);
       break;
     case "Change position":
-      ids.forEach(async (e) => {
+      for (const e of ids) {
         let [id, position] = e.split("-");
         position = parseInt(position);
         await PostCategory.updateOne(
           { _id: id },
           { position: position, updatedBy: res.locals.user._id }
         );
-      });
+      }
       req.flash("success", `Đã thay đổi vị trí cho ${ids.length} danh mục`);
       break;
 
@@ -146,7 +145,7 @@ module.exports.delete = async (req, res) => {
 //[GET] /post-category/create
 module.exports.create = async (req, res) => {
   let find = { deleted: false };
-  const listCategory = await PostCategory.find(find);
+  const listCategory = await PostCategory.find(find).lean();
 
   const treeCategory = createTree(listCategory);
 
@@ -184,10 +183,10 @@ module.exports.createPostCategory = async (req, res) => {
 //[GET] /post-category/edit
 module.exports.edit = async (req, res) => {
   const id = req.params.id;
-  const category = await PostCategory.findOne({ _id: id });
+  const category = await PostCategory.findOne({ _id: id }).lean();
 
   let find = { deleted: false };
-  const listCategory = await PostCategory.find(find);
+  const listCategory = await PostCategory.find(find).lean();
   const treeCategory = createTree(listCategory);
 
   res.render("admin/pages/post-category/edit", {
@@ -225,18 +224,18 @@ module.exports.editPostCategory = async (req, res) => {
 //[GET] /post-category/detail/:id
 module.exports.detail = async (req, res) => {
   id = req.params.id;
-  const category = await PostCategory.findOne({ _id: id });
+  const category = await PostCategory.findOne({ _id: id }).lean();
 
   if (category.updatedBy) {
     const userUpdate = await Acccount.findOne({
       _id: category.updatedBy,
-    }).select("fullName");
+    }).select("fullName").lean();
     category.updatedByFullName = userUpdate.fullName;
   }
   if (category.createdBy) {
     const userCreate = await Acccount.findOne({
       _id: category.createdBy,
-    }).select("fullName");
+    }).select("fullName").lean();
 
     category.createdByFullName = userCreate.fullName;
   }

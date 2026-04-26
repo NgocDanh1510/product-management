@@ -29,7 +29,7 @@ module.exports.register = (req, res) => {
 module.exports.loginPost = async (req, res) => {
   const { email, password } = req.body;
 
-  const user = await User.findOne({ email: email });
+  const user = await User.findOne({ email: email }).lean();
 
   if (!user) {
     req.flash("error", "email hoặc mật khẩu không hợp lệ!");
@@ -54,7 +54,7 @@ module.exports.loginPost = async (req, res) => {
 // [PATCH] /user/register
 module.exports.registerPost = async (req, res) => {
   try {
-    const emailExist = await User.findOne({ email: req.body.email });
+    const emailExist = await User.findOne({ email: req.body.email }).lean();
     if (emailExist) {
       req.flash("error", "Email đã tồn tại!");
       return res.redirect(req.get("Referrer"));
@@ -92,7 +92,7 @@ module.exports.forgot = (req, res) => {
 // [POST] /user/password/forgot
 module.exports.forgotPost = async (req, res) => {
   const { email } = req.body;
-  const emailExist = await User.findOne({ email: email });
+  const emailExist = await User.findOne({ email: email }).lean();
 
   if (!emailExist) {
     req.flash("error", "Email không tồn tại!");
@@ -141,13 +141,13 @@ module.exports.otp = (req, res) => {
 // [POST] /user/password/otp
 module.exports.otpPost = async (req, res) => {
   const { email, otp } = req.body;
-  const checkOtp = await ForgotPassword.findOne({ email, otp });
+  const checkOtp = await ForgotPassword.findOne({ email, otp }).lean();
   if (!checkOtp) {
     req.flash("error", "Mã OTP không đúng, vui lòng nhập lại!");
     return res.redirect(req.get("Referrer"));
   }
 
-  const user = await User.findOne({ email }).select("_id");
+  const user = await User.findOne({ email }).select("_id").lean();
 
   const jwtToken = jwtHelper.generateToken({ _id: user._id });
   res.cookie("tokenUser", jwtToken, {

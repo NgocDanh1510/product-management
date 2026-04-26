@@ -2,7 +2,8 @@ const express = require("express");
 const asyncHandler = require("../../helper/asyncHandler");
 
 const controller = require("../../controller/admin/product.controller");
-const validate = require("../../validates/admin/product.validate");
+const validate = require("../../validates/validate.middleware");
+const productSchema = require("../../validates/schemas/product.schema");
 const multer = require("multer");
 const upload = multer();
 const uploadCloud = require("../../middlewares/admin/uploadCloud.middleware");
@@ -11,48 +12,64 @@ const {
 } = require("../../middlewares/admin/checkPermission.middleware");
 
 const Router = express.Router();
-Router.get("/", checkPermission("products_view"), asyncHandler(controller.index));
+Router.get(
+  "/",
+  checkPermission("products_view"),
+  asyncHandler(controller.index),
+);
 
 Router.patch(
   "/change-status/:status/:id",
   checkPermission("products_edit"),
-  asyncHandler(controller.changeStatus)
+  asyncHandler(controller.changeStatus),
 );
 
 Router.patch(
   "/change-multi",
   checkPermission("products_edit"),
-  asyncHandler(controller.changeMulti)
+  asyncHandler(controller.changeMulti),
 );
 
 Router.delete(
   "/delete/:id",
   checkPermission("products_delete"),
-  asyncHandler(controller.delete)
+  asyncHandler(controller.delete),
 );
 
-Router.get("/create", checkPermission("products_create"), asyncHandler(controller.create));
+Router.get(
+  "/create",
+  checkPermission("products_create"),
+  asyncHandler(controller.create),
+);
 
 Router.post(
   "/create",
   checkPermission("products_create"),
   upload.single("thumbnail"),
   uploadCloud.upload,
-  validate.createProduct,
-  asyncHandler(controller.createProduct)
+  validate(productSchema),
+  asyncHandler(controller.createProduct),
 );
 
-Router.get("/edit/:id", checkPermission("products_edit"), asyncHandler(controller.edit));
+Router.get(
+  "/edit/:id",
+  checkPermission("products_edit"),
+  asyncHandler(controller.edit),
+);
 Router.patch(
   "/edit/:id",
   checkPermission("products_edit"),
   upload.single("thumbnail"),
   uploadCloud.upload,
-  validate.createProduct,
-  asyncHandler(controller.editProduct)
+  validate(productSchema),
+  asyncHandler(controller.editProduct),
 );
 
-Router.get("/detail/:id", checkPermission("products_view"), asyncHandler(controller.detail));
+Router.get(
+  "/detail/:id",
+  checkPermission("products_view"),
+  asyncHandler(controller.detail),
+);
 
 // Router.patch("/test", asyncHandler(controller.test));
 module.exports = Router;

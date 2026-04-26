@@ -1,5 +1,7 @@
 const express = require("express");
 const asyncHandler = require("../../helper/asyncHandler");
+const validate = require("../../validates/validate.middleware");
+const userSchema = require("../../validates/schemas/user.schema");
 
 const router = express.Router();
 
@@ -9,7 +11,11 @@ router.get("/login", asyncHandler(controller.login));
 router.post("/login", asyncHandler(controller.loginPost));
 router.get("/logout", asyncHandler(controller.logout));
 router.get("/register", asyncHandler(controller.register));
-router.post("/register", asyncHandler(controller.registerPost));
+router.post(
+  "/register",
+  validate(userSchema),
+  asyncHandler(controller.registerPost),
+);
 router.get("/password/forgot", asyncHandler(controller.forgot));
 router.post("/password/forgot", asyncHandler(controller.forgotPost));
 router.get("/password/otp", asyncHandler(controller.otp));

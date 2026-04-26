@@ -5,9 +5,9 @@ module.exports = async (objectPagination, query, Model, find) => {
   //   limitPage: 5,
   // },
   const countItem = await Model.countDocuments(find);
-
+  objectPagination.totalRecord = countItem;
   objectPagination.pageTotal = Math.ceil(
-    countItem / objectPagination.limitPage
+    countItem / objectPagination.limitPage,
   );
 
   if (query.page) {

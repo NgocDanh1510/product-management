@@ -9,11 +9,12 @@ module.exports.index = async (req, res) => {
   const categories = await ProductCategory.find({
     deleted: false,
     status: "active",
-    $or: [{ parent_id: "" }, { parent_id: { $exists: false } }],
+    $or: [{ parent_id: null }, { parent_id: { $exists: false } }],
   })
     .sort({ position: 1 })
     .limit(8)
-    .select("title description thumbnail slug isFeatured");
+    .select("title description thumbnail slug isFeatured")
+    .lean();
 
   const productIsFeatureds = await Product.find({
     isFeatured: true,
@@ -23,7 +24,8 @@ module.exports.index = async (req, res) => {
     .sort({
       position: "desc",
     })
-    .limit(4);
+    .limit(4)
+    .lean();
   const productIsFeaturedsNew = calculator.newPrice(productIsFeatureds);
 
   //get post
@@ -33,7 +35,8 @@ module.exports.index = async (req, res) => {
     isFeatured: true,
   })
     .sort({ position: "desc" })
-    .limit(3);
+    .limit(3)
+    .lean();
 
   res.render("client/pages/home/index", {
     titlePage: res.locals.settingGeneral.general.site_title,

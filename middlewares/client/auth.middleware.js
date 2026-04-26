@@ -11,29 +11,29 @@ module.exports.checkLogin = async (req, res, next) => {
 
     const user = await User.findOne({ _id: decoded._id }).select(
       "-password -tokenUser -status"
-    );
+    ).lean();
 
     if (user) {
       res.locals.user = user;
 
       //check cart
-      const cartUser = await Cart.findOne({ user_id: user.id });
+      const cartUser = await Cart.findOne({ user_id: user._id }).lean();
       const cartId = req.cookies.cartId;
       if (cartUser) {
-        if (cartUser.id != cartId) {
+        if (cartUser._id != cartId) {
           // phần xử lý trộn giỏ hàng
 
           //gán lại giỏ hàng
           await Cart.deleteOne({ _id: cartId });
-          req.cookies.cartId = cartUser.id;
-          res.cookie("cartId", cartUser.id, {
+          req.cookies.cartId = cartUser._id;
+          res.cookie("cartId", cartUser._id, {
             expires: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
           });
         }
       } else {
         await Cart.updateOne(
           { _id: cartId },
-          { user_id: user.id, expiresAt: null }
+          { user_id: user._id, expiresAt: null }
         );
       }
     }

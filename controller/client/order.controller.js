@@ -4,15 +4,15 @@ const Order = require("../../model/order.model");
 //[GET] /orders
 
 module.exports.index = async (req, res) => {
-  const userId = res.locals.user.id;
-  const filter = { user_id: userId };
+  const userId = res.locals.user._id;
+  const filter = { user_id: userId, deleted: false };
 
   const status = req.query.status;
   if (status) {
     filter.status = status;
   }
 
-  const orders = await Order.find(filter).sort({ createdAt: -1 }); // Sắp xếp đơn mới nhất lên đầu
+  const orders = await Order.find(filter).sort({ createdAt: -1 }).lean(); // Sắp xếp đơn mới nhất lên đầu
 
   res.render("client/pages/orders/index", {
     titlePage: "Lịch sử đơn hàng",
@@ -22,15 +22,18 @@ module.exports.index = async (req, res) => {
 
 //[GET] /orders/detail/:orderId
 module.exports.detail = async (req, res) => {
-  const order = await Order.findById(req.params.orderId).lean();
+  const order = await Order.findOne({
+    _id: req.params.orderId,
+    deleted: false,
+  }).lean();
 
   for (const element of order.products) {
     element.priceNew = Number(
-      (element.price * (1 - element.discountPercentage / 100)).toFixed(2)
+      (element.price * (1 - element.discountPercentage / 100)).toFixed(2),
     );
 
     element.totalPrice = Number(
-      (element.priceNew * element.quantity).toFixed(2)
+      (element.priceNew * element.quantity).toFixed(2),
     );
   }
   order.discount = (order.totalOriginalPrice - order.totalPrice).toFixed(2);

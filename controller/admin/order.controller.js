@@ -1,9 +1,10 @@
 const Order = require("../../model/order.model");
+const Product = require("../../model/product.model");
 const paginationHelper = require("../../helper/pagination");
 const mongoose = require("mongoose");
 //[GET] /admin/order
 module.exports.index = async (req, res) => {
-  const filters = {};
+  const filters = { deleted: false };
   const sort = { createdAt: "desc" };
   //?status
   if (req.query.status) {
@@ -56,14 +57,14 @@ module.exports.index = async (req, res) => {
     },
     req.query,
     Order,
-    filters
+    filters,
   );
-  const orders = await Order.find(filters).sort(sort);
+  const orders = await Order.find(filters).sort(sort).lean();
 
   for (const order of orders) {
     order.totalQuantity = order.products.reduce(
       (sum, p) => sum + p.quantity,
-      0
+      0,
     );
   }
 
@@ -79,6 +80,27 @@ module.exports.index = async (req, res) => {
 //[PATCH] /admin/order/change-status/:status/:id
 module.exports.changeStatus = async (req, res) => {
   const { id, status } = req.params;
+
+  const order = await Order.findOne({ _id: id });
+
+  if (order.status !== "cancelled" && status === "cancelled") {
+    // Hoàn stock khi huỷ đơn hàng
+    for (const item of order.products) {
+      await Product.updateOne(
+        { _id: item.product_id },
+        { $inc: { stock: item.quantity } },
+      );
+    }
+  } else if (order.status === "cancelled" && status !== "cancelled") {
+    // Trừ stock lại khi đơn hàng đổi từ huỷ sang trạng thái khác
+    for (const item of order.products) {
+      await Product.updateOne(
+        { _id: item.product_id },
+        { $inc: { stock: -item.quantity } },
+      );
+    }
+  }
+
   await Order.updateOne({ _id: id }, { status });
 
   req.flash("success", "Cập nhật trạng thái thành công");
@@ -93,7 +115,7 @@ module.exports.detail = async (req, res) => {
     const id = req.params.id;
     const order = await Order.findOne({
       _id: id,
-    });
+    }).lean();
 
     if (!order) {
       req.flash("error", "Không tìm thấy đơn hàng!");
@@ -128,6 +150,22 @@ module.exports.detail = async (req, res) => {
       getStatusLabel: getStatusLabel, // Truyền hàm sang view
       getStatusClass: getStatusClass, // Truyền hàm sang view
     });
+  } catch (error) {
+    console.log(error);
+    res.redirect(`${systemConfig.prefixAdmin}/orders`);
+  }
+};
+
+// [DELETE] /admin/order/delete/:id
+module.exports.delete = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const order = await Order.findOne({ _id: id });
+    await Order.updateOne({ _id: id }, { deleted: true });
+    req.flash("success", "Xóa đơn hàng thành công");
+    //back lai trang truoc
+    const backURL = req.get("Referrer");
+    res.redirect(backURL);
   } catch (error) {
     console.log(error);
     res.redirect(`${systemConfig.prefixAdmin}/orders`);

@@ -1,72 +1,13 @@
 const Cart = require("../../model/cart.model");
 const Product = require("../../model/product.model");
 const Order = require("../../model/order.model");
+const cartHelper = require("../../helper/cart.helper");
+const sendMail = require("../../helper/sendMail");
 
 // [GET] /checkout
 module.exports.index = async (req, res) => {
   try {
-    const cart = await Cart.findOne({ _id: req.cookies.cartId }).lean();
-
-    // Khởi tạo tổng tiền
-    let totalPrice = 0;
-    let totalPriceNew = 0;
-
-    // Nếu cart trống
-    if (!cart || cart.products.length === 0) {
-      cart.products = [];
-      cart.totalPrice = 0;
-      cart.totalPriceNew = 0;
-      cart.totalDiscount = 0;
-    }
-
-    // Lấy danh sách product_id
-    const productIds = cart.products.map((item) => item.product_id);
-
-    // Lấy toàn bộ product trong 1 query
-    const products = await Product.find({
-      _id: { $in: productIds },
-    })
-      .select("title thumbnail price discountPercentage")
-      .lean();
-
-    // Map product theo id
-    const productMap = {};
-    products.forEach((p) => {
-      productMap[p._id.toString()] = p;
-    });
-
-    // Build lại cart.products để render
-    const cartProducts = cart.products
-      .map((item) => {
-        const product = productMap[item.product_id.toString()];
-
-        if (!product) return null; // sản phẩm đã bị xóa
-
-        const priceNew = Number(
-          (product.price * (1 - product.discountPercentage / 100)).toFixed(2)
-        );
-
-        const itemTotalPrice = product.price * item.quantity;
-        const itemTotalPriceNew = Number((priceNew * item.quantity).toFixed(2));
-
-        totalPrice += itemTotalPrice;
-        totalPriceNew += itemTotalPriceNew;
-
-        return {
-          // product_id: product._id,
-          title: product.title,
-          thumbnail: product.thumbnail,
-          quantity: item.quantity,
-          totalPrice: itemTotalPriceNew,
-        };
-      })
-      .filter(Boolean); // loại bỏ product null
-
-    // Gán lại dữ liệu cho cart
-    cart.products = cartProducts;
-    cart.totalPrice = totalPrice;
-    cart.totalPriceNew = Number(totalPriceNew.toFixed(2));
-    cart.totalDiscount = Number((totalPrice - totalPriceNew).toFixed(2));
+    const cart = await cartHelper.getCartWithProducts(req.cookies.cartId);
 
     // Render view
     res.render("client/pages/checkout/index", {
@@ -83,7 +24,18 @@ module.exports.index = async (req, res) => {
 module.exports.order = async (req, res) => {
   try {
     const cartId = req.cookies.cartId;
-    const cart = await Cart.findById(cartId).lean();
+    const cart = await cartHelper.getCartWithProducts(cartId);
+
+    // Kiểm tra tồn kho trước khi tạo order
+    for (const item of cart.products) {
+      if (item.detail.stock < item.quantity) {
+        req.flash(
+          "error",
+          `Sản phẩm "${item.detail.title}" chỉ còn ${item.detail.stock} sản phẩm trong kho!`
+        );
+        return res.redirect("back");
+      }
+    }
 
     // Nếu user chưa có địa chỉ hoặc số điện thoại → cập nhật từ form đặt hàng
     if (!res.locals.user.address || !res.locals.user.phone) {
@@ -94,55 +46,97 @@ module.exports.order = async (req, res) => {
     }
 
     const order = {
-      user_id: res.locals.user.id,
+      user_id: res.locals.user._id,
       note: req.body.note,
       paymentMethod: req.body.paymentMethod,
-      totalPrice: 0,
-      totalOriginalPrice: 0,
+      totalPrice: cart.totalPriceNew,
+      totalOriginalPrice: cart.totalPrice,
     };
     delete req.body.note;
     delete req.body.paymentMethod;
 
     order.userInfor = req.body;
 
-    const product_ids = cart.products.map((item) => item.product_id);
-
-    const productMap = {};
-    const products = await Product.find({ _id: { $in: product_ids } })
-      .select("_id title thumbnail price discountPercentage")
-      .lean();
-
-    products.forEach((item) => {
-      productMap[item._id.toString()] = item;
-    });
-
     const productNew = cart.products.map((item) => {
-      const product = productMap[item.product_id.toString()];
-      const priceNew =
-        Math.round(
-          product.price * (1 - product.discountPercentage / 100) * 100
-        ) / 100;
-
-      order.totalOriginalPrice += product.price * item.quantity;
-      order.totalPrice += priceNew * item.quantity;
       return {
-        product_id: product._id,
-        price: product.price,
-        title: product.title,
-        thumbnail: product.thumbnail,
-        discountPercentage: product.discountPercentage,
+        product_id: item.product_id,
+        price: item.detail.price,
+        title: item.detail.title,
+        thumbnail: item.detail.thumbnail,
+        discountPercentage: item.detail.discountPercentage,
         quantity: item.quantity,
       };
     });
-    order.totalOriginalPrice = Number(order.totalOriginalPrice.toFixed(2));
-    order.totalPrice = Number(order.totalPrice.toFixed(2));
+    
     order.products = productNew;
 
     const orderNew = new Order(order);
     await orderNew.save();
-    // xóa sản phẩm trong giỏ hàng
 
+    // Trừ stock sau khi order thành công
+    for (const item of cart.products) {
+      await Product.updateOne(
+        { _id: item.product_id },
+        { $inc: { stock: -item.quantity } }
+      );
+    }
+
+    // xóa sản phẩm trong giỏ hàng
     await Cart.updateOne({ _id: cartId }, { products: [] });
+
+    // Gửi email xác nhận đơn hàng
+    if (orderNew.userInfor.email) {
+      let productsHtml = "";
+      for (const item of orderNew.products) {
+        productsHtml += `
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;">${item.title}</td>
+            <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${item.quantity}</td>
+            <td style="padding: 8px; border: 1px solid #ddd; text-align: right;">$${item.price}</td>
+          </tr>
+        `;
+      }
+
+      const htmlTemplate = `
+        <h3>Xin chào ${orderNew.userInfor.fullName},</h3>
+        <p>Cảm ơn bạn đã đặt hàng tại cửa hàng của chúng tôi. Dưới đây là thông tin đơn hàng của bạn:</p>
+        <ul>
+          <li><strong>Mã đơn hàng:</strong> ${orderNew._id}</li>
+          <li><strong>Ngày đặt:</strong> ${new Date().toLocaleString("vi-VN")}</li>
+          <li><strong>Trạng thái:</strong> Chờ xác nhận</li>
+          <li><strong>Phương thức thanh toán:</strong> ${orderNew.paymentMethod}</li>
+        </ul>
+        <h4>Thông tin giao hàng:</h4>
+        <ul>
+          <li><strong>Họ tên:</strong> ${orderNew.userInfor.fullName}</li>
+          <li><strong>Số điện thoại:</strong> ${orderNew.userInfor.phone}</li>
+          <li><strong>Địa chỉ:</strong> ${orderNew.userInfor.address}</li>
+        </ul>
+        <h4>Chi tiết sản phẩm:</h4>
+        <table style="width: 100%; border-collapse: collapse;">
+          <thead>
+            <tr style="background-color: #f2f2f2;">
+              <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Tên sản phẩm</th>
+              <th style="padding: 8px; border: 1px solid #ddd; text-align: center;">Số lượng</th>
+              <th style="padding: 8px; border: 1px solid #ddd; text-align: right;">Giá</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${productsHtml}
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="2" style="padding: 8px; border: 1px solid #ddd; text-align: right;"><strong>Tổng tiền:</strong></td>
+              <td style="padding: 8px; border: 1px solid #ddd; text-align: right;"><strong>$${orderNew.totalPrice}</strong></td>
+            </tr>
+          </tfoot>
+        </table>
+        <p>Chúng tôi sẽ sớm liên hệ với bạn để xác nhận đơn hàng. Chúc bạn một ngày vui vẻ!</p>
+      `;
+
+      sendMail(orderNew.userInfor.email, "Xác nhận đặt hàng thành công", htmlTemplate);
+    }
+
     //chuyển trang thanh toán ( nếu thanh toán ngân hàng, ví mono)
 
     // chuyển đến trang đặt hàng thành công

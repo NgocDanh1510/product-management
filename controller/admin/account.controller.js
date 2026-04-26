@@ -6,12 +6,13 @@ const bcrypt = require("bcrypt");
 //[GET] /admin/accounts
 module.exports.index = async (req, res) => {
   let find = { deleted: false };
-  const accounts = await Account.find(find).select("-password -token");
+  const accounts = await Account.find(find)
+    .populate({ path: "role_id", match: { deleted: false }, select: "title" })
+    .select("-password -token").lean();
 
   for (const element of accounts) {
     if (element.role_id) {
-      const role = await Role.findOne({ _id: element.role_id, deleted: false });
-      element.nameRole = role.title;
+      element.nameRole = element.role_id.title;
     }
   }
 
@@ -23,7 +24,7 @@ module.exports.index = async (req, res) => {
 
 //[GET] /admin/create
 module.exports.create = async (req, res) => {
-  const roles = await Role.find({ deleted: false });
+  const roles = await Role.find({ deleted: false }).lean();
   res.render("admin/pages/accounts/create", {
     titlePage: "tao tai khoan",
     roles: roles,
@@ -36,7 +37,7 @@ module.exports.createPost = async (req, res) => {
     const isExist = await Account.findOne({
       email: req.body.email,
       deleted: false,
-    });
+    }).lean();
 
     if (isExist) {
       req.flash("error", "Email đã tồn tại!");
@@ -65,8 +66,8 @@ module.exports.createPost = async (req, res) => {
 
 //[GET] /admin/edit/:id
 module.exports.edit = async (req, res) => {
-  const account = await Account.findOne({ _id: req.params.id });
-  const roles = await Role.find({ deleted: false });
+  const account = await Account.findOne({ _id: req.params.id }).lean();
+  const roles = await Role.find({ deleted: false }).lean();
 
   res.render("admin/pages/accounts/edit", {
     titlePage: "chỉnh sửa tài khoản",
@@ -83,7 +84,7 @@ module.exports.editPatch = async (req, res) => {
       _id: { $ne: id },
       email: req.body.email,
       deleted: false,
-    });
+    }).lean();
 
     if (isExist) {
       req.flash("error", "Email đã tồn tại!");
