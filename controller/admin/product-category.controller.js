@@ -75,47 +75,47 @@ module.exports.changeMulti = async (req, res) => {
   const ids = req.body.ids.split(", ");
   switch (req.body.type) {
     case "active":
-      ids.forEach(async (e) => {
+      for (const e of ids) {
         await ProductCategory.updateOne(
           { _id: e },
           { status: "active", updatedBy: res.locals.user._id }
         );
-      });
+      }
       req.flash(
         "success",
         `Đã thay đổi trạng thái Còn Hàng cho ${ids.length} danh mục`
       );
       break;
     case "inactive":
-      ids.forEach(async (e) => {
+      for (const e of ids) {
         await ProductCategory.updateOne(
           { _id: e },
           { status: "inactive", updatedBy: res.locals.user._id }
         );
-      });
+      }
       req.flash(
         "success",
         `Đã thay đổi trạng thái Hết Hàng cho ${ids.length} danh mục`
       );
       break;
     case "delete":
-      ids.forEach(async (e) => {
+      for (const e of ids) {
         await ProductCategory.updateOne(
           { _id: e },
           { deleted: true, deletedBy: res.locals.user._id }
         );
-      });
+      }
       req.flash("success", `Đã xóa ${ids.length} danh mục`);
       break;
     case "Change position":
-      ids.forEach(async (e) => {
+      for (const e of ids) {
         let [id, position] = e.split("-");
         position = parseInt(position);
         await ProductCategory.updateOne(
           { _id: id },
           { position: position, updatedBy: res.locals.user._id }
         );
-      });
+      }
       req.flash("success", `Đã thay đổi vị trí cho ${ids.length} danh mục`);
       break;
 
