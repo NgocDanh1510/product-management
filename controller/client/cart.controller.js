@@ -1,75 +1,11 @@
 const Cart = require("../../model/cart.model");
 const Product = require("../../model/product.model");
+const cartHelper = require("../../helper/cart.helper");
 
 // [GET] /cart
 module.exports.index = async (req, res) => {
   try {
-    const cart = await Cart.findOne({ _id: req.cookies.cartId }).lean();
-
-    // Khởi tạo tổng tiền
-    let totalPrice = 0;
-    let totalPriceNew = 0;
-
-    // Nếu cart trống
-    if (!cart || cart.products.length === 0) {
-      cart.products = [];
-      cart.totalPrice = 0;
-      cart.totalPriceNew = 0;
-      cart.totalDiscount = 0;
-    }
-
-    // Lấy danh sách product_id
-    const productIds = cart.products.map((item) => item.product_id);
-
-    // Lấy toàn bộ product trong 1 query
-    const products = await Product.find({
-      _id: { $in: productIds },
-    })
-      .select("title thumbnail price discountPercentage stock slug")
-      .lean();
-
-    // Map product theo id
-    const productMap = {};
-    products.forEach((p) => {
-      productMap[p._id.toString()] = p;
-    });
-
-    // Build lại cart.products để render
-    const cartProducts = cart.products
-      .map((item) => {
-        const product = productMap[item.product_id.toString()];
-
-        if (!product) return null; // sản phẩm đã bị xóa
-
-        const priceNew = product.price * (1 - product.discountPercentage / 100);
-        const itemTotalPrice = product.price * item.quantity;
-        const itemTotalPriceNew = Number((priceNew * item.quantity).toFixed(2));
-
-        totalPrice += itemTotalPrice;
-        totalPriceNew += itemTotalPriceNew;
-
-        return {
-          product_id: product._id,
-          quantity: item.quantity,
-          detail: {
-            title: product.title,
-            thumbnail: product.thumbnail,
-            price: product.price,
-            discountPercentage: product.discountPercentage,
-            priceNew: priceNew.toFixed(2),
-            stock: product.stock,
-            totalPrice: itemTotalPriceNew,
-            slug: product.slug,
-          },
-        };
-      })
-      .filter(Boolean); // loại bỏ product null
-
-    // Gán lại dữ liệu cho cart
-    cart.products = cartProducts;
-    cart.totalPrice = totalPrice;
-    cart.totalPriceNew = Number(totalPriceNew.toFixed(2));
-    cart.totalDiscount = Number((totalPrice - totalPriceNew).toFixed(2));
+    const cart = await cartHelper.getCartWithProducts(req.cookies.cartId);
 
     // Render view
     res.render("client/pages/cart/index", {
