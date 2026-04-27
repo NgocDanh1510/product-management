@@ -1,5 +1,7 @@
 const express = require("express");
 const asyncHandler = require("../../helper/asyncHandler");
+const validate = require("../../validates/validate.middleware");
+const accountSchema = require("../../validates/schemas/account.schema");
 
 const multer = require("multer");
 const upload = multer();
@@ -21,6 +23,7 @@ Router.post(
   checkPermission("accounts_create"),
   upload.single("avatar"),
   uploadCloud.upload,
+  validate(accountSchema),
   asyncHandler(controller.createPost)
 );
 
@@ -30,6 +33,7 @@ Router.patch(
   checkPermission("accounts_edit"),
   upload.single("avatar"),
   uploadCloud.upload,
+  validate(accountSchema),
   asyncHandler(controller.editPatch)
 );
 

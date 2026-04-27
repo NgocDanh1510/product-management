@@ -2,7 +2,8 @@ const express = require("express");
 const asyncHandler = require("../../helper/asyncHandler");
 
 const controller = require("../../controller/admin/product.controller");
-const validate = require("../../validates/admin/product.validate");
+const validate = require("../../validates/validate.middleware");
+const productSchema = require("../../validates/schemas/product.schema");
 const multer = require("multer");
 const upload = multer();
 const uploadCloud = require("../../middlewares/admin/uploadCloud.middleware");
@@ -38,7 +39,7 @@ Router.post(
   checkPermission("products_create"),
   upload.single("thumbnail"),
   uploadCloud.upload,
-  validate.createProduct,
+  validate(productSchema),
   asyncHandler(controller.createProduct)
 );
 
@@ -48,7 +49,7 @@ Router.patch(
   checkPermission("products_edit"),
   upload.single("thumbnail"),
   uploadCloud.upload,
-  validate.createProduct,
+  validate(productSchema),
   asyncHandler(controller.editProduct)
 );
 
