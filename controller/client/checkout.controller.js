@@ -2,6 +2,7 @@ const Cart = require("../../model/cart.model");
 const Product = require("../../model/product.model");
 const Order = require("../../model/order.model");
 const cartHelper = require("../../helper/cart.helper");
+const sendMail = require("../../helper/sendMail");
 
 // [GET] /checkout
 module.exports.index = async (req, res) => {
@@ -81,8 +82,61 @@ module.exports.order = async (req, res) => {
     }
 
     // xóa sản phẩm trong giỏ hàng
-
     await Cart.updateOne({ _id: cartId }, { products: [] });
+
+    // Gửi email xác nhận đơn hàng
+    if (orderNew.userInfor.email) {
+      let productsHtml = "";
+      for (const item of orderNew.products) {
+        productsHtml += `
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;">${item.title}</td>
+            <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${item.quantity}</td>
+            <td style="padding: 8px; border: 1px solid #ddd; text-align: right;">$${item.price}</td>
+          </tr>
+        `;
+      }
+
+      const htmlTemplate = `
+        <h3>Xin chào ${orderNew.userInfor.fullName},</h3>
+        <p>Cảm ơn bạn đã đặt hàng tại cửa hàng của chúng tôi. Dưới đây là thông tin đơn hàng của bạn:</p>
+        <ul>
+          <li><strong>Mã đơn hàng:</strong> ${orderNew._id}</li>
+          <li><strong>Ngày đặt:</strong> ${new Date().toLocaleString("vi-VN")}</li>
+          <li><strong>Trạng thái:</strong> Chờ xác nhận</li>
+          <li><strong>Phương thức thanh toán:</strong> ${orderNew.paymentMethod}</li>
+        </ul>
+        <h4>Thông tin giao hàng:</h4>
+        <ul>
+          <li><strong>Họ tên:</strong> ${orderNew.userInfor.fullName}</li>
+          <li><strong>Số điện thoại:</strong> ${orderNew.userInfor.phone}</li>
+          <li><strong>Địa chỉ:</strong> ${orderNew.userInfor.address}</li>
+        </ul>
+        <h4>Chi tiết sản phẩm:</h4>
+        <table style="width: 100%; border-collapse: collapse;">
+          <thead>
+            <tr style="background-color: #f2f2f2;">
+              <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Tên sản phẩm</th>
+              <th style="padding: 8px; border: 1px solid #ddd; text-align: center;">Số lượng</th>
+              <th style="padding: 8px; border: 1px solid #ddd; text-align: right;">Giá</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${productsHtml}
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="2" style="padding: 8px; border: 1px solid #ddd; text-align: right;"><strong>Tổng tiền:</strong></td>
+              <td style="padding: 8px; border: 1px solid #ddd; text-align: right;"><strong>$${orderNew.totalPrice}</strong></td>
+            </tr>
+          </tfoot>
+        </table>
+        <p>Chúng tôi sẽ sớm liên hệ với bạn để xác nhận đơn hàng. Chúc bạn một ngày vui vẻ!</p>
+      `;
+
+      sendMail(orderNew.userInfor.email, "Xác nhận đặt hàng thành công", htmlTemplate);
+    }
+
     //chuyển trang thanh toán ( nếu thanh toán ngân hàng, ví mono)
 
     // chuyển đến trang đặt hàng thành công
