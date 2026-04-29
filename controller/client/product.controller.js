@@ -106,7 +106,7 @@ module.exports.index = async (req, res) => {
     listProduct: newProducts, // Danh sách sản phẩm
     categories: categories, // Danh mục cho bộ lọc
     articles: posts, // Tin tức sidebar
-    totalProducts: 150, // Tổng số sản phẩm
+    totalProducts: objectPagination.totalRecord, // Tổng số sản phẩm
     selectedCategory: category, // Category đang chọn
     defaultPriceMin: min,
     defaultPriceMax: max,
