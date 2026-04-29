@@ -25,6 +25,17 @@ module.exports.order = async (req, res) => {
     const cartId = req.cookies.cartId;
     const cart = await cartHelper.getCartWithProducts(cartId);
 
+    // Kiểm tra tồn kho trước khi tạo order
+    for (const item of cart.products) {
+      if (item.detail.stock < item.quantity) {
+        req.flash(
+          "error",
+          `Sản phẩm "${item.detail.title}" chỉ còn ${item.detail.stock} sản phẩm trong kho!`
+        );
+        return res.redirect("back");
+      }
+    }
+
     // Nếu user chưa có địa chỉ hoặc số điện thoại → cập nhật từ form đặt hàng
     if (!res.locals.user.address || !res.locals.user.phone) {
       await res.locals.user.updateOne({
@@ -60,6 +71,15 @@ module.exports.order = async (req, res) => {
 
     const orderNew = new Order(order);
     await orderNew.save();
+
+    // Trừ stock sau khi order thành công
+    for (const item of cart.products) {
+      await Product.updateOne(
+        { _id: item.product_id },
+        { $inc: { stock: -item.quantity } }
+      );
+    }
+
     // xóa sản phẩm trong giỏ hàng
 
     await Cart.updateOne({ _id: cartId }, { products: [] });

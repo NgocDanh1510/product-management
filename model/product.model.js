@@ -11,7 +11,7 @@ const productSchema = new mongoose.Schema(
     description: String,
     price: Number,
     discountPercentage: Number,
-    stock: String,
+    stock: { type: Number, default: 0 },
     thumbnail: String,
     availabilityStatus: String,
     position: Number,
@@ -42,7 +42,7 @@ const productSchema = new mongoose.Schema(
     },
     deletedAt: Date,
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 const Product = mongoose.model("Product", productSchema, "products");

@@ -1,10 +1,14 @@
+//hàm này giúp tìm tất cả các danh mục con, cháu,... của một danh mục
+
 const ProductCategory = require("../model/product-category.model");
 const getSubCategories = async (parent_id) => {
   const subCategories = await ProductCategory.find({
     parent_id: parent_id,
     deleted: false,
     status: "active",
-  }).select("_id title").lean();
+  })
+    .select("_id title")
+    .lean();
 
   let subAll = [...subCategories];
 

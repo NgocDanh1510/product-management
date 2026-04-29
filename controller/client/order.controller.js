@@ -5,7 +5,7 @@ const Order = require("../../model/order.model");
 
 module.exports.index = async (req, res) => {
   const userId = res.locals.user._id;
-  const filter = { user_id: userId };
+  const filter = { user_id: userId, deleted: false };
 
   const status = req.query.status;
   if (status) {
@@ -22,15 +22,18 @@ module.exports.index = async (req, res) => {
 
 //[GET] /orders/detail/:orderId
 module.exports.detail = async (req, res) => {
-  const order = await Order.findById(req.params.orderId).lean();
+  const order = await Order.findOne({
+    _id: req.params.orderId,
+    deleted: false,
+  }).lean();
 
   for (const element of order.products) {
     element.priceNew = Number(
-      (element.price * (1 - element.discountPercentage / 100)).toFixed(2)
+      (element.price * (1 - element.discountPercentage / 100)).toFixed(2),
     );
 
     element.totalPrice = Number(
-      (element.priceNew * element.quantity).toFixed(2)
+      (element.priceNew * element.quantity).toFixed(2),
     );
   }
   order.discount = (order.totalOriginalPrice - order.totalPrice).toFixed(2);
